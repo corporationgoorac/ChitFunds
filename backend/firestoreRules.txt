@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- ADVANCED HELPER FUNCTIONS ---
+    // Replace 'YOUR_ADMIN_UID_HERE' with your actual Firebase Auth UID
+    function isAdmin() {
+      return request.auth != null && request.auth.uid == 'YOUR_ADMIN_UID_HERE';
+    }
+
+    // --- GLOBAL DATABASE RULES ---
+    match /{document=**} {
+      
+      // 1. PUBLIC READ ACCESS
+      // Anyone on the internet (logged in or logged out) can read the data.
+      allow read: if true;
+
+      // 2. SECURE WRITE ACCESS
+      // Only the authenticated Admin can create, edit, or delete documents.
+      allow write: if isAdmin();
+      
+    }
+  }
+}
