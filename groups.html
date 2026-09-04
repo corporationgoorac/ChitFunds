@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f0f" />
+  <link rel="manifest" href="manifest.json">
+  <title>Groups Dashboard - Meena Chitfunds</title>
+  
+  <style>
+    /* Premium Theme Variables */
+    :root {
+      --bg-color: #f4f7f6;
+      --text-main: #111111;
+      --text-muted: #6b7280;
+      --surface-color: #ffffff;
+      --surface-hover: #f9fafb;
+      --border-color: #e5e7eb;
+      --brand-accent: #065fd4;
+      --brand-accent-light: #e6f0fa;
+      --danger-color: #dc3545;
+      --danger-light: #fde8e8;
+      --warning-color: #f59e0b;
+      --warning-light: #fef3c7;
+      --success-color: #0f9d58;
+      --success-light: #e6f4ea;
+      --modal-overlay: rgba(0, 0, 0, 0.6);
+      --card-shadow: 0 4px 12px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #0a0a0a;
+        --text-main: #f8f9fa;
+        --text-muted: #9ca3af;
+        --surface-color: #141414;
+        --surface-hover: #1f1f1f;
+        --border-color: #2d2d2d;
+        --brand-accent: #3ea6ff;
+        --brand-accent-light: rgba(62, 166, 255, 0.15);
+        --danger-color: #ff4e45;
+        --danger-light: rgba(255, 78, 69, 0.15);
+        --warning-color: #fbbf24;
+        --warning-light: rgba(251, 191, 36, 0.15);
+        --success-color: #34a853;
+        --success-light: rgba(52, 168, 83, 0.15);
+        --modal-overlay: rgba(0, 0, 0, 0.85);
+        --card-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Premium Header with Back Arrow */
+    header {
+      position: sticky;
+      top: 0;
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 20px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    @media (prefers-color-scheme: dark) { header { background-color: rgba(20, 20, 20, 0.85); } }
+
+    .header-titles {
+      display: flex;
+      align-items: center;
+    }
+
+    .header-back-btn {
+      background: none;
+      border: none;
+      color: var(--text-main);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+      margin-right: 12px;
+    }
+    .header-back-btn:active { background-color: var(--surface-hover); }
+    .header-back-btn svg { width: 24px; height: 24px; fill: currentColor; }
+
+    .header-titles h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    /* List Container & Advanced Search */
+    .list-container { padding: 24px 20px 80px; }
+    .section-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .section-title { font-size: 15px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; margin-bottom: 0; color: var(--text-muted); }
+    
+    .search-wrapper { position: relative; width: 100%; margin-bottom: 20px;}
+    .search-input { width: 100%; padding: 14px 14px 14px 44px; border-radius: 14px; border: 2px solid var(--border-color); background: var(--surface-color); color: var(--text-main); font-size: 15px; font-weight: 600; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: var(--card-shadow);}
+    .search-input:focus { border-color: var(--brand-accent); box-shadow: 0 0 0 4px var(--brand-accent-light); }
+    .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
+
+    /* Group Card */
+    .group-card {
+      background-color: var(--surface-color); border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 20px; margin-bottom: 16px; display: flex; flex-direction: column; cursor: pointer; transition: 0.2s;
+      box-shadow: var(--card-shadow);
+    }
+    .group-card:active { transform: scale(0.98); background-color: var(--surface-hover); border-color: var(--brand-accent); }
+    
+    .group-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px;}
+    .group-name { font-size: 18px; font-weight: 800; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: -0.5px; word-break: break-word;}
+    .group-id-badge { font-size: 11px; background: var(--brand-accent-light); color: var(--brand-accent); padding: 4px 8px; border-radius: 6px; font-weight: 800; font-family: monospace; letter-spacing: 0.5px;}
+    
+    .g-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .g-stat { display: flex; flex-direction: column; gap: 4px; }
+    .g-stat-label { font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px;}
+    .g-stat-val { font-size: 15px; font-weight: 800; color: var(--text-main); }
+    .g-stat-val.highlight { color: var(--brand-accent); }
+
+    .load-more-btn { width: 100%; background: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 16px; border-radius: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; box-shadow: var(--card-shadow); }
+    .load-more-btn:active { background: var(--surface-hover); transform: scale(0.98);}
+
+    /* Full Screen Side Modals */
+    .modal {
+      position: fixed; top: 0; right: 0; width: 100%; height: 100%;
+      background-color: var(--bg-color); z-index: 100; transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column;
+    }
+    .modal.active { transform: translateX(0); }
+    
+    /* Ensure Modals stack correctly */
+    #group-detail-modal { z-index: 105; }
+    #participants-modal { z-index: 110; }
+    #pending-modal { z-index: 110; } 
+    
+    .modal-header { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border-color); background-color: var(--surface-color); }
+    .back-btn { background: var(--surface-hover); border: 1px solid var(--border-color); border-radius: 50%; color: var(--text-main); padding: 8px; margin-left: -4px; cursor: pointer; display: flex; align-items: center; justify-content: center;}
+    .back-btn svg { width: 20px; height: 20px; fill: currentColor; }
+    .modal-title { font-size: 18px; font-weight: 800; margin-left: 14px; letter-spacing: -0.5px;}
+    .modal-subtitle { font-size: 11px; color: var(--brand-accent); font-weight: 700; margin-left: 14px; font-family: monospace;}
+    .modal-body { padding: 24px 20px; flex: 1; overflow-y: auto; }
+
+    /* Advanced Engine Detail Card (Refined for Sleek Look) */
+    .detail-card { background: var(--surface-color); padding: 24px; border-radius: 20px; margin-bottom: 24px; border: 1px solid var(--border-color); box-shadow: var(--card-shadow); text-align: center; }
+    
+    .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; background: var(--success-light); color: var(--success-color);}
+    .status-badge.warning { background: var(--warning-light); color: var(--warning-color); }
+
+    .engine-box { background: var(--bg-color); padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); }
+    .e-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 8px; letter-spacing: 0.5px;}
+    .e-val { font-size: 24px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;}
+    .e-val.success { color: var(--success-color); }
+
+    /* Big Center Image / Icon Container */
+    .big-icon-container {
+        display: flex; justify-content: center; align-items: center; padding: 30px 0; margin-bottom: 10px;
+    }
+    .big-icon-circle {
+        width: 140px; height: 140px; background: var(--brand-accent-light); border-radius: 50%; 
+        display: flex; justify-content: center; align-items: center; 
+        box-shadow: 0 10px 30px rgba(6, 95, 212, 0.15); border: 2px solid rgba(6, 95, 212, 0.2);
+    }
+
+    /* Modal Action Buttons */
+    .btn-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .m-btn { width: 100%; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px; border: none;}
+    .m-btn:active { transform: scale(0.97); }
+    .btn-primary { background: linear-gradient(135deg, var(--danger-color), #a00000); color: #ffffff; box-shadow: 0 8px 20px rgba(220, 53, 69, 0.25); }
+    .btn-secondary { background: var(--surface-hover); color: var(--text-main); border: 2px solid var(--border-color); }
+
+    /* Participant User Cards */
+    .user-card { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--card-shadow); }
+    .u-left { display: flex; align-items: center; gap: 14px; width: 100%;}
+    .u-avatar { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: 800; flex-shrink: 0;}
+    .u-info { flex: 1; }
+    .u-info h3 { margin: 0 0 4px 0; font-size: 15px; font-weight: 800; text-transform: uppercase; word-break: break-word;}
+    .u-meta { font-size: 12px; color: var(--text-muted); font-weight: 600; font-family: monospace; letter-spacing: 0.5px;}
+    
+    /* Defaulter / Pending Specific Styling */
+    .defaulter-card { border-color: var(--danger-color); background: var(--danger-light); }
+    .d-amount { font-size: 18px; font-weight: 800; color: var(--danger-color); text-align: right; }
+    .d-months { font-size: 11px; color: var(--danger-color); font-weight: 700; text-align: right; margin-top: 4px; }
+    
+    .call-btn { background: var(--success-color); color: white; border: none; width: 44px; height: 44px; border-radius: 12px; display: flex; justify-content: center; align-items: center; text-decoration: none; box-shadow: 0 4px 10px rgba(15, 157, 88, 0.3); transition: 0.2s;}
+    .call-btn:active { transform: scale(0.9); }
+    .call-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+    /* Empty States */
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+    .empty-state svg { width: 64px; height: 64px; fill: var(--border-color); margin-bottom: 16px;}
+    .empty-state h3 { font-size: 18px; font-weight: 800; margin: 0 0 8px 0; color: var(--text-main); }
+    .empty-state p { font-size: 14px; font-weight: 500; margin: 0; line-height: 1.5; }
+
+    /* Loading Spinner */
+    .loader { border: 3px solid var(--border-color); border-top: 3px solid var(--brand-accent); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 20px auto; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* System Alert Modals */
+    .center-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);}
+    .center-modal.active { opacity: 1; pointer-events: all; }
+    .mini-modal-content { background-color: var(--surface-color); width: 90%; max-width: 340px; border-radius: 24px; padding: 30px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid var(--border-color); text-align: center; }
+    .center-modal.active .mini-modal-content { transform: scale(1); }
+    .msg-icon { font-size: 48px; margin-bottom: 16px; }
+    .mini-modal-title { font-size: 20px; font-weight: 800; margin: 0 0 12px 0; color: var(--text-main); }
+    .mini-modal-text { font-size: 14px; color: var(--text-muted); margin: 0 0 28px 0; line-height: 1.5; font-weight: 500; word-break: break-word;}
+    .mini-btn { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; width: 100%; background-color: var(--brand-accent); color: #fff;}
+
+    /* Responsive Grid fixes */
+    @media (max-width: 480px) {
+        .g-stats-row { grid-template-columns: repeat(3, 1fr); gap: 8px;}
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-titles">
+      <button onclick="window.history.back()" class="header-back-btn">
+          <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      </button>
+      <h1>Meena Chitfunds</h1>
+    </div>
+  </header>
+
+  <main>
+    <div class="list-container">
+      <div class="search-wrapper">
+        <span class="search-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </span>
+        <input type="text" id="master-search" class="search-input" placeholder="Search Groups by ID or Name...">
+      </div>
+      
+      <div class="section-header-row">
+        <div class="section-title">All Active Groups</div>
+      </div>
+      
+      <div id="main-groups-list">
+        <div class="loader" id="main-loader"></div>
+      </div>
+      <button id="main-load-more-btn" class="load-more-btn" style="display: none;" onclick="loadMoreGroups()">Load More Groups</button>
+    </div>
+  </main>
+
+  <aside id="group-detail-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div>
+        <div class="modal-title" id="md-g-name">Loading...</div>
+        <div class="modal-subtitle" id="md-g-id">@LOADING</div>
+      </div>
+    </div>
+    <div class="modal-body">
+      
+      <div class="detail-card">
+        <div class="status-badge" id="md-g-status">Status</div>
+        
+        <div style="display: flex; justify-content: space-around; gap: 16px;">
+            <div class="engine-box" style="flex: 1;">
+              <div class="e-label">Total Pot</div>
+              <div class="e-val success" id="md-g-pot">--</div>
+            </div>
+            <div class="engine-box" style="flex: 1;">
+              <div class="e-label">Participants</div>
+              <div class="e-val" id="md-g-count">--</div>
+            </div>
+        </div>
+
+        <div class="big-icon-container">
+            <div class="big-icon-circle">
+                <svg viewBox="0 0 24 24" width="70" height="70" fill="var(--brand-accent)">
+                    <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="btn-grid">
+          <button class="m-btn btn-primary" onclick="openPendingModal()">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            Pending Payments
+          </button>
+          <button class="m-btn btn-secondary" onclick="openParticipantsModal()">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            View Participants
+          </button>
+          
+          <button class="m-btn btn-secondary" onclick="shareGroupSummary()" style="margin-top: 12px; background: var(--brand-accent-light); color: var(--brand-accent); border:none;">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+            Share Group Summary
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <aside id="participants-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div class="modal-title">Participants Directory</div>
+    </div>
+    <div class="modal-body" id="participants-list-container">
+        </div>
+  </aside>
+
+  <aside id="pending-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div class="modal-title" style="color: var(--danger-color);">Pending Dues</div>
+    </div>
+    <div class="modal-body" id="pending-list-container">
+        </div>
+  </aside>
+
+  <aside id="message-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div id="msg-icon" class="msg-icon">
+          </div>
+      <h3 class="mini-modal-title" id="msg-title">Alert</h3>
+      <p class="mini-modal-text" id="msg-body">Operation completed.</p>
+      <div class="mini-modal-actions">
+        <button class="mini-btn" onclick="closeMessageModal()">OK</button>
+      </div>
+    </div>
+  </aside>
+
+  <script type="module">
+    import { auth, db } from './config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+    import { collection, query, orderBy, limit, getDocs, doc, getDoc, where, startAfter, documentId } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+    onAuthStateChanged(auth, (user) => { if (!user) window.location.replace('login.html'); });
+
+    // --- FLAWLESS MODAL NAVIGATION (Hash Based) ---
+    window.openModal = function(modalId) {
+      document.getElementById(modalId).classList.add('active');
+      if (window.location.hash !== `#${modalId}`) {
+          history.pushState({ id: modalId }, '', `#${modalId}`);
+      }
+    };
+    
+    window.closeModal = function() {
+      if (window.location.hash) {
+          history.back(); 
+      } else {
+          closeAllModals();
+      }
+    };
+    
+    function closeAllModals() { 
+      document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+    }
+    
+    window.addEventListener('popstate', (e) => {
+       closeAllModals();
+       if(e.state && e.state.id) {
+           const targetModal = document.getElementById(e.state.id);
+           if(targetModal) targetModal.classList.add('active');
+       }
+    });
+
+    // --- CUSTOM UI ALERTS ---
+    window.showMessage = function(title, body, type = 'success') {
+      document.getElementById('msg-title').innerText = title;
+      document.getElementById('msg-body').innerHTML = body; 
+      const iconContainer = document.getElementById('msg-icon');
+      
+      if (type === 'success') {
+        iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--success-color)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+      } else {
+        iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--warning-color)"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
+      }
+      
+      document.getElementById('message-modal').classList.add('active');
+    };
+    window.closeMessageModal = function() {
+      document.getElementById('message-modal').classList.remove('active');
+    };
+
+    // --- GLOBAL CACHE & SEARCH ENGINE ---
+    let allGroupsCache = []; // Kept to instantly load modal data without re-reading
+    let lastVisibleGroup = null;
+    let isSearching = false;
+    let currentSearchTerm = "";
+    let lastSearchType = "default";
+    let searchDebounce;
+
+    // 1. Live Server-Side Search Engine (0-Read Waste)
+    window.loadGroupsFromServer = async function(isLoadMore = false) {
+        const container = document.getElementById('main-groups-list');
+        const loadMoreBtn = document.getElementById('main-load-more-btn');
+        
+        if (!isLoadMore) {
+            container.innerHTML = '<div class="loader" id="main-loader"></div>';
+            lastVisibleGroup = null;
+        } else {
+            loadMoreBtn.innerText = "Loading...";
+        }
+
+        const loader = document.getElementById('main-loader');
+        if (loader) loader.style.display = 'block';
+
+        try {
+            let querySnapshot;
+            const term = currentSearchTerm;
+            const termUpper = term.toUpperCase();
+            // Handle Title Case for group names
+            const termTitle = term.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+
+            if (term === "") {
+                lastSearchType = "default";
+                let q = (isLoadMore && lastVisibleGroup) 
+                    ? query(collection(db, "groups"), orderBy("createdAt", "desc"), startAfter(lastVisibleGroup), limit(10)) 
+                    : query(collection(db, "groups"), orderBy("createdAt", "desc"), limit(10));
+                querySnapshot = await getDocs(q);
+            } else {
+                if (isLoadMore && lastVisibleGroup) {
+                    let q;
+                    if (lastSearchType === "id") {
+                        q = query(collection(db, "groups"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), orderBy(documentId()), startAfter(lastVisibleGroup), limit(10));
+                    } else if (lastSearchType === "name_title") {
+                        q = query(collection(db, "groups"), where("groupName", ">=", termTitle), where("groupName", "<=", termTitle + "\uf8ff"), orderBy("groupName"), startAfter(lastVisibleGroup), limit(10));
+                    } else if (lastSearchType === "name_upper") {
+                        q = query(collection(db, "groups"), where("groupName", ">=", termUpper), where("groupName", "<=", termUpper + "\uf8ff"), orderBy("groupName"), startAfter(lastVisibleGroup), limit(10));
+                    } else {
+                        q = query(collection(db, "groups"), where("groupName", ">=", term), where("groupName", "<=", term + "\uf8ff"), orderBy("groupName"), startAfter(lastVisibleGroup), limit(10));
+                    }
+                    querySnapshot = await getDocs(q);
+                } else {
+                    // Try ID first
+                    let qId = query(collection(db, "groups"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), orderBy(documentId()), limit(10));
+                    querySnapshot = await getDocs(qId);
+                    lastSearchType = "id";
+
+                    // Try Name (Title Case)
+                    if (querySnapshot.empty) {
+                        let qNameTitle = query(collection(db, "groups"), where("groupName", ">=", termTitle), where("groupName", "<=", termTitle + "\uf8ff"), orderBy("groupName"), limit(10));
+                        querySnapshot = await getDocs(qNameTitle);
+                        lastSearchType = "name_title";
+                    }
+
+                    // Try Name (Upper Case)
+                    if (querySnapshot.empty) {
+                        let qNameUpper = query(collection(db, "groups"), where("groupName", ">=", termUpper), where("groupName", "<=", termUpper + "\uf8ff"), orderBy("groupName"), limit(10));
+                        querySnapshot = await getDocs(qNameUpper);
+                        lastSearchType = "name_upper";
+                    }
+
+                    // Try Name (Exact/Lower)
+                    if (querySnapshot.empty) {
+                        let qNameExact = query(collection(db, "groups"), where("groupName", ">=", term), where("groupName", "<=", term + "\uf8ff"), orderBy("groupName"), limit(10));
+                        querySnapshot = await getDocs(qNameExact);
+                        lastSearchType = "name_exact";
+                    }
+                }
+            }
+
+            if (!isLoadMore) container.innerHTML = '';
+
+            if (querySnapshot.empty) {
+                if (!isLoadMore) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                            <h3>No Groups Found</h3>
+                            <p>We couldn't find any chit groups matching "${term}".</p>
+                        </div>`;
+                }
+                loadMoreBtn.style.display = 'none';
+                return;
+            }
+
+            lastVisibleGroup = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+            querySnapshot.forEach((docSnap) => {
+                const group = docSnap.data();
+                group.id = docSnap.id; 
+                
+                if(!allGroupsCache.some(g => g.id === group.id)) {
+                    allGroupsCache.push(group);
+                }
+
+                const safePot = group.totalPot ? Number(group.totalPot).toLocaleString('en-IN') : '0';
+                
+                // --- NEW UI UPGRADE: Better representation of group stats ---
+                const calcMonth = calculateCurrentSystemMonth(group.startDate);
+                const cappedMonth = group.totalMonths ? Math.min(calcMonth, group.totalMonths) : calcMonth;
+                let displayStartDate = 'N/A';
+                if(group.startDate) {
+                    const dateObj = new Date(group.startDate);
+                    displayStartDate = dateObj.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'group-card';
+                card.onclick = () => openGroupDetail(group);
+                
+                card.innerHTML = `
+                    <div class="group-header">
+                        <div>
+                            <h3 class="group-name">${group.groupName || 'Unnamed'}</h3>
+                            <span class="group-id-badge">@${group.id}</span>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 18px; font-weight: 800; color: var(--success-color);">₹${safePot}</div>
+                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; margin-top: 4px; text-transform: uppercase;">Target Pot</div>
+                        </div>
+                    </div>
+                    <div class="g-stats-row">
+                        <div class="g-stat">
+                            <span class="g-stat-label">Members</span>
+                            <span class="g-stat-val">${group.participantCount || 0}</span>
+                        </div>
+                        <div class="g-stat">
+                            <span class="g-stat-label">Months</span>
+                            <span class="g-stat-val">${group.totalMonths || 0}</span>
+                        </div>
+                        <div class="g-stat">
+                            <span class="g-stat-label">Chronological</span>
+                            <span class="g-stat-val highlight">Mo. ${cappedMonth}</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 14px; padding: 12px 16px; background: var(--surface-color); border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px dashed var(--border-color);">
+                        <div>
+                            <div style="font-size: 10px; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Group Created</div>
+                            <div style="font-size: 14px; font-weight: 800; color: var(--text-main); margin-top: 2px;">${displayStartDate}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Base Due</div>
+                            <div style="font-size: 14px; font-weight: 800; color: var(--text-main);">₹${(group.startAmount || 0).toLocaleString('en-IN')}</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            loadMoreBtn.style.display = querySnapshot.docs.length === 10 ? 'block' : 'none';
+            loadMoreBtn.innerText = "Load More Groups";
+
+        } catch (err) {
+            console.error("Fetch Error:", err);
+            if (loader) loader.style.display = 'none';
+            
+            if(err.message && err.message.includes("https://console.firebase.google.com")) {
+                const urlRegex = /(https:\/\/console\.firebase\.google\.com[^\s]+)/g;
+                const match = err.message.match(urlRegex);
+                if(match && match) {
+                    if (!isLoadMore) {
+                        container.innerHTML = `
+                            <div style="text-align:center; padding: 30px 20px;">
+                                <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--warning-color)" style="margin-bottom:16px;"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                                <h3 style="margin:0 0 8px 0; font-size:18px; font-weight:800; color:var(--text-main);">Database Optimization Required</h3>
+                                <p style="margin:0 0 20px 0; font-size:14px; color:var(--text-muted); line-height:1.5;">To enable lightning-fast live search, Firebase needs a quick index build. Please click the button below to generate it.</p>
+                                <a href="${match}" target="_blank" style="display:inline-block; background:var(--brand-accent); color:white; padding:12px 24px; border-radius:12px; text-decoration:none; font-weight:800; font-size:14px; box-shadow: 0 8px 20px rgba(6, 95, 212, 0.25); transition: 0.2s;">Build Secure Index</a>
+                            </div>
+                        `;
+                    }
+                }
+            } else if (!isLoadMore) {
+                container.innerHTML = `<div style="color:var(--danger-color); text-align:center; padding: 20px; font-weight:700;">Error Loading Groups</div>`;
+            }
+        }
+    };
+
+    window.loadMoreGroups = function() {
+        loadGroupsFromServer(true);
+    };
+
+    document.getElementById('master-search').addEventListener('input', (e) => {
+        clearTimeout(searchDebounce);
+        const val = e.target.value.trim(); 
+        searchDebounce = setTimeout(() => {
+            currentSearchTerm = val;
+            isSearching = val.length > 0;
+            lastSearchType = "default";
+            loadGroupsFromServer(false);
+        }, 500);
+    });
+
+    // --- CORE ENGINE LOGIC (Calculations) ---
+
+    // 1. Calculate chronological timeline of the group (For reference only now)
+    function calculateCurrentSystemMonth(startDateStr) {
+        if(!startDateStr) return 1; 
+        const start = new Date(startDateStr);
+        const now = new Date();
+        let months = (now.getFullYear() - start.getFullYear()) * 12;
+        months -= start.getMonth();
+        months += now.getMonth();
+        return months <= 0 ? 1 : months + 1; 
+    }
+
+    // 2. NEW LOGIC: Calculate personal timeline dynamically per participant based on their unique Join Date
+    function calculateParticipantExpectedMonth(user, groupData) {
+        if (!user || !groupData) return 1;
+        const start = user?.joinedAt ? (typeof user.joinedAt.toDate === 'function' ? user.joinedAt.toDate() : new Date(user.joinedAt)) : new Date(groupData?.startDate || new Date());
+        const now = new Date();
+        
+        let elapsed = (now.getFullYear() - start.getFullYear()) * 12;
+        elapsed -= start.getMonth();
+        elapsed += now.getMonth();
+        if (elapsed < 0) elapsed = 0;
+        
+        // Base expectation (Owe 1 month currently)
+        let expected = elapsed + 1; 
+        
+        // Safety cap so they don't get overcharged if group ends
+        const totalGroupMonths = groupData.totalMonths || 0;
+        if (totalGroupMonths > 0 && expected > totalGroupMonths) {
+            expected = totalGroupMonths;
+        }
+        
+        return expected;
+    }
+
+    // 3. Calculate the exact Due Amount for ANY given target month using Increments
+    function calculateDueForMonth(targetMonth, startAmount, schedule) {
+        if (targetMonth <= 1) return startAmount;
+        
+        let currentAmount = startAmount;
+        for (let m = 2; m <= targetMonth; m++) {
+            let increment = 0;
+            for (let tier of schedule) {
+                if (m >= tier.start && m <= tier.end) {
+                    increment = tier.amount;
+                    break;
+                }
+            }
+            currentAmount += increment;
+        }
+        return currentAmount;
+    }
+
+    // --- MODAL VIEWS & ZERO-READ ARCHITECTURE ---
+
+    let activeGroupData = null; 
+    let activeLoadedGroupUsers = []; 
+
+    window.openGroupDetail = async function(group) {
+      if(!group) return showMessage("Error", "Active group data not found.", "error");
+
+      try {
+        activeGroupData = group;
+        activeLoadedGroupUsers = []; 
+        
+        // Set Header
+        document.getElementById('md-g-name').innerText = group.groupName || 'Unnamed Group';
+        document.getElementById('md-g-id').innerText = `@${group.id}`;
+        
+        openModal('group-detail-modal');
+
+        // INSTANT 0-READ UI UPDATE
+        const safePot = group.totalPot ? Number(group.totalPot).toLocaleString('en-IN') : '0';
+        document.getElementById('md-g-pot').innerText = `₹${safePot}`;
+        document.getElementById('md-g-count').innerText = `${group.participantCount || 0}`;
+
+        // Update overall Group status logic
+        const calcMonth = calculateCurrentSystemMonth(group.startDate);
+        if(calcMonth > (group.totalMonths || 0)) {
+            const badge = document.getElementById('md-g-status');
+            badge.innerText = "Chit Complete";
+            badge.className = "status-badge"; 
+        } else {
+            const badge = document.getElementById('md-g-status');
+            badge.innerText = "Active • Ongoing";
+            badge.className = "status-badge warning"; 
+        }
+
+      } catch (err) {
+        console.error("Modal Render Error:", err);
+        showMessage("Engine Error", "Could not load this group's data: " + err.message, "error");
+      }
+    };
+
+    // --- NEW FEATURE: Share Group Summary ---
+    window.shareGroupSummary = function() {
+        if(!activeGroupData) return showMessage("Error", "Active group data not found.", "error");
+        
+        const safeName = (activeGroupData.groupName || 'Group').toUpperCase();
+        const safePot = activeGroupData.totalPot ? Number(activeGroupData.totalPot).toLocaleString('en-IN') : '0';
+        
+        const summary = `*${safeName}*\nID: @${activeGroupData.id}\n\n` +
+                        `Total Participants: ${activeGroupData.participantCount || 0}\n` +
+                        `Total Pot: ₹${safePot}\n\n` +
+                        `Powered by Meena Chitfunds`;
+
+        if (navigator.share) {
+            navigator.share({
+                title: safeName,
+                text: summary
+            }).catch(console.error);
+        } else {
+            navigator.clipboard.writeText(summary).then(() => {
+                showMessage("Copied!", "Group summary copied to clipboard.", "success");
+            });
+        }
+    };
+
+    // --- FETCH FULL PARTICIPANT PROFILES ---
+    // Reads ONLY occur when the buttons are specifically clicked!
+    async function fetchGroupUsers() {
+        if(!activeGroupData) throw new Error("Active group data not found.");
+        if(activeLoadedGroupUsers.length > 0) return activeLoadedGroupUsers; 
+        
+        const q = query(collection(db, "users"), where("activeGroups", "array-contains", activeGroupData.id));
+        const snap = await getDocs(q);
+        
+        let users = [];
+        snap.forEach(doc => {
+            users.push({ id: doc.id, ...doc.data() });
+        });
+        
+        activeLoadedGroupUsers = users;
+        return users;
+    }
+
+    // --- HELPER FOR ICONS ---
+    const phoneIconSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>`;
+    const locIconSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
+
+    window.openParticipantsModal = async function() {
+        if(!activeGroupData) return showMessage("Error", "Active group data not found.", "error");
+
+        openModal('participants-modal');
+        const container = document.getElementById('participants-list-container');
+        container.innerHTML = '<div class="loader"></div><div style="text-align:center; font-size:12px; color:var(--text-muted); font-weight:700;">Fetching Directory...</div>';
+        
+        try {
+            const users = await fetchGroupUsers();
+            container.innerHTML = '';
+            
+            if(users.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                        <h3>No Participants</h3>
+                        <p>No one is assigned to this group yet.</p>
+                    </div>`;
+                return;
+            }
+
+            const snapshotMap = new Map();
+            if(activeGroupData.memberSnapshot) {
+                activeGroupData.memberSnapshot.forEach(s => snapshotMap.set(s.id, s));
+            }
+
+            users.forEach(u => {
+                const snapData = snapshotMap.get(u.id) || { monthsPaid: 0 };
+                const expectedUserMonth = calculateParticipantExpectedMonth(u, activeGroupData);
+                
+                const initial = u.name ? u.name.charAt(0).toUpperCase() : '?';
+                const phoneText = u.phone ? `${phoneIconSVG} ${u.phone}` : 'No Phone';
+                const locText = u.location ? `${locIconSVG} ${u.location}` : 'No Location';
+                
+                const card = document.createElement('div');
+                card.className = 'user-card';
+                card.innerHTML = `
+                    <div class="u-left">
+                        <div class="u-avatar">${initial}</div>
+                        <div class="u-info">
+                            <h3>${u.name || 'Unnamed'}</h3>
+                            <div class="u-meta">@${u.id} <span style="margin: 0 4px;">•</span> ${phoneText}</div>
+                            <div class="u-loc">${locText}</div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 16px; font-weight: 800; color: var(--text-main);">${snapData.monthsPaid} / ${expectedUserMonth}</div>
+                        <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Mo. Paid</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            
+        } catch (e) {
+            console.error(e);
+            container.innerHTML = '<div style="color:var(--danger-color); text-align:center; padding:20px; font-weight:700;">Error fetching participants.</div>';
+        }
+    };
+
+    window.openPendingModal = async function() {
+        if(!activeGroupData) return showMessage("Error", "Active group data not found.", "error");
+
+        openModal('pending-modal');
+        const container = document.getElementById('pending-list-container');
+        container.innerHTML = '<div class="loader" style="border-top-color: var(--danger-color);"></div><div style="text-align:center; font-size:12px; color:var(--text-muted); font-weight:700;">Analyzing Defaulters...</div>';
+        
+        try {
+            const users = await fetchGroupUsers();
+            container.innerHTML = '';
+            
+            const snapshotMap = new Map();
+            if(activeGroupData.memberSnapshot) {
+                activeGroupData.memberSnapshot.forEach(s => snapshotMap.set(s.id, s));
+            }
+
+            let hasPending = false;
+            const startAmt = activeGroupData.startAmount || 0;
+            const schedule = activeGroupData.installmentSchedule || [];
+
+            users.forEach(u => {
+                const snapData = snapshotMap.get(u.id) || { monthsPaid: 0 };
+                
+                const expectedUserMonth = calculateParticipantExpectedMonth(u, activeGroupData);
+                
+                if(snapData.monthsPaid < expectedUserMonth) {
+                    hasPending = true;
+                    
+                    let totalOwed = 0;
+                    let pendingMonthsList = []; 
+                    
+                    for(let m = snapData.monthsPaid + 1; m <= expectedUserMonth; m++) {
+                        let dueAmount = calculateDueForMonth(m, startAmt, schedule);
+                        totalOwed += dueAmount;
+                        pendingMonthsList.push({ month: m, amount: dueAmount });
+                    }
+
+                    const initial = u.name ? u.name.charAt(0).toUpperCase() : '?';
+                    const missedCount = expectedUserMonth - snapData.monthsPaid;
+                    
+                    const callButtonHTML = u.phone 
+                        ? `<a href="tel:${u.phone}" class="call-btn"><svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg></a>`
+                        : ``;
+
+                    let waButtonHTML = ``;
+                    if (u.phone) {
+                        let breakdownText = "";
+                        pendingMonthsList.forEach(pm => {
+                            breakdownText += `- Month ${pm.month}: ₹${pm.amount}\n`;
+                        });
+
+                        const msg = `*Meena Chitfunds*\nGroup: ${activeGroupData.groupName.toUpperCase()} (@${activeGroupData.id})\nTimeline: Month ${expectedUserMonth} of ${activeGroupData.totalMonths || 0}\n\nDear ${(u.name || 'Participant').toUpperCase()},\nYou have pending payments for the following months:\n\n${breakdownText}\n*Total Pending: ₹${totalOwed}*\n\nKindly clear your dues at the earliest.`;
+                        
+                        const safePhone = u.phone.replace(/\D/g,'');
+                        const waLink = `https://wa.me/${safePhone}?text=${encodeURIComponent(msg)}`;
+                        
+                        waButtonHTML = `<a href="${waLink}" target="_blank" class="call-btn" style="background:#25D366; margin-right:8px;"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.422C7.145 7.63 6 8.7 6 10.923c0 2.222 1.98 4.372 2.254 4.743.274.371 3.235 4.939 7.838 6.936 1.103.479 1.963.765 2.633.978 1.107.351 2.115.301 2.912.182.894-.134 2.748-1.122 3.134-2.207.386-1.085.386-2.015.271-2.208-.115-.192-.413-.301-.71-.45zM12.002 22.002h-.006c-1.666 0-3.294-.447-4.726-1.293l-.339-.2-3.513.921.936-3.424-.22-.349a9.92 9.92 0 01-1.517-5.328c0-5.513 4.49-9.998 10.013-9.998 2.671 0 5.182 1.042 7.07 2.932 1.889 1.888 2.93 4.398 2.931 7.069 0 5.514-4.49 10.003-10.01 10.003z"/></svg></a>`;
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'user-card defaulter-card';
+                    card.style.display = 'block'; 
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                            <div class="u-left" style="width: auto; flex:1;">
+                                <div class="u-avatar" style="background: var(--danger-color); box-shadow: none;">${initial}</div>
+                                <div class="u-info">
+                                    <h3 style="color: var(--danger-color);">${u.name || 'Unnamed'}</h3>
+                                    <div class="u-meta">@${u.id}</div>
+                                    <div class="d-months">${missedCount} Month(s) Behind</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right; flex-shrink:0;">
+                                <div class="d-amount">₹${Number(totalOwed).toLocaleString('en-IN')}</div>
+                                <div style="font-size: 10px; font-weight: 800; color: var(--danger-color); text-transform: uppercase; margin-top: 4px;">Total Due</div>
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:flex-end; gap:8px; border-top: 1px dashed var(--border-color); padding-top: 12px; margin-top: 12px;">
+                            ${waButtonHTML}
+                            ${callButtonHTML}
+                        </div>
+                    `;
+                    container.appendChild(card);
+                }
+            });
+
+            if(!hasPending) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="var(--success-color)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        <h3 style="color: var(--success-color);">All Clear!</h3>
+                        <p>Every participant in this group is up to date.</p>
+                    </div>`;
+            }
+            
+        } catch (e) {
+            console.error(e);
+            container.innerHTML = '<div style="color:var(--danger-color); text-align:center; padding:20px; font-weight:700;">Error fetching pending data.</div>';
+        }
+    };
+
+    // Execute Initial Data Load
+    window.onload = () => loadGroupsFromServer(false);
+
+  </script>
+</body>
+</html>

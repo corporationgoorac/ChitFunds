@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8f9fa" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#050505" />
+  <link rel="manifest" href="manifest.json">
+  <title>Home - Meena Chitfunds</title>
+  
+  <style>
+    * { scrollbar-width: none; } *::-webkit-scrollbar { display: none; }
+    
+    /* Ultra-Premium Fintech Theme Variables */
+    :root {
+      --bg-color: #f8f9fa;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --surface-color: #ffffff;
+      --surface-hover: #f1f5f9;
+      --border-color: #e2e8f0;
+      --brand-accent: #2563eb;
+      --brand-accent-light: #dbeafe;
+      --danger-color: #ef4444;
+      --danger-light: #fee2e2;
+      --warning-color: #f59e0b;
+      --warning-light: #fef3c7;
+      --success-color: #10b981;
+      --success-light: #d1fae5;
+      --auction-color: #8b5cf6; 
+      --nav-height: 65px;
+      --modal-overlay: rgba(15, 23, 42, 0.4);
+      --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #050505;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --surface-color: #111111;
+        --surface-hover: #1e1e1e;
+        --border-color: #262626;
+        --brand-accent: #3b82f6;
+        --brand-accent-light: rgba(59, 130, 246, 0.15);
+        --danger-color: #f87171;
+        --danger-light: rgba(248, 113, 113, 0.15);
+        --warning-color: #fbbf24;
+        --warning-light: rgba(251, 191, 36, 0.15);
+        --success-color: #34d399;
+        --success-light: rgba(52, 211, 153, 0.15);
+        --auction-color: #a78bfa;
+        --modal-overlay: rgba(0, 0, 0, 0.8);
+        --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+        --card-shadow-hover: 0 20px 40px -5px rgba(0, 0, 0, 0.4);
+      }
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      padding-bottom: calc(var(--nav-height) + 120px); 
+      background-image: radial-gradient(circle at 50% 0%, var(--surface-color) 0%, var(--bg-color) 100%);
+      background-attachment: fixed;
+    }
+
+    /* Premium Header */
+    header {
+      position: sticky;
+      top: 0;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.1);
+      padding: 16px 20px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    @media (prefers-color-scheme: dark) { header { background-color: rgba(5, 5, 5, 0.7); border-bottom: 1px solid rgba(38, 38, 38, 0.5); } }
+
+    .header-titles h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--text-main), var(--text-muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Header Actions Container */
+    .header-actions { display: flex; align-items: center; gap: 16px; }
+
+    .header-auction-btn {
+      color: var(--text-main); display: flex; align-items: center; justify-content: center;
+      text-decoration: none; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .header-auction-btn:active { transform: scale(0.85); color: var(--brand-accent); }
+
+    .header-broadcast-btn {
+      color: var(--text-main); display: flex; align-items: center; justify-content: center;
+      text-decoration: none; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .header-broadcast-btn:active { transform: scale(0.85); color: var(--success-color); }
+
+    /* Profile Pic / Skeleton */
+    .profile-trigger {
+      width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--surface-hover);
+      overflow: hidden; cursor: pointer; transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); background: var(--surface-color);
+      display: flex; align-items: center; justify-content: center; box-shadow: var(--card-shadow);
+    }
+    .profile-trigger:active { transform: scale(0.85); border-color: var(--brand-accent); }
+    .profile-trigger img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    
+    @keyframes shimmer { 0% { background-position: -200px 0; } 100% { background-position: 200px 0; } }
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface-color) 25%, var(--surface-hover) 50%, var(--surface-color) 75%);
+      background-size: 400px 100%; animation: shimmer 1.5s infinite; border-radius: 8px;
+    }
+    .profile-trigger.skeleton { border: none; }
+
+    /* Dashboard Content */
+    .dashboard-container { padding: 32px 20px; }
+    .greeting { 
+      font-size: 32px; font-weight: 800; letter-spacing: -1.2px; margin: 0 0 4px 0; 
+      color: var(--text-main);
+    }
+    .sub-greeting { font-size: 15px; color: var(--text-muted); font-weight: 600; margin-bottom: 28px; letter-spacing: 0.2px;}
+
+    /* Metric Cards */
+    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 36px; }
+    
+    .metric-card { 
+      background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 24px; 
+      padding: 24px; box-shadow: var(--card-shadow); display: flex; flex-direction: column; justify-content: space-between;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .metric-card:active { transform: scale(0.98); box-shadow: var(--card-shadow-hover); }
+    
+    /* Ultimate Gradient Cards */
+    .metric-card.full-width { 
+      grid-column: span 2; 
+      background: linear-gradient(135deg, #0052D4, #4364F7, #6FB1FC); 
+      color: white; border: none; box-shadow: 0 12px 30px rgba(67, 100, 247, 0.3);
+    }
+    @media (prefers-color-scheme: dark) { .metric-card.full-width { background: linear-gradient(135deg, #1e3a8a, #2563eb, #3b82f6); box-shadow: 0 12px 30px rgba(37, 99, 235, 0.2);} }
+    .metric-card.full-width .m-icon { background: rgba(255,255,255,0.2); color: white; backdrop-filter: blur(10px); }
+    .metric-card.full-width .m-label { color: rgba(255,255,255,0.85); }
+
+    .metric-card.wallet-card { 
+      grid-column: span 2; 
+      background: linear-gradient(135deg, #059669, #10b981); 
+      color: white; border: none; box-shadow: 0 12px 30px rgba(16, 185, 129, 0.3);
+    }
+    @media (prefers-color-scheme: dark) { .metric-card.wallet-card { background: linear-gradient(135deg, #065f46, #059669); box-shadow: 0 12px 30px rgba(5, 150, 105, 0.2);} }
+    .metric-card.wallet-card .m-icon { background: rgba(255,255,255,0.2); color: white; backdrop-filter: blur(10px); }
+    .metric-card.wallet-card .m-label { color: rgba(255,255,255,0.85); }
+    
+    .m-icon { width: 44px; height: 44px; border-radius: 14px; background: var(--brand-accent-light); color: var(--brand-accent); display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
+    .m-icon svg { width: 22px; height: 22px; fill: currentColor; }
+    
+    .m-val { font-size: 32px; font-weight: 800; margin: 0 0 6px 0; letter-spacing: -1.5px; font-family: "SF Pro Display", -apple-system, sans-serif; }
+    .m-val.skeleton { height: 36px; width: 80%; margin-bottom: 10px; border-radius: 8px;}
+    .m-label { font-size: 13px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+
+    /* Quick Actions */
+    .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .qa-btn { 
+      background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 20px; 
+      padding: 20px 16px; font-weight: 800; font-size: 14px; color: var(--text-main); display: flex; flex-direction: column; 
+      align-items: center; gap: 14px; cursor: pointer; transition: 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: var(--card-shadow);
+    }
+    .qa-btn:active { transform: scale(0.95); background: var(--surface-hover); }
+    .qa-btn svg { width: 32px; height: 32px; fill: var(--brand-accent); background: var(--brand-accent-light); padding: 6px; border-radius: 10px; }
+
+    /* Floating iOS-Style Bottom Navigation */
+    .bottom-nav {
+      position: fixed; bottom: 20px; left: 20px; width: calc(100% - 40px); height: var(--nav-height);
+      background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.4); border-radius: 32px; z-index: 50; display: flex; justify-content: space-around; align-items: center;
+      padding: 0 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    @media (prefers-color-scheme: dark) { .bottom-nav { background-color: rgba(20, 20, 20, 0.85); border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 20px 40px rgba(0,0,0,0.5);} }
+    
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-muted); text-decoration: none; font-size: 10px; font-weight: 800; transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); -webkit-tap-highlight-color: transparent;}
+    .nav-item svg { width: 24px; height: 24px; fill: currentColor; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .nav-item.active { color: var(--brand-accent); }
+    .nav-item.active svg { transform: translateY(-4px); filter: drop-shadow(0 4px 6px rgba(37, 99, 235, 0.3)); }
+    .nav-item:active svg { transform: scale(0.8); }
+
+    /* Dynamic Island PWA Banner */
+    .pwa-banner {
+      position: fixed; top: 16px; left: 50%; width: 90%; max-width: 400px;
+      background: var(--text-main); color: var(--bg-color); border-radius: 32px; padding: 16px 20px;
+      display: flex; justify-content: space-between; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      z-index: 100; transform: translate(-50%, -150%); transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .pwa-banner.show { transform: translate(-50%, 0); }
+    .pwa-info { display: flex; align-items: center; gap: 14px; }
+    .pwa-icon { width: 44px; height: 44px; background: var(--bg-color); border-radius: 14px; display: flex; justify-content: center; align-items: center; }
+    .pwa-icon img { width: 26px; height: 26px; }
+    .pwa-text h4 { margin: 0 0 4px 0; font-size: 15px; font-weight: 800; }
+    .pwa-text p { margin: 0; font-size: 12px; font-weight: 600; opacity: 0.8; }
+    .pwa-install-btn { background: var(--brand-accent); color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);}
+    .pwa-close { background: none; border: none; color: var(--bg-color); font-size: 24px; padding: 4px; cursor: pointer; opacity: 0.5; margin-left: 8px;}
+
+    /* Side Modal */
+    .modal {
+      position: fixed; top: 0; right: 0; width: 100%; height: 100%;
+      background-color: var(--bg-color); z-index: 100; transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; flex-direction: column;
+    }
+    .modal.active { transform: translateX(0); }
+    .modal-header { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border-color); background-color: var(--surface-color); }
+    .back-btn { background: var(--surface-hover); border: 1px solid var(--border-color); border-radius: 50%; color: var(--text-main); padding: 8px; margin-left: -4px; cursor: pointer; display: flex; align-items: center; justify-content: center;}
+    .back-btn svg { width: 20px; height: 20px; fill: currentColor; }
+    .modal-title { font-size: 20px; font-weight: 800; margin-left: 14px; letter-spacing: -0.5px;}
+    .modal-body { padding: 32px 20px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
+
+    /* Profile Modal Specifics */
+    .big-avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--surface-color); box-shadow: 0 0 0 4px var(--brand-accent-light); margin-bottom: 20px; }
+    .p-name { font-size: 28px; font-weight: 800; margin: 0 0 6px 0; letter-spacing: -0.5px;}
+    .p-email { font-size: 15px; color: var(--text-muted); font-weight: 600; margin-bottom: 36px; }
+    
+    .system-info { width: 100%; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; margin-bottom: 36px; text-align: left; box-shadow: var(--card-shadow);}
+    .sys-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px dashed var(--border-color); font-size: 14px; font-weight: 700;}
+    .sys-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .sys-label { color: var(--text-muted); }
+    .sys-val { color: var(--text-main); font-family: monospace; font-size: 15px;}
+
+    .logout-btn { width: 100%; background: var(--danger-light); color: var(--danger-color); border: none; padding: 20px; border-radius: 20px; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);}
+    .logout-btn:active { transform: scale(0.95); }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-titles">
+      <h1>Meena Chitfunds</h1>
+    </div>
+    
+    <div class="header-actions">
+      <a href="auction.html" class="header-auction-btn" aria-label="Auctions">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+      </a>
+      
+      <div class="profile-trigger skeleton" id="header-profile-btn" onclick="openProfileModal()">
+        <img id="header-avatar" src="" alt="Profile">
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="dashboard-container">
+      <h2 class="greeting" id="time-greeting">Welcome back,</h2>
+      <div class="sub-greeting">Here is your financial overview.</div>
+
+      <div class="metrics-grid">
+        <div class="metric-card full-width">
+          <div class="m-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          </div>
+          <div class="m-val skeleton" id="metric-pot"></div>
+          <div class="m-label">Total Reg. Target Value</div>
+        </div>
+
+        <div class="metric-card wallet-card">
+          <div class="m-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+          </div>
+          <div class="m-val skeleton" id="metric-wallet"></div>
+          <div class="m-label">Total Vault (Collected)</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="m-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 10h3v7H4zM10.5 10h3v7h-3zM2 19h20v3H2zM17 10h3v7h-3zM12 1L2 6v2h20V6L12 1z"/></svg>
+          </div>
+          <div class="m-val skeleton" id="metric-groups"></div>
+          <div class="m-label">Active Groups</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="m-icon">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          </div>
+          <div class="m-val skeleton" id="metric-users"></div>
+          <div class="m-label">Participants</div>
+        </div>
+      </div>
+
+      <div class="sub-greeting" style="margin-bottom: 16px;">Quick Database Actions</div>
+      <div class="quick-actions">
+        <button class="qa-btn" onclick="window.location.href='add.html#group-modal'">
+          <svg viewBox="0 0 24 24"><path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+          Create Group
+        </button>
+        <button class="qa-btn" onclick="window.location.href='add.html#participant-modal'">
+          <svg viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          Add Participant
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="pwa-banner" id="install-banner">
+    <div class="pwa-info">
+      <div class="pwa-icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--text-main)"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+      </div>
+      <div class="pwa-text">
+        <h4>Install App</h4>
+        <p>Get the full offline experience.</p>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px;">
+        <button class="pwa-install-btn" id="pwa-install-btn">Install</button>
+        <button class="pwa-close" onclick="document.getElementById('install-banner').classList.remove('show')">×</button>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item active">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      Home
+    </a>
+    <a href="add.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      Add
+    </a>
+    <a href="payment.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+      Payment
+    </a>
+    <a href="groups.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M4 10h3v7H4zM10.5 10h3v7h-3zM2 19h20v3H2zM17 10h3v7h-3zM12 1L2 6v2h20V6L12 1z"/></svg>
+      Groups
+    </a>
+    <a href="reports.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+      Reports
+    </a>
+  </nav>
+
+  <aside id="profile-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div class="modal-title">Account Settings</div>
+    </div>
+    <div class="modal-body">
+      <img id="modal-avatar" src="" alt="Profile" class="big-avatar" style="display: none;">
+      <div class="big-avatar skeleton" id="modal-avatar-skeleton"></div>
+      
+      <h2 class="p-name" id="modal-name">Loading...</h2>
+      <div class="p-email" id="modal-email">admin@domain.com</div>
+
+      <div class="system-info">
+        <div class="sys-row">
+            <span class="sys-label">System Architecture</span>
+            <span class="sys-val">Goorac v3.1</span>
+        </div>
+        <div class="sys-row">
+            <span class="sys-label">Database Protocol</span>
+            <span class="sys-val">0-Read Engine</span>
+        </div>
+        <div class="sys-row">
+            <span class="sys-label">Organization</span>
+            <span class="sys-val" style="color: var(--brand-accent);">Meena Chitfunds</span>
+        </div>
+      </div>
+
+      <button class="logout-btn" onclick="executeLogout()">Sign Out securely</button>
+    </div>
+  </aside>
+
+  <script type="module">
+    import { auth, db } from './config.js';
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+    import { collection, getDocs, getCountFromServer, getAggregateFromServer, sum, query, where } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+    // --- 1. Auth & LocalStorage Profile Sync (0ms Load) ---
+    const CACHE_PROFILE_KEY = 'mc_profile_data';
+    const CACHE_METRICS_KEY = 'mc_dashboard_metrics';
+
+    // Instantly load profile from cache to prevent flicker
+    const cachedProfile = JSON.parse(localStorage.getItem(CACHE_PROFILE_KEY));
+    if (cachedProfile) {
+        updateProfileUI(cachedProfile.photo, cachedProfile.name, cachedProfile.email);
+    }
+
+    onAuthStateChanged(auth, (user) => { 
+        if (!user) {
+            localStorage.clear();
+            window.location.replace('login.html'); 
+        } else {
+            // Update cache and UI with real live data
+            const profileData = {
+                photo: user.photoURL || 'https://ui-avatars.com/api/?name=Admin&background=065fd4&color=fff',
+                name: user.displayName || 'Administrator',
+                email: user.email
+            };
+            localStorage.setItem(CACHE_PROFILE_KEY, JSON.stringify(profileData));
+            updateProfileUI(profileData.photo, profileData.name, profileData.email);
+        }
+    });
+
+    function updateProfileUI(photo, name, email) {
+        const hBtn = document.getElementById('header-profile-btn');
+        const hImg = document.getElementById('header-avatar');
+        const mImg = document.getElementById('modal-avatar');
+        
+        hImg.src = photo;
+        mImg.src = photo;
+        
+        hImg.onload = () => {
+            hImg.style.display = 'block';
+            hBtn.classList.remove('skeleton');
+        };
+        mImg.onload = () => {
+            mImg.style.display = 'block';
+            document.getElementById('modal-avatar-skeleton').style.display = 'none';
+        };
+
+        document.getElementById('modal-name').innerText = name;
+        document.getElementById('modal-email').innerText = email;
+    }
+
+    // --- 2. Dynamic Greeting ---
+    const hour = new Date().getHours();
+    let greeting = "Good Evening,";
+    if (hour < 12) greeting = "Good Morning,";
+    else if (hour < 18) greeting = "Good Afternoon,";
+    document.getElementById('time-greeting').innerText = greeting;
+
+    // --- 3. Dashboard Metrics Engine (Aggressively Cached) ---
+    
+    // Load skeleton cache instantly
+    const cachedMetrics = JSON.parse(localStorage.getItem(CACHE_METRICS_KEY));
+    if (cachedMetrics) {
+        updateMetricsUI(cachedMetrics.pot, cachedMetrics.groups, cachedMetrics.users, cachedMetrics.wallet || 0);
+    }
+
+    async function syncDatabaseMetrics() {
+        try {
+            // 1. Get exact User Count (Costs exactly 1 Read!)
+            const userSnap = await getCountFromServer(collection(db, "users"));
+            let userCount = userSnap.data().count;
+
+            // 2. Get exact Group Count (Costs exactly 1 Read!)
+            const groupSnap = await getCountFromServer(collection(db, "groups"));
+            let groupCount = groupSnap.data().count;
+
+            // 3. Sum the Total Pot directly on the server (Costs exactly 1 Read!)
+            const potAggregate = await getAggregateFromServer(collection(db, "groups"), {
+                totalPot: sum('totalPot')
+            });
+            let totalPot = potAggregate.data().totalPot || 0;
+
+            // 4. Sum Total Vault (Collected Payments, Excluding Payouts) (Costs exactly 1 Read!)
+            let totalWallet = 0;
+            try {
+                // FIX: Since we moved payouts to the 'auctions' collection, 
+                // the 'transactions' collection is now PURE incoming revenue.
+                // We sum the entire collection directly. No index required!
+                const walletAggregate = await getAggregateFromServer(collection(db, "transactions"), {
+                    totalWallet: sum('amount')
+                });
+                totalWallet = walletAggregate.data().totalWallet || 0;
+            } catch(e) {
+                console.warn("Transaction aggregate failed. Trying group fallback...");
+                try {
+                    const fallbackAgg = await getAggregateFromServer(collection(db, "groups"), {
+                        totalWallet: sum('totalPotCollected')
+                    });
+                    totalWallet = fallbackAgg.data().totalWallet || 0;
+                } catch(err) {
+                    console.error("Wallet aggregate failed.", err);
+                }
+            }
+
+            // Save to Cache and Update UI
+            const metrics = { pot: totalPot, groups: groupCount, users: userCount, wallet: totalWallet };
+            localStorage.setItem(CACHE_METRICS_KEY, JSON.stringify(metrics));
+            
+            updateMetricsUI(totalPot, groupCount, userCount, totalWallet);
+        } catch (e) {
+            console.error("Failed to sync metrics", e);
+        }
+    }
+
+    function updateMetricsUI(pot, groups, users, wallet) {
+        const elPot = document.getElementById('metric-pot');
+        const elGroups = document.getElementById('metric-groups');
+        const elUsers = document.getElementById('metric-users');
+        const elWallet = document.getElementById('metric-wallet');
+
+        elPot.classList.remove('skeleton');
+        elGroups.classList.remove('skeleton');
+        elUsers.classList.remove('skeleton');
+        elWallet.classList.remove('skeleton');
+
+        elPot.innerText = `₹${Number(pot).toLocaleString('en-IN')}`;
+        elGroups.innerText = groups;
+        elUsers.innerText = users;
+        elWallet.innerText = `₹${Number(wallet).toLocaleString('en-IN')}`;
+    }
+
+    // Trigger background sync
+    syncDatabaseMetrics();
+
+
+    // --- 4. Modal Hash Routing Engine ---
+    window.openProfileModal = function() {
+      document.getElementById('profile-modal').classList.add('active');
+      if (window.location.hash !== `#profile-modal`) {
+          history.pushState({ id: 'profile-modal' }, '', `#profile-modal`);
+      }
+    };
+    
+    window.closeModal = function() {
+      if (window.location.hash) {
+          history.back(); 
+      } else {
+          document.getElementById('profile-modal').classList.remove('active');
+      }
+    };
+    
+    window.addEventListener('popstate', (e) => {
+       document.getElementById('profile-modal').classList.remove('active');
+       if(e.state && e.state.id === 'profile-modal') {
+           document.getElementById('profile-modal').classList.add('active');
+       } else if (window.location.hash === '#profile-modal') {
+           document.getElementById('profile-modal').classList.add('active');
+       }
+    });
+
+    // --- 5. Logout System ---
+    window.executeLogout = async function() {
+        try {
+            await signOut(auth);
+            localStorage.clear();
+            window.location.replace('login.html');
+        } catch(e) {
+            console.error("Logout Error", e);
+        }
+    };
+
+    // --- 6. PWA Installation & Service Worker Registration ---
+    
+    // Register Service Worker silently in the background
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js', { scope: './' }).then((registration) => {
+                console.log('ServiceWorker registered successfully');
+            }).catch((err) => {
+                console.log('ServiceWorker registration failed:', err);
+            });
+        });
+    }
+
+    // Handle Custom Install Banner
+    let deferredPrompt;
+    const pwaBanner = document.getElementById('install-banner');
+    const pwaInstallBtn = document.getElementById('pwa-install-btn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent Chrome 67 and earlier from automatically showing the prompt
+        e.preventDefault();
+        // Stash the event so it can be triggered later
+        deferredPrompt = e;
+        
+        // Show the sleek custom banner smoothly
+        setTimeout(() => { pwaBanner.classList.add('show'); }, 1500);
+    });
+
+    pwaInstallBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            pwaBanner.classList.remove('show'); // Hide banner
+            deferredPrompt.prompt(); // Show native prompt
+            
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User response to the install prompt: ${outcome}`);
+            deferredPrompt = null; // Clear prompt
+        }
+    });
+
+    // If successfully installed, automatically hide the banner
+    window.addEventListener('appinstalled', () => {
+        pwaBanner.classList.remove('show');
+        console.log('PWA was installed');
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f0f" />
+  <link rel="manifest" href="manifest.json">
+  <title>Auctions & Lending - Meena Chitfunds</title>
+  
+  <style>
+    /* Premium Theme Variables */
+    :root {
+      --bg-color: #f4f7f6;
+      --text-main: #111111;
+      --text-muted: #6b7280;
+      --surface-color: #ffffff;
+      --surface-hover: #f9fafb;
+      --border-color: #e5e7eb;
+      --brand-accent: #065fd4;
+      --brand-accent-light: #e6f0fa;
+      --danger-color: #dc3545;
+      --danger-light: #fde8e8;
+      --warning-color: #f59e0b;
+      --warning-light: #fef3c7;
+      --success-color: #0f9d58;
+      --success-light: #e6f4ea;
+      --auction-color: #8b5cf6; /* Special color for auctions */
+      --auction-light: #f5f3ff;
+      --modal-overlay: rgba(0, 0, 0, 0.6);
+      --card-shadow: 0 4px 12px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #0a0a0a;
+        --text-main: #f8f9fa;
+        --text-muted: #9ca3af;
+        --surface-color: #141414;
+        --surface-hover: #1f1f1f;
+        --border-color: #2d2d2d;
+        --brand-accent: #3ea6ff;
+        --brand-accent-light: rgba(62, 166, 255, 0.15);
+        --danger-color: #ff4e45;
+        --danger-light: rgba(255, 78, 69, 0.15);
+        --warning-color: #fbbf24;
+        --warning-light: rgba(251, 191, 36, 0.15);
+        --success-color: #34a853;
+        --success-light: rgba(52, 168, 83, 0.15);
+        --auction-color: #a78bfa;
+        --auction-light: rgba(139, 92, 246, 0.15);
+        --modal-overlay: rgba(0, 0, 0, 0.85);
+        --card-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* PC & Tablet Responsive View */
+    @media (min-width: 768px) {
+      body {
+        max-width: 500px;
+        margin: 0 auto;
+        border-left: 1px solid var(--border-color);
+        border-right: 1px solid var(--border-color);
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        min-height: 100vh;
+        position: relative;
+      }
+      header {
+        max-width: 500px;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+      }
+      .modal {
+        max-width: 500px;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+      }
+      .gpay-overlay {
+        max-width: 500px;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+      }
+      .center-modal {
+        max-width: 500px;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+      }
+    }
+
+    /* Premium Header */
+    header {
+      position: sticky;
+      top: 0;
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 20px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    @media (prefers-color-scheme: dark) { header { background-color: rgba(20, 20, 20, 0.85); } }
+
+    .header-titles h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    /* Hero Action Buttons */
+    .action-bar { padding: 24px 20px; display: flex; gap: 12px; }
+    .action-btn {
+      flex: 1; border: none; padding: 16px; border-radius: 16px;
+      font-size: 14px; font-weight: 800; cursor: pointer; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; gap: 8px; transition: transform 0.2s, box-shadow 0.2s;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--auction-color), #5b21b6); color: #ffffff; box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3); }
+    .btn-primary:active { transform: scale(0.97); box-shadow: 0 4px 10px rgba(139, 92, 246, 0.2); }
+    
+    .btn-secondary { background: var(--surface-color); color: var(--text-main); border: 2px solid var(--border-color); box-shadow: var(--card-shadow); }
+    .btn-secondary:active { transform: scale(0.97); background: var(--surface-hover); }
+    
+    .action-btn svg { width: 24px; height: 24px; fill: currentColor; }
+
+    /* List Container */
+    .list-container { padding: 0 20px 80px; }
+    .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; margin-bottom: 16px; color: var(--text-muted); }
+
+    /* Search Wrapper */
+    .search-wrapper { position: relative; width: 100%; margin-bottom: 20px;}
+    .search-input { width: 100%; padding: 14px 14px 14px 44px; border-radius: 14px; border: 2px solid var(--border-color); background: var(--surface-color); color: var(--text-main); font-size: 15px; font-weight: 600; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: var(--card-shadow); text-transform: uppercase;}
+    .search-input:focus { border-color: var(--auction-color); box-shadow: 0 0 0 4px var(--auction-light); }
+    .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
+
+    /* Transaction / Group Cards */
+    .data-card {
+      background-color: var(--surface-color); border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
+      box-shadow: var(--card-shadow); transition: transform 0.2s; cursor: pointer;
+    }
+    .data-card:active { transform: scale(0.98); background-color: var(--surface-hover); border-color: var(--auction-color);}
+    
+    .c-left { display: flex; align-items: center; gap: 14px; width: 100%;}
+    .c-icon { width: 44px; height: 44px; border-radius: 14px; background-color: var(--auction-light); color: var(--auction-color); display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 18px; flex-shrink: 0;}
+    .c-info { flex: 1; }
+    .c-info h3 { margin: 0 0 4px 0; font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px;}
+    .c-meta { font-size: 11px; color: var(--brand-accent); font-weight: 800; font-family: monospace; letter-spacing: 0.5px; background: var(--brand-accent-light); padding: 2px 6px; border-radius: 6px; display: inline-block; margin-bottom: 4px;}
+    .c-sub { font-size: 11px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 4px;}
+    
+    .c-amount { font-size: 18px; font-weight: 800; color: var(--auction-color); text-align: right;}
+    .c-date { font-size: 11px; color: var(--text-muted); text-align: right; margin-top: 4px; font-weight: 600; }
+
+    .load-more-btn { width: 100%; background: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 16px; border-radius: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; box-shadow: var(--card-shadow); }
+    .load-more-btn:active { background: var(--surface-hover); transform: scale(0.98);}
+
+    /* Full Screen Side Modals */
+    .modal {
+      position: fixed; top: 0; right: 0; width: 100%; height: 100%;
+      background-color: var(--bg-color); z-index: 100; transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column;
+    }
+    .modal.active { transform: translateX(0); }
+    
+    /* Ensure Modals stack correctly on top of each other */
+    #action-modal { z-index: 105; }
+    #group-payouts-modal { z-index: 105; }
+    
+    .modal-header { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border-color); background-color: var(--surface-color); }
+    .back-btn { background: var(--surface-hover); border: 1px solid var(--border-color); border-radius: 50%; color: var(--text-main); padding: 8px; margin-left: -4px; cursor: pointer; display: flex; align-items: center; justify-content: center;}
+    .back-btn svg { width: 20px; height: 20px; fill: currentColor; }
+    .modal-title { font-size: 18px; font-weight: 800; margin-left: 14px; letter-spacing: -0.5px;}
+    .modal-subtitle { font-size: 11px; color: var(--auction-color); font-weight: 700; margin-left: 14px; font-family: monospace;}
+    .modal-body { padding: 24px 20px; flex: 1; overflow-y: auto; }
+
+    /* Forms & Inputs */
+    .input-group { margin-bottom: 24px; position: relative; }
+    .input-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
+    .input-group input, .input-group select {
+      width: 100%; background-color: var(--surface-color); border: 2px solid var(--border-color);
+      color: var(--text-main); padding: 16px; border-radius: 14px; font-size: 16px; outline: none; appearance: none; font-weight: 700; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-group input:focus, .input-group select:focus { border-color: var(--auction-color); box-shadow: 0 0 0 4px var(--auction-light); }
+    
+    .loading-text { font-size: 11px; color: var(--auction-color); position: absolute; right: 14px; top: 0; display: none; font-weight: 800; text-transform: uppercase;}
+
+    /* Neo-Banking Amount Display */
+    .due-section { background: var(--surface-color); padding: 24px; border-radius: 16px; text-align: center; border: 2px solid var(--auction-light); position: relative; overflow: hidden; margin-top: 24px;}
+    .due-section::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--auction-color); }
+    .due-label { font-size: 14px; color: var(--text-muted); font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1.5px;}
+    .due-amount-wrapper { display: flex; justify-content: center; align-items: center; gap: 4px; }
+    .currency-symbol { font-size: 32px; font-weight: 800; color: var(--auction-color); }
+    .due-amount-input { width: 100%; max-width: 220px; font-size: 48px; font-weight: 800; color: var(--auction-color); text-align: left; background: none; border: none; outline: none; padding: 0; letter-spacing: -1px;}
+
+    .submit-btn { background: var(--auction-color); color: #ffffff; border: none; width: 100%; padding: 20px; border-radius: 16px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3); transition: 0.2s; margin-top: 24px;}
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+    .submit-btn:active:not(:disabled) { transform: scale(0.97); box-shadow: 0 4px 10px rgba(139, 92, 246, 0.2); }
+
+    /* GPay Style Overlay */
+    .gpay-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-color: var(--bg-color); z-index: 300; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out;
+    }
+    .gpay-overlay.active { opacity: 1; pointer-events: all; }
+    
+    .gpay-circle {
+      width: 120px; height: 120px; border-radius: 50%; background-color: var(--auction-light);
+      display: flex; justify-content: center; align-items: center; margin-bottom: 24px;
+      transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .gpay-overlay.active .gpay-circle { transform: scale(1); }
+    
+    .gpay-check { width: 60px; height: 60px; fill: none; stroke: var(--auction-color); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; }
+    .gpay-overlay.active .gpay-check { animation: drawCheck 0.6s ease forwards 0.3s; }
+    @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+    .gpay-title { font-size: 26px; font-weight: 800; color: var(--text-main); margin: 0 0 8px 0; opacity: 0; transform: translateY(10px); transition: 0.4s ease 0.5s; letter-spacing: -0.5px;}
+    .gpay-amount { font-size: 54px; font-weight: 800; color: var(--text-main); margin: 0 0 32px 0; opacity: 0; transform: translateY(10px); transition: 0.4s ease 0.6s; letter-spacing: -2px;}
+    .gpay-overlay.active .gpay-title, .gpay-overlay.active .gpay-amount, .gpay-overlay.active .gpay-footer { opacity: 1; transform: translateY(0); }
+    .gpay-footer { position: absolute; bottom: 32px; font-size: 13px; color: var(--auction-color); font-weight: 800; letter-spacing: 2px; text-transform: uppercase; opacity: 0; transition: 0.4s ease 0.8s;}
+
+    /* Empty States */
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+    .empty-state svg { width: 64px; height: 64px; fill: var(--border-color); margin-bottom: 16px;}
+    .empty-state h3 { font-size: 18px; font-weight: 800; margin: 0 0 8px 0; color: var(--text-main); }
+    .empty-state p { font-size: 14px; font-weight: 500; margin: 0; line-height: 1.5; }
+
+    /* Loading Spinner */
+    .loader { border: 3px solid var(--border-color); border-top: 3px solid var(--auction-color); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 20px auto; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* System Alert Modals */
+    .center-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);}
+    .center-modal.active { opacity: 1; pointer-events: all; }
+    .mini-modal-content { background-color: var(--surface-color); width: 90%; max-width: 340px; border-radius: 24px; padding: 30px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid var(--border-color); text-align: center; }
+    .center-modal.active .mini-modal-content { transform: scale(1); }
+    .msg-icon { font-size: 48px; margin-bottom: 16px; }
+    .mini-modal-title { font-size: 20px; font-weight: 800; margin: 0 0 12px 0; color: var(--text-main); }
+    .mini-modal-text { font-size: 14px; color: var(--text-muted); margin: 0 0 28px 0; line-height: 1.5; font-weight: 500; word-break: break-word;}
+    .mini-btn { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; width: 100%; background-color: var(--auction-color); color: #fff;}
+    
+    /* Styled Link for Indexing Errors */
+    .index-link { display: inline-block; background-color: var(--auction-color); color: white !important; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 12px; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+      <button onclick="window.history.length > 1 ? window.history.back() : window.location.href='index.html'" style="background:none; border:none; color:var(--text-main); cursor:pointer; padding:4px; display:flex; margin-left: -8px; align-items: center; justify-content: center;">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      </button>
+      <div class="header-titles">
+        <h1>Meena Chitfunds</h1>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="action-bar">
+      <button class="action-btn btn-primary" onclick="openLendSearchModal()">
+        <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+        Lend / Payout
+      </button>
+      <button class="action-btn btn-secondary" onclick="openGroupSearchModal()">
+        <svg viewBox="0 0 24 24"><path d="M4 10h3v7H4zM10.5 10h3v7h-3zM2 19h20v3H2zM17 10h3v7h-3zM12 1L2 6v2h20V6L12 1z"/></svg>
+        Group View
+      </button>
+    </div>
+
+    <div class="list-container">
+      <div class="section-title">Recent Payouts & Lends</div>
+      <div id="recent-lends-list">
+        </div>
+      <button id="load-more-lends-btn" class="load-more-btn" style="display: none;" onclick="loadRecentLends(true)">Load Older Lends</button>
+    </div>
+  </main>
+
+  <aside id="search-user-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div class="modal-title">Select Participant</div>
+    </div>
+    <div class="modal-body" style="padding-bottom: 80px;">
+      <div class="search-wrapper">
+        <span class="loading-text" id="user-search-loading">Searching...</span>
+        <span class="search-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </span>
+        <input type="text" id="user-search-input" class="search-input" placeholder="Search ID, Name, or Phone...">
+      </div>
+      <div id="user-search-results"></div>
+      <button id="load-more-users-btn" class="load-more-btn" style="display: none;" onclick="loadUsersFromServer(true)">Load More</button>
+    </div>
+  </aside>
+
+  <aside id="action-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div>
+        <div class="modal-title" id="action-u-name">Loading...</div>
+        <div class="modal-subtitle" id="action-u-id">@LOADING</div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="input-group">
+        <label>Source Group (Auction Linked)</label>
+        <select id="action-group-select">
+          <option value="">-- Choose a group --</option>
+        </select>
+      </div>
+
+      <div class="due-section">
+        <div class="due-label">Lend / Auction Amount</div>
+        <div class="due-amount-wrapper">
+          <span class="currency-symbol">₹</span>
+          <input type="number" id="action-amount-input" class="due-amount-input" placeholder="0">
+        </div>
+      </div>
+
+      <button type="button" class="submit-btn" id="confirm-lend-btn" onclick="submitLendRecord()">Disburse Funds</button>
+    </div>
+  </aside>
+
+  <aside id="search-group-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div class="modal-title">Select Group</div>
+    </div>
+    <div class="modal-body" style="padding-bottom: 80px;">
+      <div class="search-wrapper">
+        <span class="loading-text" id="group-search-loading">Searching...</span>
+        <span class="search-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </span>
+        <input type="text" id="group-search-input" class="search-input" placeholder="Search Group ID or Name...">
+      </div>
+      <div id="group-search-results"></div>
+      <button id="load-more-groups-btn" class="load-more-btn" style="display: none;" onclick="loadGroupsFromServer(true)">Load More</button>
+    </div>
+  </aside>
+
+  <aside id="group-payouts-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div>
+        <div class="modal-title" id="gp-name">Loading...</div>
+        <div class="modal-subtitle" id="gp-id" style="color: var(--brand-accent);">@LOADING</div>
+      </div>
+    </div>
+    <div class="modal-body" id="group-payouts-list">
+        </div>
+  </aside>
+
+  <div id="gpay-overlay" class="gpay-overlay">
+    <div class="gpay-circle">
+      <svg class="gpay-check" viewBox="0 0 24 24" stroke="var(--auction-color)">
+        <path d="M4 12 l5 5 l11 -11" />
+      </svg>
+    </div>
+    <div class="gpay-title">Funds Disbursed</div>
+    <div class="gpay-amount" id="gpay-amount-text">₹0</div>
+    <div class="gpay-footer">Lend Recorded Successfully</div>
+  </div>
+
+  <aside id="message-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div id="msg-icon" class="msg-icon"></div>
+      <h3 class="mini-modal-title" id="msg-title">Alert</h3>
+      <p class="mini-modal-text" id="msg-body">Operation completed.</p>
+      <div class="mini-modal-actions">
+        <button class="mini-btn" onclick="closeMessageModal()">OK</button>
+      </div>
+    </div>
+  </aside>
+
+  <script type="module">
+    import { auth, db } from './config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+    import { collection, query, orderBy, limit, getDocs, startAfter, doc, getDoc, writeBatch, serverTimestamp, where, documentId } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+    onAuthStateChanged(auth, (user) => { if (!user) window.location.replace('login.html'); });
+
+    // --- FLAWLESS MODAL NAVIGATION ---
+    let modalStackCount = 0;
+    
+    window.openModal = function(modalId) {
+      document.getElementById(modalId).classList.add('active');
+      try {
+          if (window.location.hash !== `#${modalId}`) {
+              history.pushState({ id: modalId }, '', `#${modalId}`);
+              modalStackCount++;
+          }
+      } catch(e) {
+          window.location.hash = modalId; 
+      }
+    };
+    
+    window.closeModal = function() {
+      if (window.location.hash) {
+          history.back(); 
+      } else {
+          closeAllModals();
+      }
+    };
+    
+    function closeAllModals() { 
+      document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+      document.querySelectorAll('.center-modal').forEach(m => m.classList.remove('active'));
+      modalStackCount = 0;
+    }
+    
+    window.addEventListener('popstate', (e) => {
+       // Close ALL modals visually to prevent stacking/ghost modals
+       document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+       document.querySelectorAll('.center-modal').forEach(m => m.classList.remove('active'));
+       
+       if(modalStackCount > 0) modalStackCount--;
+       
+       // Exclusively activate the specific modal assigned to the hash
+       if(window.location.hash) {
+           const targetModal = document.querySelector(window.location.hash);
+           if(targetModal) {
+               targetModal.classList.add('active');
+           }
+       }
+    });
+
+    // --- CUSTOM UI ALERTS ---
+    window.showMessage = function(title, body, type = 'success') {
+      document.getElementById('msg-title').innerText = title;
+      document.getElementById('msg-body').innerHTML = body; 
+      const iconContainer = document.getElementById('msg-icon');
+      
+      if (type === 'success') {
+        iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--success-color)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+      } else {
+        iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--warning-color)"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
+      }
+      
+      document.getElementById('message-modal').classList.add('active');
+    };
+    window.closeMessageModal = function() {
+      document.getElementById('message-modal').classList.remove('active');
+    };
+
+    // --- RECENT PAYOUTS ENGINE (Dashboard List) ---
+    let lastVisibleLend = null;
+    
+    window.loadRecentLends = async function(isLoadMore = false) {
+        const container = document.getElementById('recent-lends-list');
+        const loadBtn = document.getElementById('load-more-lends-btn');
+        
+        if(!isLoadMore) {
+            container.innerHTML = '<div class="loader"></div>';
+            lastVisibleLend = null;
+        } else {
+            loadBtn.innerText = "Loading...";
+        }
+
+        try {
+            let qTxn;
+            try {
+                if (isLoadMore && lastVisibleLend) {
+                    qTxn = query(collection(db, "auctions"), orderBy("date", "desc"), startAfter(lastVisibleLend), limit(10));
+                } else {
+                    qTxn = query(collection(db, "auctions"), orderBy("date", "desc"), limit(10));
+                }
+                const snap = await getDocs(qTxn);
+                if(!isLoadMore) container.innerHTML = '';
+                
+                if(snap.empty) {
+                    if(!isLoadMore) container.innerHTML = '<div class="empty-state"><p>No auction payouts recorded.</p></div>';
+                    loadBtn.style.display = 'none';
+                    return;
+                }
+                
+                lastVisibleLend = snap.docs[snap.docs.length - 1];
+                
+                snap.forEach(docSnap => {
+                    renderLendCard(docSnap.data(), container);
+                });
+                
+                loadBtn.style.display = snap.docs.length === 10 ? 'block' : 'none';
+                loadBtn.innerText = "Load Older Lends";
+                
+            } catch (idxErr) {
+                console.warn("Index missing for type + date sort. Using client-side fallback...");
+                
+                if(idxErr.message && idxErr.message.includes("https://console.firebase.google.com")) {
+                    const match = idxErr.message.match(/(https:\/\/console\.firebase\.google\.com[^\s]+)/g);
+                    if(match && match.length > 0) {
+                        setTimeout(() => {
+                            showMessage("Database Index Missing", `Please click the link below to build the Firebase Index for Payouts.<br><br><a href="${match[0]}" target="_blank" style="display:inline-block; background:var(--brand-accent); color:white; padding:10px 16px; border-radius:8px; text-decoration:none; font-weight:bold; margin-top:10px;">Build Index</a>`, "error");
+                        }, 500);
+                    }
+                }
+                
+                // Fallback: Fetch without sort, sort locally
+                const fallbackQ = query(collection(db, "auctions"));
+                const fallbackSnap = await getDocs(fallbackQ);
+                let txns = [];
+                fallbackSnap.forEach(t => txns.push(t.data()));
+                
+                txns.sort((a, b) => {
+                    const timeA = a.date ? (typeof a.date.toMillis === 'function' ? a.date.toMillis() : 0) : 0;
+                    const timeB = b.date ? (typeof b.date.toMillis === 'function' ? b.date.toMillis() : 0) : 0;
+                    return timeB - timeA;
+                });
+                
+                container.innerHTML = '';
+                if(txns.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><p>No auction payouts recorded.</p></div>';
+                } else {
+                    // Just render top 20 on fallback to save DOM
+                    txns.slice(0, 20).forEach(tData => renderLendCard(tData, container));
+                }
+                loadBtn.style.display = 'none';
+            }
+
+        } catch (err) {
+            console.error(err);
+            if(!isLoadMore) container.innerHTML = '<div style="color:var(--danger-color); text-align:center; padding:20px; font-weight:700;">Error Loading Payouts</div>';
+        }
+    };
+
+    function renderLendCard(data, container) {
+        let displayDate = "N/A";
+        if(data.date && typeof data.date.toDate === 'function') {
+            displayDate = data.date.toDate().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+        
+        const displayName = data.subscriberName || `@${data.subscriberId}`;
+        const initial = displayName.charAt(0).toUpperCase();
+
+        const card = document.createElement('div');
+        card.className = 'data-card';
+        card.innerHTML = `
+            <div class="c-left">
+                <div class="c-icon">${initial}</div>
+                <div class="c-info">
+                    <h3>${displayName}</h3>
+                    <div class="c-meta">Grp: ${data.groupId}</div>
+                    <div class="c-sub">ID: ${data.subscriberId}</div>
+                </div>
+            </div>
+            <div>
+                <div class="c-amount">₹${Number(data.amount).toLocaleString('en-IN')}</div>
+                <div class="c-date">${displayDate}</div>
+            </div>
+        `;
+        container.appendChild(card);
+    }
+
+    // --- SMART SERVER-SIDE SEARCH (USERS) ---
+    let lastVisibleUser = null;
+    let currentUserSearchTerm = "";
+    let isNumericUserSearch = false;
+    let lastUserSearchType = "default";
+    let userSearchDebounce;
+
+    window.openLendSearchModal = function() {
+        openModal('search-user-modal');
+        document.getElementById('user-search-input').value = '';
+        currentUserSearchTerm = '';
+        isNumericUserSearch = false;
+        lastUserSearchType = "default";
+        window.loadUsersFromServer(false);
+    };
+
+    document.getElementById('user-search-input').addEventListener('input', (e) => {
+        clearTimeout(userSearchDebounce);
+        const val = e.target.value.trim();
+        userSearchDebounce = setTimeout(() => {
+            currentUserSearchTerm = val;
+            isNumericUserSearch = /^\d+$/.test(val);
+            window.loadUsersFromServer(false);
+        }, 500); 
+    });
+
+    window.loadUsersFromServer = async function(isLoadMore = false) {
+        const container = document.getElementById('user-search-results');
+        const loadBtn = document.getElementById('load-more-users-btn');
+        const loader = document.getElementById('user-search-loading');
+
+        if (!isLoadMore) {
+            container.innerHTML = '<div class="loader" style="border-top-color:var(--auction-color);"></div>';
+            lastVisibleUser = null;
+        } else {
+            loadBtn.innerText = "Loading...";
+        }
+
+        if (loader) loader.style.display = 'block';
+
+        try {
+            let q;
+            const term = currentUserSearchTerm;
+            const termUpper = term.toUpperCase();
+            const termName = term.charAt(0).toUpperCase() + term.slice(1).toLowerCase();
+
+            if (term === "") {
+                lastUserSearchType = "default";
+                q = (isLoadMore && lastVisibleUser) 
+                    ? query(collection(db, "users"), orderBy("joinedAt", "desc"), startAfter(lastVisibleUser), limit(10))
+                    : query(collection(db, "users"), orderBy("joinedAt", "desc"), limit(10));
+            } else if (isNumericUserSearch) {
+                lastUserSearchType = "phone";
+                q = (isLoadMore && lastVisibleUser)
+                    ? query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), orderBy("phone"), startAfter(lastVisibleUser), limit(10))
+                    : query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), orderBy("phone"), limit(10));
+            } else {
+                if (isLoadMore && lastVisibleUser) {
+                    if (lastUserSearchType === "id") {
+                        q = query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), orderBy(documentId()), startAfter(lastVisibleUser), limit(10));
+                    } else if (lastUserSearchType === "name") {
+                        q = query(collection(db, "users"), where("name", ">=", termName), where("name", "<=", termName + "\uf8ff"), orderBy("name"), startAfter(lastVisibleUser), limit(10));
+                    } else {
+                        q = query(collection(db, "users"), where("name", ">=", term), where("name", "<=", term + "\uf8ff"), orderBy("name"), startAfter(lastVisibleUser), limit(10));
+                    }
+                } else {
+                    // Try ID first
+                    q = query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), orderBy(documentId()), limit(10));
+                    lastUserSearchType = "id";
+                }
+            }
+
+            let querySnapshot;
+            try {
+                querySnapshot = await getDocs(q);
+                
+                // Name Fallback
+                if (!isLoadMore && term !== "" && !isNumericUserSearch && querySnapshot.empty) {
+                    q = query(collection(db, "users"), where("name", ">=", termName), where("name", "<=", termName + "\uf8ff"), orderBy("name"), limit(10));
+                    querySnapshot = await getDocs(q);
+                    lastUserSearchType = "name";
+                    
+                    if(querySnapshot.empty) {
+                        q = query(collection(db, "users"), where("name", ">=", term), where("name", "<=", term + "\uf8ff"), orderBy("name"), limit(10));
+                        querySnapshot = await getDocs(q);
+                        lastUserSearchType = "name_exact";
+                    }
+                }
+            } catch (idxErr) {
+                console.warn("Index missing for User Search.", idxErr);
+                if(idxErr.message && idxErr.message.includes("https://console.firebase.google.com")) {
+                    const match = idxErr.message.match(/(https:\/\/console\.firebase\.google\.com[^\s]+)/g);
+                    if(match && match.length > 0) {
+                        setTimeout(() => {
+                            showMessage("Search Index Missing", `Please click the link below to build the required Firebase Index to enable live searching.<br><br><a href="${match[0]}" target="_blank" style="display:inline-block; background:var(--brand-accent); color:white; padding:10px 16px; border-radius:8px; text-decoration:none; font-weight:bold; margin-top:10px;">Build Index</a>`, "error");
+                        }, 500);
+                    }
+                }
+                
+                // Safe Fallback
+                let fallbackQ;
+                if (term === "") {
+                    fallbackQ = (isLoadMore && lastVisibleUser) ? query(collection(db, "users"), startAfter(lastVisibleUser), limit(10)) : query(collection(db, "users"), limit(10));
+                } else if (isNumericUserSearch) {
+                    fallbackQ = (isLoadMore && lastVisibleUser) ? query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), startAfter(lastVisibleUser), limit(10)) : query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), limit(10));
+                } else {
+                    fallbackQ = (isLoadMore && lastVisibleUser) ? query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), startAfter(lastVisibleUser), limit(10)) : query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), limit(10));
+                }
+                querySnapshot = await getDocs(fallbackQ);
+            }
+
+            if (loader) loader.style.display = 'none';
+            if (!isLoadMore) container.innerHTML = '';
+
+            if (querySnapshot.empty) {
+                if (!isLoadMore) container.innerHTML = '<div class="empty-state"><p>No participants found.</p></div>';
+                loadBtn.style.display = 'none';
+                return;
+            }
+
+            lastVisibleUser = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+            querySnapshot.forEach(docSnap => {
+                const user = docSnap.data();
+                user.id = docSnap.id;
+
+                const initial = user.name ? user.name.charAt(0).toUpperCase() : '?';
+                const card = document.createElement('div');
+                card.className = 'data-card';
+                card.onclick = () => window.openLendActionModal(user);
+                
+                const phoneIconSVG = `<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 2px;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>`;
+                const phoneText = user.phone ? `<span style="display:inline-flex; align-items:center;">${phoneIconSVG} ${user.phone}</span>` : '';
+                
+                let groupsText = '';
+                if (user.activeGroups && user.activeGroups.length > 0) {
+                    groupsText = `<div class="c-meta" style="color:var(--auction-color); font-weight:800; font-family:monospace; background:var(--auction-light); padding:2px 6px; border-radius:4px; display:inline-block; margin-top:4px;">Grp: ${user.activeGroups.join(', ')}</div>`;
+                } else {
+                    groupsText = `<div class="c-meta" style="color:var(--text-muted); font-weight:800; font-family:monospace; background:var(--surface-hover); padding:2px 6px; border-radius:4px; display:inline-block; margin-top:4px;">No Groups</div>`;
+                }
+
+                card.innerHTML = `
+                    <div class="c-left">
+                        <div class="c-icon">${initial}</div>
+                        <div class="c-info">
+                            <h3>${user.name || 'Unnamed'}</h3>
+                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                                @${user.id} ${phoneText}
+                            </div>
+                            ${groupsText}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            loadBtn.style.display = querySnapshot.docs.length === 10 ? 'block' : 'none';
+            loadBtn.innerText = "Load More";
+
+        } catch (e) {
+            console.error("User Search Error:", e);
+            if (loader) loader.style.display = 'none';
+            if (!isLoadMore) container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--danger-color);">Search Error.</div>';
+        }
+    };
+
+
+    // --- SMART SERVER-SIDE SEARCH (GROUPS) ---
+    let lastVisibleGroup = null;
+    let currentGrpSearchTerm = "";
+    let lastGrpSearchType = "default";
+    let grpSearchDebounce;
+
+    window.openGroupSearchModal = function() {
+        openModal('search-group-modal');
+        document.getElementById('group-search-input').value = '';
+        currentGrpSearchTerm = '';
+        lastGrpSearchType = "default";
+        window.loadGroupsFromServer(false);
+    };
+
+    document.getElementById('group-search-input').addEventListener('input', (e) => {
+        clearTimeout(grpSearchDebounce);
+        const val = e.target.value.trim();
+        grpSearchDebounce = setTimeout(() => {
+            currentGrpSearchTerm = val;
+            window.loadGroupsFromServer(false);
+        }, 500); 
+    });
+
+    window.loadGroupsFromServer = async function(isLoadMore = false) {
+        const container = document.getElementById('group-search-results');
+        const loadBtn = document.getElementById('load-more-groups-btn');
+        const loader = document.getElementById('group-search-loading');
+
+        if (!isLoadMore) {
+            container.innerHTML = '<div class="loader" style="border-top-color:var(--auction-color);"></div>';
+            lastVisibleGroup = null;
+        } else {
+            loadBtn.innerText = "Loading...";
+        }
+
+        if (loader) loader.style.display = 'block';
+
+        try {
+            let q;
+            const term = currentGrpSearchTerm;
+            const termUpper = term.toUpperCase();
+            const termTitle = term.split(' ').map(w => w.length > 0 ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : '').join(' ');
+
+            if (term === "") {
+                lastGrpSearchType = "default";
+                q = (isLoadMore && lastVisibleGroup) 
+                    ? query(collection(db, "groups"), orderBy("createdAt", "desc"), startAfter(lastVisibleGroup), limit(10))
+                    : query(collection(db, "groups"), orderBy("createdAt", "desc"), limit(10));
+            } else {
+                if (isLoadMore && lastVisibleGroup) {
+                    if (lastGrpSearchType === "id") {
+                        q = query(collection(db, "groups"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), orderBy(documentId()), startAfter(lastVisibleGroup), limit(10));
+                    } else if (lastGrpSearchType === "name_title") {
+                        q = query(collection(db, "groups"), where("groupName", ">=", termTitle), where("groupName", "<=", termTitle + "\uf8ff"), orderBy("groupName"), startAfter(lastVisibleGroup), limit(10));
+                    } else if (lastGrpSearchType === "name_upper") {
+                        q = query(collection(db, "groups"), where("groupName", ">=", termUpper), where("groupName", "<=", termUpper + "\uf8ff"), orderBy("groupName"), startAfter(lastVisibleGroup), limit(10));
+                    } else {
+                        q = query(collection(db, "groups"), where("groupName", ">=", term), where("groupName", "<=", term + "\uf8ff"), orderBy("groupName"), startAfter(lastVisibleGroup), limit(10));
+                    }
+                } else {
+                    // Try ID first
+                    q = query(collection(db, "groups"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), orderBy(documentId()), limit(10));
+                    lastGrpSearchType = "id";
+                }
+            }
+
+            let querySnapshot;
+            try {
+                querySnapshot = await getDocs(q);
+                
+                // Name Fallback
+                if (!isLoadMore && term !== "" && querySnapshot.empty) {
+                    q = query(collection(db, "groups"), where("groupName", ">=", termTitle), where("groupName", "<=", termTitle + "\uf8ff"), orderBy("groupName"), limit(10));
+                    querySnapshot = await getDocs(q);
+                    lastGrpSearchType = "name_title";
+                    
+                    if(querySnapshot.empty) {
+                        q = query(collection(db, "groups"), where("groupName", ">=", termUpper), where("groupName", "<=", termUpper + "\uf8ff"), orderBy("groupName"), limit(10));
+                        querySnapshot = await getDocs(q);
+                        lastGrpSearchType = "name_upper";
+                    }
+
+                    if(querySnapshot.empty) {
+                        q = query(collection(db, "groups"), where("groupName", ">=", term), where("groupName", "<=", term + "\uf8ff"), orderBy("groupName"), limit(10));
+                        querySnapshot = await getDocs(q);
+                        lastGrpSearchType = "name_exact";
+                    }
+                }
+            } catch (idxErr) {
+                console.warn("Index missing for Group Search.", idxErr);
+                if(idxErr.message && idxErr.message.includes("https://console.firebase.google.com")) {
+                    const match = idxErr.message.match(/(https:\/\/console\.firebase\.google\.com[^\s]+)/g);
+                    if(match && match.length > 0) {
+                        setTimeout(() => {
+                            showMessage("Search Index Missing", `Please click the link below to build the required Firebase Index to enable live searching.<br><br><a href="${match[0]}" target="_blank" style="display:inline-block; background:var(--brand-accent); color:white; padding:10px 16px; border-radius:8px; text-decoration:none; font-weight:bold; margin-top:10px;">Build Index</a>`, "error");
+                        }, 500);
+                    }
+                }
+
+                // Safe Fallback
+                let fallbackQ;
+                if (term === "") {
+                    fallbackQ = (isLoadMore && lastVisibleGroup) ? query(collection(db, "groups"), startAfter(lastVisibleGroup), limit(10)) : query(collection(db, "groups"), limit(10));
+                } else {
+                    fallbackQ = (isLoadMore && lastVisibleGroup) ? query(collection(db, "groups"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), startAfter(lastVisibleGroup), limit(10)) : query(collection(db, "groups"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), limit(10));
+                }
+                querySnapshot = await getDocs(fallbackQ);
+            }
+
+            if (loader) loader.style.display = 'none';
+            if (!isLoadMore) container.innerHTML = '';
+
+            if (querySnapshot.empty) {
+                if (!isLoadMore) container.innerHTML = '<div class="empty-state"><p>No groups found.</p></div>';
+                loadBtn.style.display = 'none';
+                return;
+            }
+
+            lastVisibleGroup = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+            querySnapshot.forEach(docSnap => {
+                const group = docSnap.data();
+                group.id = docSnap.id;
+
+                const card = document.createElement('div');
+                card.className = 'data-card';
+                card.onclick = () => window.openGroupPayoutsModal(group);
+                card.innerHTML = `
+                    <div class="c-left">
+                        <div class="c-info">
+                            <h3>${group.groupName || 'Unnamed'}</h3>
+                            <div class="c-meta" style="color:var(--text-muted); background:none; padding:0;">@${group.id}</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            loadBtn.style.display = querySnapshot.docs.length === 10 ? 'block' : 'none';
+            loadBtn.innerText = "Load More";
+
+        } catch (e) {
+            console.error("Group Search Error:", e);
+            if (loader) loader.style.display = 'none';
+            if (!isLoadMore) container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--danger-color);">Search Error.</div>';
+        }
+    };
+
+
+    // --- LEND ACTION LOGIC ---
+    let targetLendUser = null;
+
+    window.openLendActionModal = function(user) {
+        targetLendUser = user;
+        document.getElementById('action-u-name').innerText = user.name || "Unnamed";
+        document.getElementById('action-u-id').innerText = `@${user.id}`;
+        
+        const select = document.getElementById('action-group-select');
+        select.innerHTML = '<option value="">-- Choose a group --</option>';
+        
+        if(user.activeGroups && user.activeGroups.length > 0) {
+            user.activeGroups.forEach(gId => {
+                const opt = document.createElement('option');
+                opt.value = gId;
+                opt.innerText = `@${gId}`;
+                select.appendChild(opt);
+            });
+            if(user.activeGroups.length === 1) select.value = user.activeGroups[0];
+        } else {
+            select.innerHTML = '<option value="">User not in any active groups</option>';
+        }
+        
+        document.getElementById('action-amount-input').value = '';
+        openModal('action-modal');
+    };
+
+    window.submitLendRecord = async function() {
+        const btn = document.getElementById('confirm-lend-btn');
+        const groupId = document.getElementById('action-group-select').value;
+        const amount = Number(document.getElementById('action-amount-input').value);
+        
+        if(!groupId) return showMessage("Error", "Please select a group.", "error");
+        if(!amount || amount <= 0) return showMessage("Error", "Please enter a valid amount.", "error");
+        
+        btn.innerText = "Securing Payout..."; btn.disabled = true;
+
+        try {
+            const batch = writeBatch(db);
+            const newTxRef = doc(collection(db, "auctions"));
+            
+            // KEY ARCHITECTURE: Saves with type "Auction Payout". 
+            // So if add.html deletes the group, these are automatically wiped!
+            batch.set(newTxRef, {
+                subscriberId: targetLendUser.id,
+                subscriberName: targetLendUser.name,
+                groupId: groupId,
+                amount: amount,
+                type: "Auction Payout",
+                date: serverTimestamp()
+            });
+
+            await batch.commit();
+
+            if ("vibrate" in navigator) navigator.vibrate([100, 50, 100]);
+
+            document.getElementById('gpay-amount-text').innerText = `₹${amount.toLocaleString('en-IN')}`;
+            const overlay = document.getElementById('gpay-overlay');
+            overlay.classList.add('active');
+
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                if (modalStackCount > 0) {
+                    history.go(-modalStackCount);
+                    modalStackCount = 0;
+                }
+                closeAllModals();
+                loadRecentLends(false); // Refresh UI
+                btn.innerText = "Disburse Funds"; btn.disabled = false;
+            }, 2500);
+
+        } catch (err) {
+            console.error(err);
+            showMessage("Transaction Failed", err.message, "error");
+            btn.innerText = "Disburse Funds"; btn.disabled = false;
+        }
+    };
+
+
+    // --- VIEW SPECIFIC GROUP PAYOUTS ---
+    window.openGroupPayoutsModal = async function(group) {
+        document.getElementById('gp-name').innerText = group.groupName || "Unnamed";
+        document.getElementById('gp-id').innerText = `@${group.id}`;
+        
+        openModal('group-payouts-modal');
+        const container = document.getElementById('group-payouts-list');
+        container.innerHTML = '<div class="loader" style="border-top-color:var(--auction-color);"></div>';
+        
+        try {
+            let txns = [];
+            try {
+                const q = query(collection(db, "auctions"), 
+                    where("groupId", "==", group.id), 
+                    orderBy("date", "desc")
+                );
+                const snap = await getDocs(q);
+                snap.forEach(d => txns.push(d.data()));
+            } catch(idxErr) {
+                console.warn("Index missing. Client side fallback...");
+                const fQ = query(collection(db, "auctions"), 
+                    where("groupId", "==", group.id)
+                );
+                const snap = await getDocs(fQ);
+                snap.forEach(d => txns.push(d.data()));
+                txns.sort((a,b) => {
+                    const tA = a.date && typeof a.date.toMillis === 'function' ? a.date.toMillis() : 0;
+                    const tB = b.date && typeof b.date.toMillis === 'function' ? b.date.toMillis() : 0;
+                    return tB - tA;
+                });
+            }
+
+            container.innerHTML = '';
+            if(txns.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No payouts recorded for this group yet.</p></div>';
+                return;
+            }
+
+            txns.forEach(t => renderLendCard(t, container));
+
+        } catch (e) {
+            console.error(e);
+            container.innerHTML = '<div style="color:var(--danger-color); text-align:center; padding:20px; font-weight:700;">Error Loading Group Data</div>';
+        }
+    };
+
+    // Init
+    window.onload = () => loadRecentLends(false);
+
+  </script>
+</body>
+</html>

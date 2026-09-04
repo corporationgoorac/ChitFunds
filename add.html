@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f0f" />
+  <link rel="manifest" href="manifest.json">
+  <title>Manage - Meena Chitfunds</title>
+  
+  <style>
+    /* Theme Variables */
+    :root {
+      --bg-color: #ffffff;
+      --text-main: #0f0f0f;
+      --text-muted: #606060;
+      --surface-color: #f2f2f2;
+      --surface-hover: #e5e5e5;
+      --border-color: #e0e0e0;
+      --brand-accent: #065fd4;
+      --danger-color: #cc0000;
+      --success-color: #0f9d58;
+      --modal-overlay: rgba(0, 0, 0, 0.4);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #0f0f0f;
+        --text-main: #f1f1f1;
+        --text-muted: #aaaaaa;
+        --surface-color: #272727;
+        --surface-hover: #3f3f3f;
+        --border-color: #3f3f3f;
+        --brand-accent: #3ea6ff;
+        --danger-color: #ff4e45;
+        --success-color: #34a853;
+        --modal-overlay: rgba(0, 0, 0, 0.7);
+      }
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      background-color: var(--bg-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 20px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-titles {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-back-btn {
+      background: none;
+      border: none;
+      color: var(--text-main);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+    }
+    .header-back-btn:active { background-color: var(--surface-hover); }
+    .header-back-btn svg { width: 24px; height: 24px; fill: currentColor; }
+
+    .header-titles h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    /* Action Buttons */
+    .action-bar { padding: 20px; display: flex; gap: 12px; }
+    .action-btn {
+      flex: 1; background-color: var(--surface-color); color: var(--text-main);
+      border: 1px solid var(--border-color); padding: 14px; border-radius: 12px;
+      font-size: 14px; font-weight: 600; cursor: pointer; display: flex;
+      justify-content: center; align-items: center; gap: 8px; transition: 0.2s;
+    }
+    .action-btn:active { transform: scale(0.98); }
+    .action-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+    /* List Container & Advanced Search */
+    .list-container { padding: 0 20px 80px; }
+    .section-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .section-title { font-size: 16px; font-weight: 600; margin-bottom: 0; color: var(--text-muted); }
+    .search-input { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--surface-color); color: var(--text-main); font-size: 13px; outline: none; width: 150px; transition: border-color 0.2s; }
+    .search-input:focus { border-color: var(--brand-accent); }
+
+    /* Group Card Upgrades */
+    .group-card {
+      background-color: var(--bg-color); border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .group-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .group-name { font-size: 18px; font-weight: 600; margin: 0; text-transform: uppercase;}
+    .group-id-badge { font-size: 11px; background: var(--surface-color); padding: 2px 8px; border-radius: 6px; color: var(--text-muted); font-family: monospace; margin-top: 4px; display: inline-block;}
+    .group-meta { font-size: 13px; color: var(--text-muted); display: flex; gap: 12px; margin-top: 8px; }
+    
+    .g-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .g-stat { display: flex; flex-direction: column; gap: 4px; }
+    .g-stat-label { font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px;}
+    .g-stat-val { font-size: 15px; font-weight: 800; color: var(--text-main); }
+
+    .group-actions { display: flex; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 12px; }
+    .icon-btn { background: none; border: none; color: var(--text-muted); font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 12px; border-radius: 8px; }
+    .icon-btn.edit:active { background-color: var(--surface-color); }
+    .icon-btn.delete { color: var(--danger-color); margin-left: auto; }
+    .icon-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+    .load-more-btn { width: 100%; background: none; border: 1px solid var(--border-color); color: var(--text-main); padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+
+    /* Full Screen Side Modals */
+    .modal {
+      position: fixed; top: 0; right: 0; width: 100%; height: 100%;
+      background-color: var(--bg-color); z-index: 100; transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column;
+    }
+    .modal.active { transform: translateX(0); }
+    .modal-header { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border-color); }
+    .back-btn { background: none; border: none; color: var(--text-main); padding: 8px; margin-left: -8px; cursor: pointer; }
+    .back-btn svg { width: 24px; height: 24px; fill: currentColor; }
+    .modal-title { font-size: 18px; font-weight: 600; margin-left: 12px; }
+    .modal-body { padding: 24px 20px; flex: 1; overflow-y: auto; }
+
+    /* Mini Center Modal (For Alerts & Deletions) */
+    .center-modal {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-color: var(--modal-overlay); z-index: 200;
+      display: flex; justify-content: center; align-items: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+      transform: none; /* Override sliding behavior */
+    }
+    .center-modal.active { opacity: 1; pointer-events: all; }
+    .mini-modal-content {
+      background-color: var(--surface-color); width: 90%; max-width: 340px;
+      border-radius: 20px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transform: scale(0.95); transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+      border: 1px solid var(--border-color); text-align: center;
+    }
+    .center-modal.active .mini-modal-content { transform: scale(1); }
+    
+    .msg-icon { font-size: 40px; margin-bottom: 12px; }
+    .mini-modal-title { font-size: 18px; font-weight: 700; margin: 0 0 12px 0; color: var(--text-main); }
+    .mini-modal-text { font-size: 14px; color: var(--text-muted); margin: 0 0 24px 0; line-height: 1.5; word-wrap: break-word; }
+    .mini-modal-actions { display: flex; gap: 12px; }
+    
+    .mini-btn { flex: 1; padding: 14px; border-radius: 10px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; }
+    .mini-btn-cancel { background-color: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); }
+    .mini-btn-danger { background-color: var(--danger-color); color: #fff; }
+    .mini-btn-primary { background-color: var(--brand-accent); color: #fff; width: 100%; }
+
+    /* Forms */
+    .input-group { margin-bottom: 20px; position: relative; }
+    .input-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
+    .input-group input, .input-group select {
+      width: 100%; background-color: var(--surface-color); border: 1px solid var(--border-color);
+      color: var(--text-main); padding: 14px; border-radius: 10px; font-size: 16px; outline: none; appearance: none;
+    }
+    
+    /* Ensure the Date input takes full width properly on iOS */
+    input[type="date"] { font-family: -apple-system, sans-serif; }
+    
+    .input-group input:focus, .input-group select:focus { border-color: var(--brand-accent); }
+    
+    /* Enforce visual uppercase for IDs */
+    #g-id, #p-id { text-transform: uppercase; font-family: monospace; letter-spacing: 1px; }
+
+    /* Responsive Grid for PC and Mobile */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; } 
+    @media (max-width: 600px) {
+      .grid-2 { grid-template-columns: 1fr; gap: 0; }
+    }
+
+    /* Validation Icon for Unique IDs */
+    .validation-icon { position: absolute; right: 14px; bottom: 14px; font-size: 16px; }
+    .valid { color: var(--success-color); }
+    .invalid { color: var(--danger-color); }
+    .loading-text { font-size: 11px; color: var(--brand-accent); position: absolute; right: 14px; top: 0; display: none; }
+
+    /* Highly Styled Mobile Schedule Builder */
+    .schedule-container { background: var(--bg-color); padding: 16px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 24px;}
+    .schedule-header { font-size: 14px; font-weight: 600; margin-bottom: 16px; display: flex; justify-content: space-between; color: var(--brand-accent);}
+    
+    .schedule-row { 
+      display: grid; 
+      grid-template-columns: 2fr auto 2fr auto 3fr; /* Mo X to Y: Rs Z */
+      gap: 8px; align-items: center; margin-bottom: 12px; 
+      background: var(--surface-color); padding: 10px; border-radius: 10px;
+    }
+    .schedule-row input { 
+      width: 100%; background: var(--bg-color); border: 1px solid var(--border-color); 
+      color: var(--text-main); padding: 10px 8px; border-radius: 6px; font-size: 14px; outline: none; text-align: center;
+    }
+    .schedule-row span { font-size: 13px; color: var(--text-muted); font-weight: 500; text-align: center; }
+    
+    .add-tier-btn { background: var(--surface-hover); border: 1px dashed var(--border-color); color: var(--text-main); width: 100%; padding: 12px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: 0.2s;}
+    .add-tier-btn:active { transform: scale(0.98); }
+
+    .submit-btn { background-color: var(--text-main); color: var(--bg-color); border: none; width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: 0.2s;}
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .submit-btn:active:not(:disabled) { transform: scale(0.98); }
+
+    /* Styled Link for Indexing Errors */
+    .index-link {
+      display: inline-block; background-color: var(--brand-accent); color: white !important;
+      padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 12px; font-size: 13px;
+    }
+    
+    /* Loading Spinner */
+    .loader { border: 3px solid var(--border-color); border-top: 3px solid var(--brand-accent); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-titles">
+      <button onclick="window.history.back()" class="header-back-btn">
+          <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      </button>
+      <h1>Meena Chitfunds</h1>
+    </div>
+  </header>
+
+  <main>
+    <div class="action-bar">
+      <button class="action-btn" onclick="openParticipantModal()">
+        <svg viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        Add Participant
+      </button>
+      <button class="action-btn" onclick="openModal('group-modal')">
+        <svg viewBox="0 0 24 24"><path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+        Create Group
+      </button>
+    </div>
+
+    <div class="list-container">
+      <div class="section-header-row">
+        <div class="section-title">Active Groups</div>
+        <input type="text" id="group-search" class="search-input" placeholder="Search ID or Name...">
+      </div>
+      <div id="groups-list">
+        </div>
+      <button id="load-more-btn" class="load-more-btn" style="display: none;">Load More</button>
+    </div>
+  </main>
+
+  <aside id="participant-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div class="modal-title">New Participant</div>
+    </div>
+    <div class="modal-body">
+      <form id="participant-form">
+        <div class="input-group">
+          <label>Participant ID (Unique Username)</label>
+          <span class="loading-text" id="p-id-loading">Checking...</span>
+          <input type="text" id="p-id" placeholder="e.g., RAHUL_101" required autocomplete="off">
+          <span class="validation-icon" id="p-id-icon"></span>
+        </div>
+        <div class="input-group">
+          <label>Full Name</label>
+          <input type="text" id="p-name" required>
+        </div>
+        <div class="input-group">
+          <label>Phone Number</label>
+          <input type="tel" id="p-phone" required>
+        </div>
+
+        <div class="input-group">
+          <label>Assign to Group (Optional)</label>
+          <select id="p-group">
+            <option value="">-- Do not assign yet --</option>
+          </select>
+        </div>
+
+        <div class="grid-2">
+            <div class="input-group">
+                <label>Participant Join Date</label>
+                <input type="date" id="p-join-date" required>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; font-weight: 500;">Calculates exactly how many months they are in.</div>
+            </div>
+            <div class="input-group">
+                <label>Advance Amount (₹)</label>
+                <input type="number" id="p-advance-amount" placeholder="e.g. 5000" min="0" value="0">
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; font-weight: 500;">Independent fixed advance collected.</div>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label>Months Already Paid</label>
+            <input type="number" id="p-months-paid" placeholder="e.g. 5" min="0" value="0">
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; font-weight: 500;">How many months of installments they are clearing upfront.</div>
+        </div>
+
+        <div id="live-calc-section" style="display:none; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+            <h4 style="margin: 0 0 12px 0; font-size: 12px; color: var(--brand-accent); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Real-Time Summary</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                <div>
+                    <div style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Expected Month</div>
+                    <div id="live-elapsed" style="font-size: 16px; font-weight: 800; color: var(--text-main);">0 Months</div>
+                </div>
+                <div>
+                    <div style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Timeline Status</div>
+                    <div id="live-status" style="font-size: 16px; font-weight: 800; color: var(--success-color);">Up to Date</div>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div style="background: rgba(15, 157, 88, 0.1); padding: 12px; border-radius: 10px; border: 1px solid rgba(15, 157, 88, 0.2);">
+                    <div style="font-size: 10px; color: var(--success-color); font-weight: 800; text-transform: uppercase;">Total Paid Now</div>
+                    <div id="live-total-paid" style="font-size: 18px; font-weight: 800; color: var(--success-color);">₹0</div>
+                </div>
+                <div id="live-pending-box" style="background: rgba(220, 53, 69, 0.1); padding: 12px; border-radius: 10px; border: 1px solid rgba(220, 53, 69, 0.2);">
+                    <div style="font-size: 10px; color: inherit; font-weight: 800; text-transform: uppercase;">Pending Dues</div>
+                    <div id="live-pending" style="font-size: 18px; font-weight: 800; color: var(--danger-color);">₹0</div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="p-submit-btn" disabled>Save Participant</button>
+      </form>
+    </div>
+  </aside>
+
+  <aside id="group-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div class="modal-title">New Chit Group</div>
+    </div>
+    <div class="modal-body">
+      <form id="group-form">
+        <div class="input-group">
+          <label>Group ID (Unique Identifier)</label>
+          <span class="loading-text" id="g-id-loading">Checking...</span>
+          <input type="text" id="g-id" placeholder="e.g., GOLD_50K_2026" required autocomplete="off">
+          <span class="validation-icon" id="g-id-icon"></span>
+        </div>
+        <div class="input-group">
+          <label>Display Name</label>
+          <input type="text" id="g-name" placeholder="e.g., 50K Gold Scheme" required>
+        </div>
+        
+        <div class="grid-2">
+          <div class="input-group">
+            <label>Total Pot (₹)</label>
+            <input type="number" id="g-value" required>
+          </div>
+          <div class="input-group">
+            <label>Total Months</label>
+            <input type="number" id="g-months" required>
+          </div>
+        </div>
+        
+        <div class="grid-2">
+          <div class="input-group">
+            <label>Start Date</label>
+            <input type="date" id="g-start-date" required>
+          </div>
+          <div class="input-group">
+            <label>Start Amount (₹)</label>
+            <input type="number" id="g-start-amount" placeholder="e.g. 5000" required min="0">
+          </div>
+        </div>
+
+        <div class="schedule-container">
+          <div class="schedule-header">Installment Schedule</div>
+          <div id="schedule-rows">
+            <div class="schedule-row">
+              <input type="number" placeholder="1" class="s-start" required min="1">
+              <span>to</span>
+              <input type="number" placeholder="10" class="s-end" required min="1">
+              <span>: ₹</span>
+              <input type="number" placeholder="Amount" class="s-amt" required min="1">
+            </div>
+          </div>
+          <button type="button" class="add-tier-btn" onclick="addScheduleRow()">+ Add Tier (e.g., Months 11-20)</button>
+        </div>
+
+        <button type="submit" class="submit-btn" id="g-submit-btn" disabled>Create Group</button>
+      </form>
+    </div>
+  </aside>
+
+  <aside id="delete-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <h3 class="mini-modal-title">Delete Group</h3>
+      <p class="mini-modal-text">Are you sure you want to permanently delete this group? All participant links, ledger transactions, and auction payouts will be lost.</p>
+      <div class="mini-modal-actions">
+        <button class="mini-btn mini-btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="mini-btn mini-btn-danger" id="confirm-delete-btn">Delete Group</button>
+      </div>
+    </div>
+  </aside>
+
+  <aside id="message-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div id="msg-icon" class="msg-icon">✅</div>
+      <h3 class="mini-modal-title" id="msg-title">Success</h3>
+      <p class="mini-modal-text" id="msg-body">Operation completed successfully.</p>
+      <div class="mini-modal-actions">
+        <button class="mini-btn mini-btn-primary" onclick="closeModal()">OK</button>
+      </div>
+    </div>
+  </aside>
+
+  <script type="module">
+    import { auth, db } from './config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+    import { collection, query, orderBy, limit, getDocs, startAfter, setDoc, doc, getDoc, deleteDoc, updateDoc, writeBatch, increment, serverTimestamp, arrayUnion, arrayRemove, where, documentId } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+    onAuthStateChanged(auth, (user) => { if (!user) window.location.replace('login.html'); });
+
+    // --- Global State ---
+    let targetIdToDelete = null;
+    let cachedGroupsForModal = {}; 
+    let lastVisibleDoc = null;
+    let isSearching = false;
+    let currentSearchTerm = "";
+    let lastSearchType = "default";
+    let searchDebounce;
+
+    // --- FLAWLESS MODAL NAVIGATION ---
+    window.openModal = function(modalId) {
+      document.getElementById(modalId).classList.add('active');
+      if(modalId === 'group-modal' && !document.getElementById('g-start-date').value) {
+          // CRITICAL BUG FIX: Extract only the date string to prevent array assignment error
+          // Updated to use local timezone to prevent UTC off-by-one-day errors
+          const now = new Date();
+          const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+          document.getElementById('g-start-date').value = localDate;
+      }
+      if (window.location.hash !== `#${modalId}`) {
+          history.pushState({ modalOpen: true, id: modalId }, '', `#${modalId}`);
+      }
+    };
+    
+    window.closeModal = function() {
+      if (window.location.hash) {
+          history.back(); 
+      } else {
+          closeAllModals();
+      }
+    };
+    
+    function closeAllModals() { 
+      document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+      document.querySelectorAll('.center-modal').forEach(m => m.classList.remove('active'));
+      targetIdToDelete = null; // Reset deletion target
+    }
+    
+    window.addEventListener('popstate', (e) => {
+       // Close everything first to ensure a clean slate
+       closeAllModals();
+       
+       // If the user went BACK to a state where a modal was open, reopen it instantly
+       if(e.state && e.state.id) {
+           const modalToReopen = document.getElementById(e.state.id);
+           if(modalToReopen) modalToReopen.classList.add('active');
+       }
+    });
+
+    // --- CUSTOM UI ALERTS ---
+    window.showMessage = function(title, body, type = 'success') {
+      document.getElementById('msg-title').innerText = title;
+      document.getElementById('msg-body').innerHTML = body; 
+      const icon = document.getElementById('msg-icon');
+      
+      if (type === 'success') {
+        icon.innerText = '✅';
+      } else if (type === 'error') {
+        icon.innerText = '⚠️';
+      } else {
+        icon.innerText = 'ℹ️';
+      }
+      
+      openModal('message-modal');
+    };
+
+    window.copyToClipboard = function(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showMessage("Copied!", `ID <b>@${text}</b> has been copied to your clipboard.`, "success");
+      }).catch(err => {
+        console.error('Failed to copy', err);
+      });
+    };
+
+    // --- CORE ENGINE LOGIC (Mathematical Ledger) ---
+    function calculateCurrentSystemMonth(startDateStr) {
+        if(!startDateStr) return 1; 
+        const start = new Date(startDateStr);
+        const now = new Date();
+        let months = (now.getFullYear() - start.getFullYear()) * 12;
+        months -= start.getMonth();
+        months += now.getMonth();
+        return months <= 0 ? 1 : months + 1; 
+    }
+
+    function calculateDueForMonth(targetMonth, startAmount, schedule) {
+        if (targetMonth <= 1) return startAmount;
+        let currentAmount = startAmount;
+        for (let m = 2; m <= targetMonth; m++) {
+            let increment = 0;
+            for (let tier of schedule) {
+                if (m >= tier.start && m <= tier.end) {
+                    increment = tier.amount; break;
+                }
+            }
+            currentAmount += increment;
+        }
+        return currentAmount;
+    }
+
+    // --- 1. ADVANCED SERVER-SIDE SEARCH FOR GROUPS ---
+    async function loadGroups(isLoadMore = false) {
+      const container = document.getElementById('groups-list');
+      const loadBtn = document.getElementById('load-more-btn');
+      
+      if (!isLoadMore) {
+        container.innerHTML = '<div style="text-align:center; padding: 20px;"><div class="loader" style="margin:0 auto;"></div></div>';
+        lastVisibleDoc = null;
+      } else {
+        loadBtn.innerText = "Loading...";
+      }
+
+      try {
+        let q;
+        const term = currentSearchTerm;
+        const termUpper = term.toUpperCase();
+        const termTitle = term.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+
+        if (term === "") {
+            lastSearchType = "default";
+            q = (isLoadMore && lastVisibleDoc) 
+                ? query(collection(db, "groups"), orderBy("createdAt", "desc"), startAfter(lastVisibleDoc), limit(5)) 
+                : query(collection(db, "groups"), orderBy("createdAt", "desc"), limit(5));
+        } else {
+            if (isLoadMore && lastVisibleDoc) {
+                if (lastSearchType === "id") {
+                    q = query(collection(db, "groups"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), orderBy(documentId()), startAfter(lastVisibleDoc), limit(5));
+                } else if (lastSearchType === "name_title") {
+                    q = query(collection(db, "groups"), where("groupName", ">=", termTitle), where("groupName", "<=", termTitle + "\uf8ff"), orderBy("groupName"), startAfter(lastVisibleDoc), limit(5));
+                } else if (lastSearchType === "name_upper") {
+                    q = query(collection(db, "groups"), where("groupName", ">=", termUpper), where("groupName", "<=", termUpper + "\uf8ff"), orderBy("groupName"), startAfter(lastVisibleDoc), limit(5));
+                } else {
+                    q = query(collection(db, "groups"), where("groupName", ">=", term), where("groupName", "<=", term + "\uf8ff"), orderBy("groupName"), startAfter(lastVisibleDoc), limit(5));
+                }
+            } else {
+                // Try ID Match first
+                q = query(collection(db, "groups"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), orderBy(documentId()), limit(5));
+                lastSearchType = "id";
+            }
+        }
+
+        let querySnapshot;
+        try {
+            querySnapshot = await getDocs(q);
+            
+            // Name Fallback Logic
+            if (!isLoadMore && term !== "" && querySnapshot.empty) {
+                q = query(collection(db, "groups"), where("groupName", ">=", termTitle), where("groupName", "<=", termTitle + "\uf8ff"), orderBy("groupName"), limit(5));
+                querySnapshot = await getDocs(q);
+                lastSearchType = "name_title";
+                
+                if(querySnapshot.empty) {
+                    q = query(collection(db, "groups"), where("groupName", ">=", termUpper), where("groupName", "<=", termUpper + "\uf8ff"), orderBy("groupName"), limit(5));
+                    querySnapshot = await getDocs(q);
+                    lastSearchType = "name_upper";
+                }
+
+                if(querySnapshot.empty) {
+                    q = query(collection(db, "groups"), where("groupName", ">=", term), where("groupName", "<=", term + "\uf8ff"), orderBy("groupName"), limit(5));
+                    querySnapshot = await getDocs(q);
+                    lastSearchType = "name_exact";
+                }
+            }
+        } catch (idxErr) {
+            console.warn("Index missing. Falling back...", idxErr);
+            // Fallback
+            let fallbackQ;
+            if (term === "") {
+                fallbackQ = (isLoadMore && lastVisibleDoc) ? query(collection(db, "groups"), startAfter(lastVisibleDoc), limit(5)) : query(collection(db, "groups"), limit(5));
+            } else {
+                fallbackQ = (isLoadMore && lastVisibleDoc) ? query(collection(db, "groups"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), startAfter(lastVisibleDoc), limit(5)) : query(collection(db, "groups"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), limit(5));
+            }
+            querySnapshot = await getDocs(fallbackQ);
+            
+            if(idxErr.message && idxErr.message.includes("https://console.firebase.google.com")) {
+                const match = idxErr.message.match(/(https:\/\/console\.firebase\.google\.com[^\s]+)/g);
+                if(match && match.length > 0) {
+                    if (!isLoadMore) {
+                        container.innerHTML = `
+                            <div style="text-align:center; padding: 20px;">
+                                <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--warning-color)" style="margin-bottom:12px;"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                                <h3 style="margin:0 0 8px 0; font-size:16px; color:var(--text-main);">Database Index Required</h3>
+                                <a href="${match}" target="_blank" class="index-link">Build Secure Index</a>
+                            </div>`;
+                        loadBtn.style.display = 'none';
+                        return;
+                    }
+                }
+            }
+        }
+
+        if (!isLoadMore) container.innerHTML = '';
+
+        if (querySnapshot.empty) {
+            if (!isLoadMore) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
+                        <svg viewBox="0 0 24 24" width="64" height="64" fill="var(--border-color)" style="margin-bottom:16px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                        <h3 style="font-size:18px; font-weight:800; color:var(--text-main); margin:0 0 8px 0;">No Groups Found</h3>
+                        <p style="margin:0; font-size:14px;">We couldn't find any chit groups matching "${term}".</p>
+                    </div>`;
+            }
+            loadBtn.style.display = 'none';
+            return;
+        }
+
+        lastVisibleDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+        querySnapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const groupId = docSnap.id;
+            
+            const safePot = data.totalPot ? Number(data.totalPot).toLocaleString('en-IN') : '0';
+            
+            // --- NEW UI UPGRADE: Better representation of group stats applied here! ---
+            const calcMonth = calculateCurrentSystemMonth(data.startDate);
+            const cappedMonth = data.totalMonths ? Math.min(calcMonth, data.totalMonths) : calcMonth;
+            let displayStartDate = 'N/A';
+            if(data.startDate) {
+                const dateObj = new Date(data.startDate);
+                displayStartDate = dateObj.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+            }
+            
+            const card = document.createElement('div');
+            card.className = 'group-card';
+            
+            card.innerHTML = `
+                <div class="group-header">
+                    <div>
+                        <h3 class="group-name">${data.groupName || 'Unnamed'}</h3>
+                        <span class="group-id-badge">@${groupId}</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 18px; font-weight: 800; color: var(--success-color);">₹${safePot}</div>
+                        <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; margin-top: 4px; text-transform: uppercase;">Target Pot</div>
+                    </div>
+                </div>
+                <div class="g-stats-row">
+                    <div class="g-stat">
+                        <span class="g-stat-label">Members</span>
+                        <span class="g-stat-val">${data.participantCount || 0}</span>
+                    </div>
+                    <div class="g-stat">
+                        <span class="g-stat-label">Months</span>
+                        <span class="g-stat-val">${data.totalMonths || 0}</span>
+                    </div>
+                    <div class="g-stat">
+                        <span class="g-stat-label">Chronological</span>
+                        <span class="g-stat-val" style="color: var(--brand-accent);">Mo. ${cappedMonth}</span>
+                    </div>
+                </div>
+                <div style="margin-top: 14px; padding: 12px 16px; background: var(--surface-color); border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px dashed var(--border-color); margin-bottom: 12px;">
+                    <div>
+                        <div style="font-size: 10px; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Group Created</div>
+                        <div style="font-size: 14px; font-weight: 800; color: var(--text-main); margin-top: 2px;">${displayStartDate}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Base Due</div>
+                        <div style="font-size: 14px; font-weight: 800; color: var(--text-main);">₹${(data.startAmount || 0).toLocaleString('en-IN')}</div>
+                    </div>
+                </div>
+                <div class="group-actions">
+                    <button class="icon-btn" onclick="copyToClipboard('${groupId}')">
+                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Copy ID
+                    </button>
+                    <button class="icon-btn delete" onclick="initiateDelete('${groupId}')">
+                        <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> Delete
+                    </button>
+                </div>`;
+            container.appendChild(card);
+        });
+
+        loadBtn.style.display = querySnapshot.docs.length === 5 ? 'block' : 'none';
+        loadBtn.innerText = "Load More Groups";
+
+      } catch (error) { 
+        console.error("Critical Fetch Error:", error); 
+        if(!isLoadMore) {
+          container.innerHTML = `
+            <div style="color:var(--danger-color); background:rgba(204,0,0,0.1); border-radius:12px; padding: 20px; font-size:13px; word-break: break-word;">
+              <b>Firebase Connection Error</b><br><br>
+              ${error.message || "Unknown error occurred while contacting database."}
+            </div>`;
+        }
+      }
+    }
+
+    document.getElementById('load-more-btn').addEventListener('click', () => loadGroups(true));
+
+    document.getElementById('group-search').addEventListener('input', (e) => {
+        clearTimeout(searchDebounce);
+        const val = e.target.value.trim(); 
+        searchDebounce = setTimeout(() => {
+            currentSearchTerm = val;
+            isSearching = val.length > 0;
+            lastSearchType = "default";
+            loadGroups(false);
+        }, 500);
+    });
+
+    // --- Schedule Builder Logic (Mobile UI) ---
+    window.addScheduleRow = function() {
+      const container = document.getElementById('schedule-rows');
+      const row = document.createElement('div');
+      row.className = 'schedule-row';
+      row.innerHTML = `
+        <input type="number" placeholder="Start" class="s-start" required min="1">
+        <span>to</span>
+        <input type="number" placeholder="End" class="s-end" required min="1">
+        <span>: ₹</span>
+        <input type="number" placeholder="Amount" class="s-amt" required min="1">
+      `;
+      container.appendChild(row);
+    };
+
+    // --- Live ID Validation (Debounced & Uppercase Enforced) ---
+    let timeoutId;
+    async function validateUniqueId(collectionName, inputId, iconElementId, loadingElementId, submitBtnId) {
+      const inputVal = document.getElementById(inputId).value.trim().toUpperCase();
+      const icon = document.getElementById(iconElementId);
+      const loader = document.getElementById(loadingElementId);
+      const btn = document.getElementById(submitBtnId);
+
+      icon.innerHTML = '';
+      btn.disabled = true;
+
+      if(inputVal.length < 3) return; // Wait for at least 3 chars
+
+      loader.style.display = 'block';
+      clearTimeout(timeoutId);
+      
+      timeoutId = setTimeout(async () => {
+        try {
+          // 1 Read Cost per check
+          const docRef = doc(db, collectionName, inputVal);
+          const docSnap = await getDoc(docRef);
+          
+          loader.style.display = 'none';
+          if (docSnap.exists()) {
+            icon.innerHTML = '❌';
+            icon.className = 'validation-icon invalid';
+            btn.disabled = true;
+          } else {
+            icon.innerHTML = '✔';
+            icon.className = 'validation-icon valid';
+            btn.disabled = false;
+          }
+        } catch (e) {
+          console.error(e);
+          loader.style.display = 'none';
+        }
+      }, 500); // 500ms debounce
+    }
+
+    document.getElementById('g-id').addEventListener('input', (e) => {
+      e.target.value = e.target.value.toUpperCase();
+      validateUniqueId('groups', 'g-id', 'g-id-icon', 'g-id-loading', 'g-submit-btn');
+    });
+    document.getElementById('p-id').addEventListener('input', (e) => {
+      e.target.value = e.target.value.toUpperCase();
+      validateUniqueId('users', 'p-id', 'p-id-icon', 'p-id-loading', 'p-submit-btn');
+    });
+
+    // --- LIVE CALCULATION ENGINE FOR MODAL ---
+    function calculateLiveSummary() {
+        const groupId = document.getElementById('p-group').value;
+        const joinDateStr = document.getElementById('p-join-date').value;
+        const monthsPaid = Number(document.getElementById('p-months-paid').value) || 0;
+        const advanceAmt = Number(document.getElementById('p-advance-amount').value) || 0;
+        
+        const section = document.getElementById('live-calc-section');
+
+        // Failsafe: if the date is empty or invalid, hide the calculator
+        if (!groupId || !joinDateStr || !cachedGroupsForModal[groupId]) {
+            section.style.display = 'none';
+            return;
+        }
+
+        const groupData = cachedGroupsForModal[groupId];
+        const joinDate = new Date(joinDateStr);
+        const now = new Date();
+
+        // Extra Failsafe
+        if (isNaN(joinDate)) {
+            section.style.display = 'none';
+            return;
+        }
+
+        let elapsed = (now.getFullYear() - joinDate.getFullYear()) * 12;
+        elapsed -= joinDate.getMonth();
+        elapsed += now.getMonth();
+        if (elapsed < 0) elapsed = 0;
+        
+        let expectedMonth = elapsed + 1;
+        const totalGroupMonths = groupData.totalMonths || 0;
+        if (totalGroupMonths > 0 && expectedMonth > totalGroupMonths) {
+            expectedMonth = totalGroupMonths;
+        }
+
+        document.getElementById('live-elapsed').innerText = expectedMonth + " Months";
+
+        const startAmt = groupData.startAmount || 0;
+        const schedule = groupData.installmentSchedule || [];
+
+        let totalPaid = advanceAmt;
+        for(let m = 1; m <= monthsPaid; m++) {
+            totalPaid += calculateDueForMonth(m, startAmt, schedule);
+        }
+
+        document.getElementById('live-total-paid').innerText = "₹" + totalPaid.toLocaleString('en-IN');
+
+        let pending = 0;
+        let missedCount = expectedMonth - monthsPaid;
+        
+        const pendingEl = document.getElementById('live-pending');
+        const pendingBox = document.getElementById('live-pending-box');
+        
+        if (missedCount > 0) {
+            for (let m = monthsPaid + 1; m <= expectedMonth; m++) {
+                pending += calculateDueForMonth(m, startAmt, schedule);
+            }
+            document.getElementById('live-status').innerText = missedCount + " Month(s) Behind";
+            document.getElementById('live-status').style.color = "var(--danger-color)";
+            pendingEl.style.color = "var(--danger-color)";
+            pendingBox.style.background = "rgba(220, 53, 69, 0.1)";
+            pendingBox.style.borderColor = "rgba(220, 53, 69, 0.2)";
+        } else if (missedCount < 0) {
+            document.getElementById('live-status').innerText = "Advance by " + Math.abs(missedCount) + " Mo";
+            document.getElementById('live-status').style.color = "var(--brand-accent)";
+            pendingEl.style.color = "var(--success-color)";
+            pendingBox.style.background = "rgba(15, 157, 88, 0.1)";
+            pendingBox.style.borderColor = "rgba(15, 157, 88, 0.2)";
+        } else {
+            document.getElementById('live-status').innerText = "All Clear";
+            document.getElementById('live-status').style.color = "var(--success-color)";
+            pendingEl.style.color = "var(--success-color)";
+            pendingBox.style.background = "rgba(15, 157, 88, 0.1)";
+            pendingBox.style.borderColor = "rgba(15, 157, 88, 0.2)";
+        }
+
+        pendingEl.innerText = "₹" + pending.toLocaleString('en-IN');
+        section.style.display = 'block';
+    }
+
+    document.getElementById('p-group').addEventListener('change', calculateLiveSummary);
+    document.getElementById('p-join-date').addEventListener('input', calculateLiveSummary);
+    document.getElementById('p-months-paid').addEventListener('input', calculateLiveSummary);
+    document.getElementById('p-advance-amount').addEventListener('input', calculateLiveSummary);
+
+    // --- Participant Modal Setup (Now Caches Group Engine Data) ---
+    window.openParticipantModal = async function() {
+      openModal('participant-modal');
+      
+      // CRITICAL BUG FIX: Extract only the date string to prevent array assignment error
+      // Updated to use local timezone to prevent UTC off-by-one-day errors
+      const now = new Date();
+      const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      document.getElementById('p-join-date').value = localDate;
+      
+      const select = document.getElementById('p-group');
+      select.innerHTML = '<option value="">-- Fetching Groups... --</option>'; 
+      
+      try {
+        const q = query(collection(db, "groups"), limit(50)); 
+        const snap = await getDocs(q);
+        
+        select.innerHTML = '<option value="">-- Do not assign yet --</option>'; 
+        cachedGroupsForModal = {}; // Reset global cache
+        
+        snap.forEach(doc => {
+          const gData = doc.data();
+          cachedGroupsForModal[doc.id] = gData; // Store for calculation
+          
+          const opt = document.createElement('option');
+          opt.value = doc.id;
+          opt.innerText = `${gData.groupName} (@${doc.id})`;
+          select.appendChild(opt);
+        });
+        
+        // Trigger live calculation in case values are pre-filled
+        calculateLiveSummary();
+
+      } catch(e) { 
+        console.error("Dropdown error", e); 
+        select.innerHTML = '<option value="">-- Error Loading Groups --</option>';
+      }
+    };
+
+    // --- Create Group Form Submission (1-Read Architecture Ready) ---
+    document.getElementById('group-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('g-submit-btn');
+      const groupId = document.getElementById('g-id').value.trim().toUpperCase();
+      const startDatePicked = document.getElementById('g-start-date').value;
+      const startAmountVal = Number(document.getElementById('g-start-amount').value);
+      
+      // Build Schedule Array
+      const scheduleRows = document.querySelectorAll('.schedule-row');
+      let installmentSchedule = [];
+      scheduleRows.forEach(row => {
+        installmentSchedule.push({
+          start: parseInt(row.querySelector('.s-start').value),
+          end: parseInt(row.querySelector('.s-end').value),
+          amount: parseInt(row.querySelector('.s-amt').value)
+        });
+      });
+
+      btn.innerText = "Creating..."; btn.disabled = true;
+
+      try {
+        // Core Logic: We include currentMonth and empty memberSnapshot for 1-read optimization
+        await setDoc(doc(db, "groups", groupId), {
+          groupName: document.getElementById('g-name').value,
+          totalPot: Number(document.getElementById('g-value').value),
+          totalMonths: Number(document.getElementById('g-months').value),
+          startDate: startDatePicked, // Exact Date the user picked
+          startAmount: startAmountVal, // EXACT Starting Amount for the new Group
+          installmentSchedule: installmentSchedule,
+          participantCount: 0,
+          currentMonth: 1, 
+          memberSnapshot: [], 
+          createdAt: serverTimestamp() // We keep this for strict system sorting
+        });
+        
+        e.target.reset();
+        document.getElementById('g-id-icon').innerHTML = ''; // Clear icon
+        document.getElementById('schedule-rows').innerHTML = `
+          <div class="schedule-row">
+            <input type="number" placeholder="1" class="s-start" required min="1">
+            <span>to</span>
+            <input type="number" placeholder="10" class="s-end" required min="1">
+            <span>: ₹</span>
+            <input type="number" placeholder="Amount" class="s-amt" required min="1">
+          </div>`; // Reset schedule UI
+        
+        closeModal();
+        loadGroups(); 
+        
+        // Trigger Custom Success Modal
+        setTimeout(() => showMessage("Group Created!", `Group <b>@${groupId}</b> has been successfully added to the database.`, "success"), 300);
+        
+      } catch (error) {
+        console.error(error);
+        showMessage("Creation Failed", `Error creating your group: <br><br> ${error.message}`, "error");
+      } finally {
+        btn.innerText = "Create Group";
+      }
+    });
+
+    // --- Add Participant Form Submission (Batched Writes + Snapshot arrayUnion) ---
+    document.getElementById('participant-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('p-submit-btn');
+      const userId = document.getElementById('p-id').value.trim().toUpperCase();
+      const userName = document.getElementById('p-name').value;
+      const selectedGroupId = document.getElementById('p-group').value;
+      const joinDate = document.getElementById('p-join-date').value;
+      const monthsPaid = Number(document.getElementById('p-months-paid').value) || 0;
+      const advanceAmt = Number(document.getElementById('p-advance-amount').value) || 0;
+      
+      btn.innerText = "Saving..."; btn.disabled = true;
+
+      try {
+        const batch = writeBatch(db);
+
+        // 1. Create User Document
+        const userRef = doc(db, "users", userId);
+        let userData = {
+          name: userName,
+          phone: document.getElementById('p-phone').value,
+          activeGroups: selectedGroupId ? [selectedGroupId] : [],
+          joinedAt: new Date(joinDate), // Record the exact join date
+          advanceAmount: advanceAmt // Store the fixed advance amount
+        };
+        batch.set(userRef, userData);
+
+        // 2. If Assigned to a Group, update group doc (count + 1-read snapshot)
+        if (selectedGroupId) {
+          const groupRef = doc(db, "groups", selectedGroupId);
+          
+          // Push user info into the array for instant loading later
+          batch.update(groupRef, { 
+            participantCount: increment(1),
+            memberSnapshot: arrayUnion({
+               id: userId,
+               name: userName,
+               monthsPaid: monthsPaid,
+               balanceDue: 0,
+               advanceAmount: advanceAmt,
+               hasAdvance: advanceAmt > 0
+            })
+          });
+          
+          // 3. Create initial transaction for any setup installments they paid upfront
+          if (monthsPaid > 0) {
+            const groupData = cachedGroupsForModal[selectedGroupId];
+            let cumulativeTotal = 0;
+            if (groupData) {
+                const startAmt = groupData.startAmount || 0;
+                const schedule = groupData.installmentSchedule || [];
+                for(let m = 1; m <= monthsPaid; m++) {
+                    cumulativeTotal += calculateDueForMonth(m, startAmt, schedule);
+                }
+            }
+            
+            if (cumulativeTotal > 0) {
+              const txRef = doc(collection(db, "transactions")); 
+              batch.set(txRef, {
+                subscriberId: userId,
+                subscriberName: userName,
+                groupId: selectedGroupId,
+                amount: cumulativeTotal,
+                monthAttributed: monthsPaid,
+                type: "Initial Setup / Catch-up",
+                date: serverTimestamp()
+              });
+            }
+          }
+
+          // 4. Record the independent Advance Amount as a separate transaction
+          if (advanceAmt > 0) {
+              const advTxRef = doc(collection(db, "transactions")); 
+              batch.set(advTxRef, {
+                subscriberId: userId,
+                subscriberName: userName,
+                groupId: selectedGroupId,
+                amount: advanceAmt,
+                monthAttributed: 0, 
+                type: "Advance Payment",
+                date: serverTimestamp()
+              });
+          }
+        }
+
+        await batch.commit();
+        
+        e.target.reset();
+        document.getElementById('p-id-icon').innerHTML = ''; 
+        document.getElementById('live-calc-section').style.display = 'none';
+        
+        closeModal();
+        
+        // Trigger Custom Success Modal
+        setTimeout(() => showMessage("Participant Saved", `User <b>@${userId}</b> successfully registered and assigned.`, "success"), 300);
+
+      } catch (error) {
+        console.error(error);
+        showMessage("Registration Failed", `Could not save participant data: <br><br> ${error.message}`, "error");
+      } finally {
+        btn.innerText = "Save Participant";
+      }
+    });
+
+    // --- ADVANCED BATCHED DELETION (Handles 500+ documents without crashing) ---
+    async function deleteTransactionsInBatches(groupId) {
+        let deletedCount = 0;
+        const batchLimit = 450; // Staying under the 500 hard limit
+        
+        while (true) {
+            const q = query(collection(db, "transactions"), where("groupId", "==", groupId), limit(batchLimit));
+            const snap = await getDocs(q);
+            
+            if (snap.empty) break;
+            
+            const batch = writeBatch(db);
+            snap.forEach(tDoc => batch.delete(tDoc.ref));
+            await batch.commit();
+            deletedCount += snap.size;
+            console.log(`Intermediate Batch: Deleted ${snap.size} transactions...`);
+        }
+        return deletedCount;
+    }
+
+    async function deleteAuctionsInBatches(groupId) {
+        let deletedCount = 0;
+        const batchLimit = 450; // Staying under the 500 hard limit
+        
+        while (true) {
+            const q = query(collection(db, "auctions"), where("groupId", "==", groupId), limit(batchLimit));
+            const snap = await getDocs(q);
+            
+            if (snap.empty) break;
+            
+            const batch = writeBatch(db);
+            snap.forEach(aDoc => batch.delete(aDoc.ref));
+            await batch.commit();
+            deletedCount += snap.size;
+            console.log(`Intermediate Batch: Deleted ${snap.size} auctions...`);
+        }
+        return deletedCount;
+    }
+
+    // --- Custom Delete Modal Logic (Advanced Batched Deletion) ---
+    window.initiateDelete = function(id) {
+      targetIdToDelete = id;
+      openModal('delete-modal');
+    };
+
+    document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+      if (!targetIdToDelete) return;
+      const btn = document.getElementById('confirm-delete-btn');
+      btn.innerText = "Deleting All Records..."; btn.disabled = true;
+
+      try {
+        // Step 1: Recursively delete all transactions in batches (500 limit fix)
+        const totalTxnsDeleted = await deleteTransactionsInBatches(targetIdToDelete);
+        
+        // Step 1.5: Recursively delete all auction payouts in batches
+        const totalAuctionsDeleted = await deleteAuctionsInBatches(targetIdToDelete);
+        
+        // Step 2: Find all participants in this group and clean them up
+        const usersQ = query(collection(db, "users"), where("activeGroups", "array-contains", targetIdToDelete));
+        const usersSnap = await getDocs(usersQ);
+        
+        const finalBatch = writeBatch(db);
+        
+        usersSnap.forEach((uDoc) => {
+            const userData = uDoc.data();
+            // If this is the ONLY group they are in, completely delete the user to remove all data
+            if (userData.activeGroups && userData.activeGroups.length <= 1) {
+                finalBatch.delete(uDoc.ref);
+            } else {
+                // Otherwise, safely untie them from this group but keep them for their other groups
+                finalBatch.update(uDoc.ref, {
+                    activeGroups: arrayRemove(targetIdToDelete)
+                });
+            }
+        });
+        
+        // Step 3: Delete the Group Document itself
+        finalBatch.delete(doc(db, "groups", targetIdToDelete));
+        
+        // Commit the final cleanup atomically
+        await finalBatch.commit();
+
+        closeModal();
+        loadGroups();
+        
+        setTimeout(() => showMessage("Complete Wipe Successful", `Group, ${usersSnap.size} participant links, ${totalTxnsDeleted} ledger records, and ${totalAuctionsDeleted} payouts permanently removed.`, "success"), 300);
+      } catch(e) { 
+        console.error("Error wiping records:", e); 
+        showMessage("Wipe Failed", `Failed to complete deletion: <br><br> ${e.message}`, "error");
+      } finally {
+        btn.innerText = "Delete Group"; btn.disabled = false;
+        targetIdToDelete = null;
+      }
+    });
+
+    // Initialize Page Data
+    loadGroups();
+  </script>
+</body>
+</html>
