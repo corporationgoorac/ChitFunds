@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Customer Portal - Meena Chitfunds</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#F0F2F5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#18191A" media="(prefers-color-scheme: dark)">
+  
+  <style>
+    /* * ==========================================
+     * 1. THEME VARIABLES (PREMIUM META STYLE)
+     * ==========================================
+     */
+    :root { 
+      --bg: #F0F2F5; 
+      --surface: #FFFFFF; 
+      --border: #CED0D4;
+      --divider: #E4E6EB;
+      
+      --brand-primary: #065fd4;
+      --brand-primary-hover: #004ba0;
+      
+      --success-bg: #E4F2EB;
+      --success-txt: #0f9d58;
+      --pending-bg: #FFF8E5;
+      --pending-txt: #F5A623;
+      --danger-txt: #FA383E;
+      
+      --text-main: #050505;
+      --text-muted: #65676B;
+      --input-bg: #F0F2F5;
+      --icon-bg: #E4E6EB;
+
+      --header-bg: #FFFFFF;
+      --header-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      --modal-overlay: rgba(244, 244, 244, 0.85);
+      --modal-btn-bg: #E4E6EB;
+      --modal-btn-txt: #050505;
+      --modal-btn-hover: #D8DADF;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #18191A; 
+        --surface: #242526; 
+        --border: #3E4042;
+        --divider: #3E4042;
+        
+        --brand-primary: #3ea6ff;
+        --brand-primary-hover: #3982E4;
+        
+        --success-bg: rgba(15, 157, 88, 0.15);
+        --success-txt: #34a853;
+        --pending-bg: rgba(245, 166, 35, 0.15);
+        --pending-txt: #E4A231;
+        --danger-txt: #FC5C65;
+        
+        --text-main: #E4E6EB;
+        --text-muted: #B0B3B8;
+        --input-bg: #3A3B3C;
+        --icon-bg: #3A3B3C;
+
+        --header-bg: #242526;
+        --header-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        --card-shadow: none;
+        --modal-overlay: rgba(0, 0, 0, 0.85);
+        --modal-btn-bg: #3A3B3C;
+        --modal-btn-txt: #E4E6EB;
+        --modal-btn-hover: #4E4F50;
+      }
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+    
+    body { 
+      background: var(--bg); 
+      color: var(--text-main); 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0; padding: 0; 
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex; flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* * ==========================================
+     * 2. HEADER
+     * ==========================================
+     */
+    header {
+      background: var(--header-bg);
+      box-shadow: var(--header-shadow);
+      padding: 0 20px;
+      height: 60px;
+      position: sticky; top: 0; z-index: 50;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .brand-logo {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--brand-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-logo::before {
+      content: 'M';
+      background: linear-gradient(135deg, var(--brand-primary), #004ba0);
+      color: white;
+      width: 30px; height: 30px;
+      display: inline-flex; justify-content: center; align-items: center;
+      border-radius: 8px;
+      font-size: 16px; font-weight: 800;
+    }
+
+    .portal-tag {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* * ==========================================
+     * 3. AUTHENTICATION SCREEN (ID INPUT)
+     * ==========================================
+     */
+    .auth-container {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 20px; animation: fadeIn 0.3s ease-out;
+    }
+
+    .login-card {
+      background: var(--surface); border-radius: 16px; padding: 32px 24px;
+      width: 100%; max-width: 400px; box-shadow: var(--card-shadow); border: 1px solid var(--border);
+    }
+
+    .login-header { text-align: center; margin-bottom: 24px; }
+    .login-header h2 { margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;}
+    .login-header p { color: var(--text-muted); font-size: 0.95rem; margin-top: 8px; line-height: 1.4; font-weight: 500;}
+
+    .input-group { margin-bottom: 16px; }
+    .styled-input {
+      width: 100%; background: var(--input-bg); border: 2px solid var(--border);
+      color: var(--text-main); padding: 16px; border-radius: 12px; font-size: 1.1rem;
+      transition: border-color 0.2s; font-weight: 700; text-align: center; letter-spacing: 1px;
+    }
+    .styled-input:focus { border-color: var(--brand-primary); }
+    .styled-input::placeholder { color: var(--text-muted); font-weight: 500; letter-spacing: 0;}
+
+    .btn-primary {
+      width: 100%; background: var(--brand-primary); color: #FFFFFF;
+      border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem;
+      font-weight: 800; cursor: pointer; transition: 0.2s; margin-top: 12px;
+      box-shadow: 0 4px 12px rgba(6, 95, 212, 0.2);
+    }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* * ==========================================
+     * 4. MAIN DASHBOARD (LEDGER VIEW)
+     * ==========================================
+     */
+    #dashboard-view { display: none; padding: 24px 16px; max-width: 800px; margin: 0 auto; padding-bottom: 80px; width: 100%; flex: 1; }
+
+    /* User Profile Top Section */
+    .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .user-profile-left { display: flex; align-items: center; gap: 14px; }
+    .user-avatar { width: 56px; height: 56px; background: linear-gradient(135deg, var(--brand-primary), #004ba0); color: white; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: 800;}
+    .user-info h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase;}
+    .user-info p { margin: 4px 0 0; color: var(--brand-primary); font-size: 0.9rem; font-weight: 800; font-family: monospace; background: var(--brand-accent-light); padding: 4px 8px; border-radius: 6px; display: inline-block;}
+    
+    .btn-logout { background: var(--modal-btn-bg); color: var(--modal-btn-txt); border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; transition: background 0.2s; }
+    .btn-logout:hover { background: var(--modal-btn-hover); }
+
+    /* Summary Stats Grid */
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+    .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: var(--card-shadow); text-align: center; }
+    .summary-box.full-width { grid-column: span 2; background: var(--success-bg); border-color: rgba(15, 157, 88, 0.2); }
+    .s-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;}
+    .s-val { font-size: 1.8rem; font-weight: 800; color: var(--text-main); letter-spacing: -1px; }
+    .s-val.success { color: var(--success-txt); }
+
+    /* Group Detail Dropdown Wrapper */
+    .group-selector-wrapper { background: var(--surface); padding: 16px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px; box-shadow: var(--card-shadow); display: none; }
+    .group-selector-wrapper select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 700; color: var(--text-main); outline: none;}
+
+    /* Generated Table Grid Styles */
+    .ledger-container { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; box-shadow: var(--card-shadow); margin-bottom: 24px; display: none;}
+    .ledger-header { padding: 20px; border-bottom: 1px solid var(--divider); background: var(--input-bg); display: flex; justify-content: space-between; align-items: center;}
+    .lh-title { font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
+    .lh-sub { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-top: 4px; }
+
+    .grid-table { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid var(--divider); }
+    .grid-table:last-child { border-bottom: none; }
+    .g-col { padding: 16px; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; border-right: 1px solid var(--divider);}
+    .g-col:last-child { border-right: none; }
+    
+    /* Table Headers */
+    .grid-table.header-row { background: var(--input-bg); font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;}
+
+    /* Dynamic Row Styles */
+    .month-badge { font-weight: 800; font-size: 0.9rem; color: var(--text-main); }
+    .amount-text { font-weight: 800; font-size: 1.1rem; }
+    
+    .status-cell { justify-content: center; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;}
+    .badge-paid { background: var(--success-bg); color: var(--success-txt); }
+    .badge-pending { background: var(--pending-bg); color: var(--pending-txt); }
+
+    /* Footer */
+    .site-footer { text-align: center; padding: 30px; color: var(--text-muted); font-size: 0.85rem; margin-top: auto; border-top: 1px solid var(--border); font-weight: 600;}
+
+    /* Animations */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .loader { border: 3px solid var(--border); border-top: 3px solid var(--brand-primary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 40px auto; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* Native Modal Alert */
+    #custom-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+    .modal-content { background: var(--surface); border: 1px solid var(--border); padding: 32px 24px; border-radius: 20px; text-align: center; max-width: 340px; width: 100%; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); transform: scale(0.95); opacity: 0; transition: all 0.2s cubic-bezier(0.08, 0.82, 0.17, 1); }
+    .modal-show .modal-content { transform: scale(1); opacity: 1; }
+    .modal-icon { font-size: 3rem; margin-bottom: 16px; display: block; }
+    .modal-title { color: var(--text-main); font-size: 1.4rem; font-weight: 800; margin: 0 0 12px 0; letter-spacing: -0.5px;}
+    .modal-msg { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 24px; font-weight: 500;}
+    .modal-btn { background: var(--brand-primary); color: white; border: none; padding: 14px 24px; font-weight: 800; border-radius: 12px; cursor: pointer; width: 100%; font-size: 1.05rem; }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-logo">MEENA CHITFUNDS</div>
+    <div class="portal-tag">Client Access</div>
+  </header>
+
+  <div id="custom-modal">
+    <div class="modal-content">
+      <span class="modal-icon" id="modal-icon">⚠️</span>
+      <h3 class="modal-title" id="modal-title">Alert</h3>
+      <p class="modal-msg" id="modal-msg">Message</p>
+      <button class="modal-btn" onclick="closeModal()">OK</button>
+    </div>
+  </div>
+
+  <div id="auth-section" class="auth-container">
+    <div class="login-card">
+      <div class="login-header">
+        <h2>View Your Ledger</h2>
+        <p>Enter your Client ID to check your monthly dues and payment status.</p>
+      </div>
+      
+      <div class="input-group">
+        <input type="text" id="custId" class="styled-input" placeholder="e.g. M105" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+      </div>
+      
+      <button class="btn-primary" id="loginBtn" onclick="verifyAccess()">Access Ledger</button>
+    </div>
+  </div>
+
+  <div id="dashboard-view">
+    
+    <div class="user-header">
+      <div class="user-profile-left">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <div class="user-info">
+          <h1 id="userName">Loading...</h1>
+          <p id="userId">@ID</p>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="location.reload()">Exit</button>
+    </div>
+
+    <div class="group-selector-wrapper" id="group-selector-wrapper">
+        <select id="user-group-select" onchange="renderGroupLedger(this.value)"></select>
+    </div>
+    
+    <div id="loader-spinner" style="display:none;"><div class="loader"></div></div>
+
+    <div id="ledger-wrapper" style="display: none;">
+        <div class="summary-grid">
+            <div class="summary-box">
+                <div class="s-label">Total Duration</div>
+                <div class="s-val" id="sum-months">--</div>
+            </div>
+            <div class="summary-box">
+                <div class="s-label">Months Paid</div>
+                <div class="s-val success" id="sum-paid">--</div>
+            </div>
+            <div class="summary-box full-width">
+                <div class="s-label">Your Total Contribution</div>
+                <div class="s-val success" id="sum-total-amount">₹0</div>
+            </div>
+        </div>
+
+        <div class="ledger-container" id="ledger-container">
+            <div class="ledger-header">
+                <div>
+                    <div class="lh-title" id="lg-title">Group Name</div>
+                    <div class="lh-sub">Mathematical Ledger Breakdown</div>
+                </div>
+            </div>
+            
+            <div class="grid-table header-row">
+                <div class="g-col">Timeline</div>
+                <div class="g-col" style="justify-content: right;">Amount</div>
+                <div class="g-col status-cell">Status</div>
+            </div>
+            
+            <div id="ledger-rows-container">
+                </div>
+        </div>
+    </div>
+
+  </div>
+
+  <footer class="site-footer">
+    <div style="margin-bottom: 6px; font-weight: 800; color: var(--text-main); font-size: 0.9rem;">MEENA CHITFUNDS FINANCIAL SERVICES</div>
+    <div>Secure Client Portal</div>
+  </footer>
+
+  <script type="module">
+    import { db } from "./config.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+    // --- MODAL LOGIC ---
+    window.showModal = (title, message, type = "error") => {
+      const modal = document.getElementById("custom-modal");
+      document.getElementById("modal-title").innerText = title;
+      document.getElementById("modal-msg").innerText = message;
+      document.getElementById("modal-icon").innerText = type === "error" ? "⚠️" : "✅";
+      
+      modal.style.display = "flex";
+      setTimeout(() => modal.classList.add("modal-show"), 10);
+    };
+
+    window.closeModal = () => {
+      const modal = document.getElementById("custom-modal");
+      modal.classList.remove("modal-show");
+      setTimeout(() => modal.style.display = "none", 200);
+    };
+
+    // --- CORE CALCULATION ENGINE ---
+    // Recycled directly from admin portal for 100% mathematical accuracy
+    function calculateDueForMonth(targetMonth, startAmount, schedule) {
+        if (targetMonth <= 1) return startAmount;
+        let currentAmount = startAmount;
+        for (let m = 2; m <= targetMonth; m++) {
+            let increment = 0;
+            for (let tier of schedule) {
+                if (m >= tier.start && m <= tier.end) {
+                    increment = tier.amount; break;
+                }
+            }
+            currentAmount += increment;
+        }
+        return currentAmount;
+    }
+
+    function calculateCurrentSystemMonth(startDateStr) {
+        if(!startDateStr) return 1; 
+        const start = new Date(startDateStr);
+        const now = new Date();
+        let months = (now.getFullYear() - start.getFullYear()) * 12;
+        months -= start.getMonth();
+        months += now.getMonth();
+        return months <= 0 ? 1 : months + 1; 
+    }
+    
+    // NEW ALGORITHM: Deep dynamic timeline calculating from jointAt point
+    function calculateParticipantExpectedMonth(user, groupData) {
+        if (!user || !groupData) return 1;
+        const start = user?.joinedAt ? (typeof user.joinedAt.toDate === 'function' ? user.joinedAt.toDate() : new Date(user.joinedAt)) : new Date(groupData?.startDate || new Date());
+        const now = new Date();
+        let elapsed = (now.getFullYear() - start.getFullYear()) * 12;
+        elapsed -= start.getMonth();
+        elapsed += now.getMonth();
+        if (elapsed < 0) elapsed = 0;
+        
+        let expected = elapsed + 1; 
+        const totalGroupMonths = groupData.totalMonths || 0;
+        if (totalGroupMonths > 0 && expected > totalGroupMonths) {
+            expected = totalGroupMonths;
+        }
+        return expected;
+    }
+
+    // --- STATE VARIABLES ---
+    let currentUserData = null;
+
+    // --- VERIFY & LOGIN (0-Auth Required, just ID check) ---
+    window.verifyAccess = async () => {
+      const idInput = document.getElementById("custId").value.trim().toUpperCase();
+
+      if (!idInput) {
+        window.showModal("ID Required", "Please enter your valid Client ID to view your ledger.");
+        return;
+      }
+
+      const btn = document.getElementById("loginBtn");
+      btn.innerText = "Authenticating...";
+      btn.disabled = true;
+
+      try {
+        // 1. Fetch User Data
+        const docRef = doc(db, "users", idInput);
+        const snap = await getDoc(docRef);
+
+        if (!snap.exists()) {
+            throw new Error("Client ID not found. Please contact administration.");
+        }
+
+        currentUserData = snap.data();
+        currentUserData.id = snap.id;
+
+        // Ensure user is in at least one group
+        if (!currentUserData.activeGroups || currentUserData.activeGroups.length === 0) {
+             throw new Error("Your account is currently not assigned to any active groups.");
+        }
+
+        // 2. Transition UI
+        document.getElementById("auth-section").style.display = "none";
+        document.getElementById("dashboard-view").style.display = "block";
+        
+        // Populate Header Profile
+        document.getElementById("userName").innerText = currentUserData.name || "Client";
+        document.getElementById("userId").innerText = `@${currentUserData.id}`;
+        document.getElementById("userAvatar").innerText = currentUserData.name ? currentUserData.name.charAt(0).toUpperCase() : "C";
+
+        // Setup Dropdown
+        const selectEl = document.getElementById("user-group-select");
+        const wrapperEl = document.getElementById("group-selector-wrapper");
+        selectEl.innerHTML = "";
+        
+        if (currentUserData.activeGroups.length > 1) {
+            wrapperEl.style.display = "block";
+            selectEl.innerHTML = '<option value="">-- Select a Group to View --</option>';
+            currentUserData.activeGroups.forEach(gId => {
+                const opt = document.createElement("option");
+                opt.value = gId; opt.innerText = `View Group: @${gId}`;
+                selectEl.appendChild(opt);
+            });
+        } else {
+            // Auto render if only 1 group
+            wrapperEl.style.display = "none";
+            renderGroupLedger(currentUserData.activeGroups[0]);
+        }
+
+      } catch (e) {
+        console.error(e);
+        window.showModal("Access Denied", e.message || "A system error occurred connecting to the database.");
+        btn.innerText = "Access Ledger";
+        btn.disabled = false;
+      }
+    };
+
+    // --- RENDER DYNAMIC MATHEMATICAL LEDGER ---
+    window.renderGroupLedger = async function(groupId) {
+        if (!groupId) {
+            document.getElementById("ledger-wrapper").style.display = "none";
+            return;
+        }
+
+        document.getElementById("ledger-wrapper").style.display = "none";
+        document.getElementById("loader-spinner").style.display = "block";
+
+        try {
+            // 1. Fetch Group Master Settings
+            const groupSnap = await getDoc(doc(db, "groups", groupId));
+            if (!groupSnap.exists()) throw new Error("Group configuration missing.");
+            
+            const groupData = groupSnap.data();
+            
+            // 2. Find User's specific snapshot inside this group to see how many months they paid
+            let monthsPaid = 0;
+            if (groupData.memberSnapshot) {
+                const userState = groupData.memberSnapshot.find(s => s.id === currentUserData.id);
+                if(userState) monthsPaid = userState.monthsPaid;
+            }
+
+            // 3. Engine Variables
+            const totalMonths = groupData.totalMonths || 0;
+            const startAmt = groupData.startAmount || 0;
+            const schedule = groupData.installmentSchedule || [];
+            const systemCurrentMonth = calculateCurrentSystemMonth(groupData.startDate);
+            const expectedMonth = calculateParticipantExpectedMonth(currentUserData, groupData);
+            
+            // 4. Update UI Headers
+            document.getElementById("sum-months").innerText = totalMonths;
+            document.getElementById("sum-paid").innerText = monthsPaid;
+            document.getElementById("lg-title").innerText = groupData.groupName || `@${groupId}`;
+
+            // 5. Generate Rows & Calculate Total Paid Amount
+            const container = document.getElementById("ledger-rows-container");
+            container.innerHTML = "";
+            
+            // STRICT DEFENSIVE CHECK: Safely Integrate Independent Advance Amount into calculation
+            let advanceAmt = currentUserData?.advanceAmount ? Number(currentUserData.advanceAmount) : 0;
+            let cumulativePaidAmount = advanceAmt;
+
+            // Render Advance Amount Row if exists to keep total amount matching logic transparent
+            if (advanceAmt > 0) {
+                const advRow = document.createElement("div");
+                advRow.className = "grid-table";
+                advRow.style.backgroundColor = "var(--success-bg)";
+                advRow.innerHTML = `
+                    <div class="g-col">
+                        <span class="month-badge" style="color: var(--success-txt);">Advance</span>
+                    </div>
+                    <div class="g-col" style="justify-content: right;">
+                        <span class="amount-text" style="color: var(--success-txt);">₹${Number(advanceAmt).toLocaleString('en-IN')}</span>
+                    </div>
+                    <div class="g-col status-cell">
+                        <span class="badge badge-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Paid</span>
+                    </div>
+                `;
+                container.appendChild(advRow);
+            }
+
+            for (let m = 1; m <= totalMonths; m++) {
+                // Calculate exact mathematical amount for this specific tier month
+                const dueAmount = calculateDueForMonth(m, startAmt, schedule);
+                
+                // Determine Status
+                let statusHtml = "";
+                let amountHtml = `<span class="amount-text">₹${Number(dueAmount).toLocaleString('en-IN')}</span>`;
+                
+                if (m <= monthsPaid) {
+                    // Paid
+                    cumulativePaidAmount += dueAmount; // Add to the summary total
+                    statusHtml = `<span class="badge badge-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Paid</span>`;
+                } else if (m <= expectedMonth) {
+                    // Missed / Currently Due
+                    statusHtml = `<span class="badge badge-pending">Pending</span>`;
+                    amountHtml = `<span class="amount-text" style="color:var(--danger-txt);">₹${Number(dueAmount).toLocaleString('en-IN')}</span>`;
+                } else {
+                    // Future Month (Not yet due)
+                    statusHtml = `<span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Upcoming</span>`;
+                    amountHtml = `<span class="amount-text" style="color:var(--text-muted); font-weight: 600;">₹${Number(dueAmount).toLocaleString('en-IN')}</span>`;
+                }
+
+                const row = document.createElement("div");
+                row.className = "grid-table";
+                
+                // Highlight current active month slightly
+                if(m === expectedMonth && m > monthsPaid) {
+                    row.style.background = "var(--pending-bg)";
+                }
+
+                row.innerHTML = `
+                    <div class="g-col">
+                        <span class="month-badge">Month ${m}</span>
+                    </div>
+                    <div class="g-col" style="justify-content: right;">
+                        ${amountHtml}
+                    </div>
+                    <div class="g-col status-cell">
+                        ${statusHtml}
+                    </div>
+                `;
+                container.appendChild(row);
+            }
+
+            // Update the new Total Contribution summary box
+            document.getElementById("sum-total-amount").innerText = `₹${cumulativePaidAmount.toLocaleString('en-IN')}`;
+
+            // Show view
+            document.getElementById("loader-spinner").style.display = "none";
+            document.getElementById("ledger-wrapper").style.display = "block";
+            document.getElementById("ledger-container").style.display = "block";
+
+        } catch (err) {
+            console.error(err);
+            document.getElementById("loader-spinner").style.display = "none";
+            window.showModal("Engine Error", "Failed to calculate mathematical ledger for this group.");
+        }
+    };
+
+    // --- DYNAMIC URL AUTO-LOGIN ---
+    const initAutoLogin = () => {
+      // Allows domain.com/public.html?id=RAHUL_101
+      const searchId = new URLSearchParams(window.location.search).get('id');
+      const hashId = window.location.hash.replace('#', '');
+      
+      const autoId = (searchId || hashId || '').trim().toUpperCase();
+      
+      if (autoId) {
+          document.getElementById("custId").value = autoId;
+          verifyAccess();
+      }
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAutoLogin);
+    } else {
+        initAutoLogin();
+    }
+  </script>
+</body>
+</html>
