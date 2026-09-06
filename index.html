@@ -2,358 +2,503 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Customer Portal - Meena Chitfunds</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#F0F2F5" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#18191A" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f0f" />
+  <link rel="manifest" href="manifest.json">
+  <title>Payments - Meena Chitfunds</title>
   
   <style>
-    /* * ==========================================
-     * 1. THEME VARIABLES (PREMIUM META STYLE)
-     * ==========================================
-     */
-    :root { 
-      --bg: #F0F2F5; 
-      --surface: #FFFFFF; 
-      --border: #CED0D4;
-      --divider: #E4E6EB;
-      
-      --brand-primary: #065fd4;
-      --brand-primary-hover: #004ba0;
-      
-      --success-bg: #E4F2EB;
-      --success-txt: #0f9d58;
-      --pending-bg: #FFF8E5;
-      --pending-txt: #F5A623;
-      --danger-txt: #FA383E;
-      
-      --text-main: #050505;
-      --text-muted: #65676B;
-      --input-bg: #F0F2F5;
-      --icon-bg: #E4E6EB;
-
-      --header-bg: #FFFFFF;
-      --header-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-      --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
-      --modal-overlay: rgba(244, 244, 244, 0.85);
-      --modal-btn-bg: #E4E6EB;
-      --modal-btn-txt: #050505;
-      --modal-btn-hover: #D8DADF;
+    /* Premium Theme Variables */
+    :root {
+      --bg-color: #f4f7f6;
+      --text-main: #111111;
+      --text-muted: #6b7280;
+      --surface-color: #ffffff;
+      --surface-hover: #f9fafb;
+      --border-color: #e5e7eb;
+      --brand-accent: #065fd4;
+      --brand-accent-light: #e6f0fa;
+      --danger-color: #dc3545;
+      --danger-light: #fde8e8;
+      --warning-color: #f59e0b;
+      --warning-light: #fef3c7;
+      --success-color: #0f9d58;
+      --success-light: #e6f4ea;
+      --modal-overlay: rgba(0, 0, 0, 0.6);
+      --card-shadow: 0 4px 12px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.02);
     }
-    
+
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #18191A; 
-        --surface: #242526; 
-        --border: #3E4042;
-        --divider: #3E4042;
-        
-        --brand-primary: #3ea6ff;
-        --brand-primary-hover: #3982E4;
-        
-        --success-bg: rgba(15, 157, 88, 0.15);
-        --success-txt: #34a853;
-        --pending-bg: rgba(245, 166, 35, 0.15);
-        --pending-txt: #E4A231;
-        --danger-txt: #FC5C65;
-        
-        --text-main: #E4E6EB;
-        --text-muted: #B0B3B8;
-        --input-bg: #3A3B3C;
-        --icon-bg: #3A3B3C;
-
-        --header-bg: #242526;
-        --header-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        --card-shadow: none;
+        --bg-color: #0a0a0a;
+        --text-main: #f8f9fa;
+        --text-muted: #9ca3af;
+        --surface-color: #141414;
+        --surface-hover: #1f1f1f;
+        --border-color: #2d2d2d;
+        --brand-accent: #3ea6ff;
+        --brand-accent-light: rgba(62, 166, 255, 0.15);
+        --danger-color: #ff4e45;
+        --danger-light: rgba(255, 78, 69, 0.15);
+        --warning-color: #fbbf24;
+        --warning-light: rgba(251, 191, 36, 0.15);
+        --success-color: #34a853;
+        --success-light: rgba(52, 168, 83, 0.15);
         --modal-overlay: rgba(0, 0, 0, 0.85);
-        --modal-btn-bg: #3A3B3C;
-        --modal-btn-txt: #E4E6EB;
-        --modal-btn-hover: #4E4F50;
+        --card-shadow: 0 4px 12px rgba(0,0,0,0.2);
       }
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-    
-    body { 
-      background: var(--bg); 
-      color: var(--text-main); 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      margin: 0; padding: 0; 
-      min-height: 100vh;
-      min-height: 100dvh;
-      display: flex; flex-direction: column;
-      -webkit-font-smoothing: antialiased;
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
     }
 
-    /* * ==========================================
-     * 2. HEADER
-     * ==========================================
-     */
+    /* Premium Header */
     header {
-      background: var(--header-bg);
-      box-shadow: var(--header-shadow);
-      padding: 0 20px;
-      height: 60px;
-      position: sticky; top: 0; z-index: 50;
-      display: flex; justify-content: space-between; align-items: center;
+      position: sticky;
+      top: 0;
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 20px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
+    @media (prefers-color-scheme: dark) { header { background-color: rgba(20, 20, 20, 0.85); } }
 
-    .brand-logo {
-      font-size: 1.2rem;
+    .header-titles h1 {
+      margin: 0;
+      font-size: 22px;
       font-weight: 800;
       letter-spacing: -0.5px;
-      color: var(--brand-primary);
+    }
+    
+    .header-back-btn {
+      background: none;
+      border: none;
+      color: var(--text-main);
+      cursor: pointer;
+      padding: 4px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+      margin-right: 12px;
     }
-    .brand-logo::before {
-      content: 'M';
-      background: linear-gradient(135deg, var(--brand-primary), #004ba0);
-      color: white;
-      width: 30px; height: 30px;
-      display: inline-flex; justify-content: center; align-items: center;
-      border-radius: 8px;
-      font-size: 16px; font-weight: 800;
-    }
+    .header-back-btn:active { background-color: var(--surface-hover); }
+    .header-back-btn svg { width: 24px; height: 24px; fill: currentColor; }
 
-    .portal-tag {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+    .header-titles {
+      display: flex;
+      align-items: center;
     }
 
-    /* * ==========================================
-     * 3. AUTHENTICATION SCREEN (ID INPUT)
-     * ==========================================
-     */
-    .auth-container {
-      flex: 1; display: flex; flex-direction: column; align-items: center;
-      justify-content: center; padding: 20px; animation: fadeIn 0.3s ease-out;
+    /* Hero Action Button */
+    .action-bar { padding: 24px 20px; }
+    .action-btn {
+      width: 100%; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: #ffffff;
+      border: none; padding: 18px; border-radius: 16px;
+      font-size: 16px; font-weight: 700; cursor: pointer; display: flex;
+      justify-content: center; align-items: center; gap: 10px; transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 8px 20px rgba(6, 95, 212, 0.3);
     }
-
-    .login-card {
-      background: var(--surface); border-radius: 16px; padding: 32px 24px;
-      width: 100%; max-width: 400px; box-shadow: var(--card-shadow); border: 1px solid var(--border);
+    @media (prefers-color-scheme: dark) {
+      .action-btn { background: linear-gradient(135deg, #3ea6ff, #065fd4); box-shadow: 0 8px 20px rgba(6, 95, 212, 0.4); }
     }
+    .action-btn:active { transform: scale(0.97); box-shadow: 0 4px 10px rgba(6, 95, 212, 0.2); }
+    .action-btn svg { width: 22px; height: 22px; fill: currentColor; }
 
-    .login-header { text-align: center; margin-bottom: 24px; }
-    .login-header h2 { margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;}
-    .login-header p { color: var(--text-muted); font-size: 0.95rem; margin-top: 8px; line-height: 1.4; font-weight: 500;}
+    /* List Container & Transactions */
+    .list-container { padding: 0 20px 80px; }
+    .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; margin-bottom: 16px; color: var(--text-muted); }
 
-    .input-group { margin-bottom: 16px; }
-    .styled-input {
-      width: 100%; background: var(--input-bg); border: 2px solid var(--border);
-      color: var(--text-main); padding: 16px; border-radius: 12px; font-size: 1.1rem;
-      transition: border-color 0.2s; font-weight: 700; text-align: center; letter-spacing: 1px;
+    .txn-card {
+      background-color: var(--surface-color); border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
+      box-shadow: var(--card-shadow); transition: transform 0.2s;
     }
-    .styled-input:focus { border-color: var(--brand-primary); }
-    .styled-input::placeholder { color: var(--text-muted); font-weight: 500; letter-spacing: 0;}
-
-    .btn-primary {
-      width: 100%; background: var(--brand-primary); color: #FFFFFF;
-      border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem;
-      font-weight: 800; cursor: pointer; transition: 0.2s; margin-top: 12px;
-      box-shadow: 0 4px 12px rgba(6, 95, 212, 0.2);
-    }
-    .btn-primary:active { transform: scale(0.97); }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-
-    /* * ==========================================
-     * 4. MAIN DASHBOARD (LEDGER VIEW)
-     * ==========================================
-     */
-    #dashboard-view { display: none; padding: 24px 16px; max-width: 800px; margin: 0 auto; padding-bottom: 80px; width: 100%; flex: 1; }
-
-    /* User Profile Top Section */
-    .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .user-profile-left { display: flex; align-items: center; gap: 14px; }
-    .user-avatar { width: 56px; height: 56px; background: linear-gradient(135deg, var(--brand-primary), #004ba0); color: white; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: 800;}
-    .user-info h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase;}
-    .user-info p { margin: 4px 0 0; color: var(--brand-primary); font-size: 0.9rem; font-weight: 800; font-family: monospace; background: var(--brand-accent-light); padding: 4px 8px; border-radius: 6px; display: inline-block;}
+    .txn-card:active { transform: scale(0.98); background-color: var(--surface-hover); }
     
-    .btn-logout { background: var(--modal-btn-bg); color: var(--modal-btn-txt); border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; transition: background 0.2s; }
-    .btn-logout:hover { background: var(--modal-btn-hover); }
+    .txn-left { display: flex; align-items: center; gap: 14px; }
+    .txn-icon { width: 44px; height: 44px; border-radius: 14px; background-color: var(--brand-accent-light); color: var(--brand-accent); display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 18px; }
+    .txn-info h3 { margin: 0 0 4px 0; font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
+    .txn-meta { font-size: 12px; color: var(--text-muted); font-weight: 500;}
+    .txn-amount { font-size: 18px; font-weight: 800; color: var(--success-color); text-align: right;}
+    .txn-date { font-size: 11px; color: var(--text-muted); text-align: right; margin-top: 4px; font-weight: 600; }
 
-    /* Summary Stats Grid */
-    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-    .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: var(--card-shadow); text-align: center; }
-    .summary-box.full-width { grid-column: span 2; background: var(--success-bg); border-color: rgba(15, 157, 88, 0.2); }
-    .s-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;}
-    .s-val { font-size: 1.8rem; font-weight: 800; color: var(--text-main); letter-spacing: -1px; }
-    .s-val.success { color: var(--success-txt); }
+    .load-more-btn { width: 100%; background: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 16px; border-radius: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; box-shadow: var(--card-shadow); }
+    .load-more-btn:active { background: var(--surface-hover); transform: scale(0.98);}
 
-    /* Group Detail Dropdown Wrapper */
-    .group-selector-wrapper { background: var(--surface); padding: 16px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px; box-shadow: var(--card-shadow); display: none; }
-    .group-selector-wrapper select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 700; color: var(--text-main); outline: none;}
-
-    /* Generated Table Grid Styles */
-    .ledger-container { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; box-shadow: var(--card-shadow); margin-bottom: 24px; display: none;}
-    .ledger-header { padding: 20px; border-bottom: 1px solid var(--divider); background: var(--input-bg); display: flex; justify-content: space-between; align-items: center;}
-    .lh-title { font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
-    .lh-sub { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-top: 4px; }
-
-    .grid-table { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid var(--divider); }
-    .grid-table:last-child { border-bottom: none; }
-    .g-col { padding: 16px; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; border-right: 1px solid var(--divider);}
-    .g-col:last-child { border-right: none; }
+    /* Full Screen Side Modals */
+    .modal {
+      position: fixed; top: 0; right: 0; width: 100%; height: 100%;
+      background-color: var(--bg-color); z-index: 100; transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column;
+    }
+    .modal.active { transform: translateX(0); }
     
-    /* Table Headers */
-    .grid-table.header-row { background: var(--input-bg); font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;}
-
-    /* Dynamic Row Styles */
-    .month-badge { font-weight: 800; font-size: 0.9rem; color: var(--text-main); }
-    .amount-text { font-weight: 800; font-size: 1.1rem; }
+    /* Ensure Calc Modal appears over Search Modal if both are active */
+    #calc-modal { z-index: 105; }
     
-    .status-cell { justify-content: center; }
-    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;}
-    .badge-paid { background: var(--success-bg); color: var(--success-txt); }
-    .badge-pending { background: var(--pending-bg); color: var(--pending-txt); }
+    .modal-header { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border-color); background-color: var(--surface-color); }
+    .back-btn { background: var(--surface-hover); border: 1px solid var(--border-color); border-radius: 50%; color: var(--text-main); padding: 8px; margin-left: -4px; cursor: pointer; display: flex; align-items: center; justify-content: center;}
+    .back-btn svg { width: 20px; height: 20px; fill: currentColor; }
+    .modal-title { font-size: 18px; font-weight: 800; margin-left: 14px; letter-spacing: -0.5px;}
+    .modal-body { padding: 24px 20px; flex: 1; overflow-y: auto; }
 
-    /* Footer */
-    .site-footer { text-align: center; padding: 30px; color: var(--text-muted); font-size: 0.85rem; margin-top: auto; border-top: 1px solid var(--border); font-weight: 600;}
+    /* Advanced Participant Search Cards */
+    .search-result-card {
+      background: var(--surface-color); border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; flex-direction: column; cursor: pointer; transition: 0.2s;
+      box-shadow: var(--card-shadow);
+    }
+    .search-result-card:active { transform: scale(0.97); background: var(--surface-hover); border-color: var(--brand-accent); }
+    .sr-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .sr-name { font-size: 16px; font-weight: 800; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px;}
+    .sr-id { font-size: 11px; background: var(--brand-accent-light); color: var(--brand-accent); padding: 4px 8px; border-radius: 6px; font-weight: 800; font-family: monospace; letter-spacing: 0.5px;}
+    .sr-bottom { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); font-weight: 600;}
 
-    /* Animations */
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .loader { border: 3px solid var(--border); border-top: 3px solid var(--brand-primary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 40px auto; }
+    /* Forms & Inputs */
+    .input-group { margin-bottom: 24px; position: relative; }
+    .input-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
+    .input-group input, .input-group select {
+      width: 100%; background-color: var(--surface-color); border: 2px solid var(--border-color);
+      color: var(--text-main); padding: 16px; border-radius: 14px; font-size: 16px; outline: none; appearance: none; font-weight: 700; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-group input:focus, .input-group select:focus { border-color: var(--brand-accent); box-shadow: 0 0 0 4px var(--brand-accent-light); }
+    
+    #p-id { font-size: 16px; letter-spacing: 0px; } 
+    
+    .validation-icon { position: absolute; right: 16px; bottom: 16px; font-size: 18px; }
+    .valid { color: var(--success-color); }
+    .invalid { color: var(--danger-color); }
+    .loading-text { font-size: 11px; color: var(--brand-accent); position: absolute; right: 14px; top: 0; display: none; font-weight: 800; text-transform: uppercase;}
+
+    /* Advanced Calculation Card (NEO-BANKING STYLE) */
+    .calc-card { background: var(--bg-color); padding: 0px; border-radius: 0px; margin-bottom: 0px; border: none; display: block; box-shadow: none; }
+    
+    .user-profile { display: flex; align-items: center; gap: 16px; border-bottom: 1px dashed var(--border-color); padding-bottom: 16px; margin-bottom: 24px; }
+    .profile-avatar { width: 50px; height: 50px; border-radius: 14px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; display: flex; justify-content: center; align-items: center; font-size: 20px; font-weight: 800; }
+    .profile-details { flex: 1; }
+    .user-name { font-size: 20px; font-weight: 800; margin: 0 0 4px 0; text-transform: uppercase;}
+    .user-phone { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+    
+    /* Chit Progress Bar */
+    .progress-container { margin-bottom: 20px; }
+    .progress-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
+    .progress-track { width: 100%; height: 8px; background-color: var(--border-color); border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: var(--success-color); border-radius: 4px; transition: width 0.5s ease; }
+
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .stat-box { background: var(--surface-color); padding: 14px; border-radius: 12px; text-align: left; border: 1px solid var(--border-color);}
+    .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+    .stat-value { font-size: 18px; font-weight: 800; color: var(--text-main); }
+    .stat-value.highlight { color: var(--brand-accent); }
+
+    /* Neo-Banking Amount Display */
+    .due-section { background: var(--surface-color); padding: 24px; border-radius: 16px; text-align: center; border: 2px solid var(--brand-accent-light); position: relative; overflow: hidden;}
+    .due-section::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--brand-accent); }
+    .due-label { font-size: 14px; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;}
+    .due-calc-hint { font-size: 11px; color: var(--brand-accent); font-weight: 600; margin-bottom: 12px; background: var(--brand-accent-light); display: inline-block; padding: 4px 10px; border-radius: 20px;}
+    
+    .due-amount-wrapper { display: flex; justify-content: center; align-items: baseline; gap: 4px; }
+    .currency-symbol { font-size: 24px; font-weight: 700; color: var(--brand-accent); }
+    
+    /* READONLY OVERRIDE TO SECURE FIELD */
+    .due-amount-input { width: 100%; max-width: 200px; font-size: 42px; font-weight: 800; color: var(--brand-accent); text-align: center; background: none; border: none; outline: none; padding: 0; letter-spacing: -1px;}
+    .due-amount-input:read-only { user-select: none; -webkit-user-select: none; pointer-events: none; opacity: 1; }
+
+    /* NEW ARREARS BANNER */
+    .arrears-banner { background: var(--danger-light); color: var(--danger-color); padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 800; text-align: center; margin-bottom: 20px; display: none; border: 1px solid rgba(220, 53, 69, 0.2); letter-spacing: 0.5px; text-transform: uppercase;}
+
+    .submit-btn { background: var(--success-color); color: #ffffff; border: none; width: 100%; padding: 18px; border-radius: 16px; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(15, 157, 88, 0.25); transition: 0.2s; margin-top: 20px;}
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+    .submit-btn:active:not(:disabled) { transform: scale(0.97); box-shadow: 0 4px 10px rgba(15, 157, 88, 0.2); }
+
+    /* GPay Style Overlay */
+    .gpay-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-color: var(--bg-color); z-index: 300; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out;
+    }
+    .gpay-overlay.active { opacity: 1; pointer-events: all; }
+    
+    .gpay-circle {
+      width: 120px; height: 120px; border-radius: 50%; background-color: #e5f4eb;
+      display: flex; justify-content: center; align-items: center; margin-bottom: 24px;
+      transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @media (prefers-color-scheme: dark) { .gpay-circle { background-color: rgba(15, 157, 88, 0.15); } }
+    .gpay-overlay.active .gpay-circle { transform: scale(1); }
+    
+    .gpay-check { width: 60px; height: 60px; fill: none; stroke: var(--success-color); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; }
+    .gpay-overlay.active .gpay-check { animation: drawCheck 0.6s ease forwards 0.3s; }
+    @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+    .gpay-title { font-size: 24px; font-weight: 800; color: var(--text-main); margin: 0 0 8px 0; opacity: 0; transform: translateY(10px); transition: 0.4s ease 0.5s; letter-spacing: -0.5px;}
+    .gpay-amount { font-size: 48px; font-weight: 800; color: var(--text-main); margin: 0 0 32px 0; opacity: 0; transform: translateY(10px); transition: 0.4s ease 0.6s; letter-spacing: -1px;}
+    .gpay-overlay.active .gpay-title, .gpay-overlay.active .gpay-amount, .gpay-overlay.active .gpay-footer { opacity: 1; transform: translateY(0); }
+
+    .gpay-footer { position: absolute; bottom: 32px; font-size: 12px; color: var(--brand-accent); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0; transition: 0.4s ease 0.8s;}
+
+    /* System Alert Modals */
+    .center-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);}
+    .center-modal.active { opacity: 1; pointer-events: all; }
+    .mini-modal-content {
+      background-color: var(--surface-color); width: 90%; max-width: 340px;
+      border-radius: 24px; padding: 30px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      transform: scale(0.95); transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+      border: 1px solid var(--border-color); text-align: center;
+    }
+    .center-modal.active .mini-modal-content { transform: scale(1); }
+    .msg-icon { font-size: 48px; margin-bottom: 16px; }
+    .mini-modal-title { font-size: 20px; font-weight: 800; margin: 0 0 12px 0; color: var(--text-main); }
+    .mini-modal-text { font-size: 14px; color: var(--text-muted); margin: 0 0 28px 0; line-height: 1.5; font-weight: 500; word-break: break-word;}
+    .mini-btn { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; width: 100%; background-color: var(--brand-accent); color: #fff;}
+
+    /* Search Selection User List Styling */
+    .user-list-box { display: flex; flex-direction: column; }
+    .u-item { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--card-shadow); cursor: pointer; transition: 0.2s;}
+    .u-item:active { transform: scale(0.98); background-color: var(--surface-hover); border-color: var(--brand-accent); }
+    .u-name { font-weight: 800; font-size: 16px; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px;}
+    .u-id { font-size: 11px; color: var(--brand-accent); font-weight: 800; font-family: monospace; background: var(--brand-accent-light); padding: 4px 8px; border-radius: 6px; display: inline-block;}
+
+    /* Loading Spinner */
+    .loader { border: 3px solid var(--border-color); border-top: 3px solid var(--brand-accent); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 20px auto; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-    /* Native Modal Alert */
-    #custom-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
-    .modal-content { background: var(--surface); border: 1px solid var(--border); padding: 32px 24px; border-radius: 20px; text-align: center; max-width: 340px; width: 100%; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); transform: scale(0.95); opacity: 0; transition: all 0.2s cubic-bezier(0.08, 0.82, 0.17, 1); }
-    .modal-show .modal-content { transform: scale(1); opacity: 1; }
-    .modal-icon { font-size: 3rem; margin-bottom: 16px; display: block; }
-    .modal-title { color: var(--text-main); font-size: 1.4rem; font-weight: 800; margin: 0 0 12px 0; letter-spacing: -0.5px;}
-    .modal-msg { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 24px; font-weight: 500;}
-    .modal-btn { background: var(--brand-primary); color: white; border: none; padding: 14px 24px; font-weight: 800; border-radius: 12px; cursor: pointer; width: 100%; font-size: 1.05rem; }
-
   </style>
 </head>
 <body>
 
   <header>
-    <div class="brand-logo">MEENA CHITFUNDS</div>
-    <div class="portal-tag">Client Access</div>
+    <div class="header-titles">
+      <button onclick="window.history.back()" class="header-back-btn">
+          <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      </button>
+      <h1>Meena Chitfunds</h1>
+    </div>
   </header>
 
-  <div id="custom-modal">
-    <div class="modal-content">
-      <span class="modal-icon" id="modal-icon">⚠️</span>
-      <h3 class="modal-title" id="modal-title">Alert</h3>
-      <p class="modal-msg" id="modal-msg">Message</p>
-      <button class="modal-btn" onclick="closeModal()">OK</button>
+  <main>
+    <div class="action-bar">
+      <button class="action-btn" onclick="openPaymentSearchModal()">
+        <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+        Record New Payment
+      </button>
     </div>
-  </div>
 
-  <div id="auth-section" class="auth-container">
-    <div class="login-card">
-      <div class="login-header">
-        <h2>View Your Ledger</h2>
-        <p>Enter your Client ID to check your monthly dues and payment status.</p>
-      </div>
+    <div class="list-container">
+      <div class="section-title">Recent Ledger</div>
+      <div id="txn-list">
+        </div>
+      <button id="load-more-btn" class="load-more-btn" style="display: none;">Load More Transactions</button>
+    </div>
+  </main>
+
+  <aside id="payment-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div class="modal-title">Search Participant</div>
+    </div>
+    <div class="modal-body" style="padding-bottom: 80px;">
       
-      <div class="input-group">
-        <input type="text" id="custId" class="styled-input" placeholder="e.g. M105" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+      <div class="input-group" style="position: sticky; top: -24px; z-index: 5; background: var(--bg-color); padding-top: 24px; margin-top: -24px;">
+        <span class="loading-text" id="u-search-loading">Searching Database...</span>
+        <input type="text" id="u-search" class="search-input" placeholder="Search ID, Name, or Phone..." autocomplete="off">
+        <span class="validation-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="var(--text-muted)"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </span>
       </div>
+
+      <div class="user-list-box" id="u-results">
+        </div>
+      <button id="search-load-more-btn" class="load-more-btn" style="display: none;" onclick="loadMoreSearchResults()">Load Next 10 Results</button>
+
+    </div>
+  </aside>
+
+  <aside id="calc-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div class="modal-title">Payment Engine</div>
+    </div>
+    <div class="modal-body">
       
-      <button class="btn-primary" id="loginBtn" onclick="verifyAccess()">Access Ledger</button>
-    </div>
-  </div>
+      <div id="calc-card" class="calc-card">
+        <div class="user-profile">
+          <div class="profile-avatar" id="u-avatar">?</div>
+          <div class="profile-details">
+            <h2 class="user-name" id="u-name">Loading...</h2>
+            <div class="user-phone" id="u-phone">+91 XXXXX XXXXX</div>
+            <div style="font-size: 11px; font-family: monospace; color: var(--brand-accent); font-weight: 800; margin-top: 6px; letter-spacing: 0.5px;" id="u-id-display"></div>
+          </div>
+        </div>
 
-  <div id="dashboard-view">
-    
-    <div class="user-header">
-      <div class="user-profile-left">
-        <div class="user-avatar" id="userAvatar">?</div>
-        <div class="user-info">
-          <h1 id="userName">Loading...</h1>
-          <p id="userId">@ID</p>
+        <div class="input-group" style="margin-bottom: 24px;">
+          <label>Select Active Group</label>
+          <select id="u-group-select">
+            <option value="">-- Choose a group --</option>
+          </select>
+        </div>
+
+        <div id="payment-details-view" style="display: none;">
+          
+          <div id="arrears-warning" class="arrears-banner"></div>
+
+          <div class="progress-container">
+            <div class="progress-labels">
+              <span>Chit Progress</span>
+              <span id="d-progress-text">0 / 0 Months</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="d-progress-bar" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-label">Last Payment</div>
+              <div class="stat-value highlight" id="d-last-paid">₹0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Total Paid</div>
+              <div class="stat-value" id="d-total-paid">₹0</div>
+            </div>
+          </div>
+
+          <div class="due-section">
+            <div class="due-label" id="d-month-label">Installment: Month --</div>
+            <div class="due-calc-hint" id="d-calc-hint">Base + Increment</div>
+            <div class="due-amount-wrapper">
+              <span class="currency-symbol">₹</span>
+              <input type="number" id="d-amount-due" class="due-amount-input" readonly>
+            </div>
+            <div style="font-size:10px; color:var(--success-color); font-weight:700; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:4px;">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>
+              Secured System Calculation
+            </div>
+          </div>
+
+          <button type="button" class="submit-btn" id="confirm-payment-btn">Approve Transaction</button>
         </div>
       </div>
-      <button class="btn-logout" onclick="location.reload()">Exit</button>
+
     </div>
+  </aside>
 
-    <div class="group-selector-wrapper" id="group-selector-wrapper">
-        <select id="user-group-select" onchange="renderGroupLedger(this.value)"></select>
+  <div id="gpay-overlay" class="gpay-overlay">
+    <div class="gpay-circle">
+      <svg class="gpay-check" viewBox="0 0 24 24">
+        <path d="M4 12 l5 5 l11 -11" />
+      </svg>
     </div>
-    
-    <div id="loader-spinner" style="display:none;"><div class="loader"></div></div>
-
-    <div id="ledger-wrapper" style="display: none;">
-        <div class="summary-grid">
-            <div class="summary-box">
-                <div class="s-label">Total Duration</div>
-                <div class="s-val" id="sum-months">--</div>
-            </div>
-            <div class="summary-box">
-                <div class="s-label">Months Paid</div>
-                <div class="s-val success" id="sum-paid">--</div>
-            </div>
-            <div class="summary-box full-width">
-                <div class="s-label">Your Total Contribution</div>
-                <div class="s-val success" id="sum-total-amount">₹0</div>
-            </div>
-        </div>
-
-        <div class="ledger-container" id="ledger-container">
-            <div class="ledger-header">
-                <div>
-                    <div class="lh-title" id="lg-title">Group Name</div>
-                    <div class="lh-sub">Mathematical Ledger Breakdown</div>
-                </div>
-            </div>
-            
-            <div class="grid-table header-row">
-                <div class="g-col">Timeline</div>
-                <div class="g-col" style="justify-content: right;">Amount</div>
-                <div class="g-col status-cell">Status</div>
-            </div>
-            
-            <div id="ledger-rows-container">
-                </div>
-        </div>
-    </div>
-
+    <div class="gpay-title">Payment Successful</div>
+    <div class="gpay-amount" id="gpay-amount-text">₹0</div>
+    <div class="gpay-footer">Verified transaction</div>
   </div>
 
-  <footer class="site-footer">
-    <div style="margin-bottom: 6px; font-weight: 800; color: var(--text-main); font-size: 0.9rem;">MEENA CHITFUNDS FINANCIAL SERVICES</div>
-    <div>Secure Client Portal</div>
-  </footer>
+  <aside id="message-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div id="msg-icon" class="msg-icon">⚠️</div>
+      <h3 class="mini-modal-title" id="msg-title">Error</h3>
+      <p class="mini-modal-text" id="msg-body">Something went wrong.</p>
+      <div class="mini-modal-actions">
+        <button class="mini-btn" onclick="closeMessageModal()">Understood</button>
+      </div>
+    </div>
+  </aside>
 
   <script type="module">
-    import { db } from "./config.js";
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+    import { auth, db } from './config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+    import { collection, query, orderBy, limit, getDocs, startAfter, doc, getDoc, writeBatch, increment, serverTimestamp, where, documentId } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-    // --- MODAL LOGIC ---
-    window.showModal = (title, message, type = "error") => {
-      const modal = document.getElementById("custom-modal");
-      document.getElementById("modal-title").innerText = title;
-      document.getElementById("modal-msg").innerText = message;
-      document.getElementById("modal-icon").innerText = type === "error" ? "⚠️" : "✅";
+    onAuthStateChanged(auth, (user) => { if (!user) window.location.replace('login.html'); });
+
+    // --- FLAWLESS HASH-BASED MODAL NAVIGATION (Fixed Back Button Trap) ---
+    let modalStackCount = 0; 
+
+    window.openModal = function(modalId) {
+      document.getElementById(modalId).classList.add('active');
+      if (window.location.hash !== `#${modalId}`) {
+          history.pushState({ id: modalId }, '', `#${modalId}`);
+          modalStackCount++;
+      }
+    };
+    
+    window.closeModal = function() {
+      if (window.location.hash) {
+          history.back(); 
+      } else {
+          closeAllModals();
+      }
+    };
+    
+    function closeAllModals() { 
+      document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+      document.getElementById('payment-details-view').style.display = 'none';
+      document.getElementById('u-search').value = '';
+      activeGroupData = null;
+      targetUserId = null;
+    }
+    
+    window.addEventListener('popstate', (e) => {
+       document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+       
+       if(modalStackCount > 0) modalStackCount--;
+       
+       if(window.location.hash) {
+           const targetModal = document.querySelector(window.location.hash);
+           if(targetModal) {
+               targetModal.classList.add('active');
+           }
+       } else {
+           closeAllModals();
+       }
+    });
+
+    window.showMessage = function(title, body, type = 'error') {
+      document.getElementById('msg-title').innerText = title;
+      document.getElementById('msg-body').innerHTML = body; 
+      const iconContainer = document.getElementById('msg-icon');
       
-      modal.style.display = "flex";
-      setTimeout(() => modal.classList.add("modal-show"), 10);
+      if (type === 'success') {
+        iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--success-color)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+      } else {
+        iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--warning-color)"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
+      }
+      
+      document.getElementById('message-modal').classList.add('active');
+    };
+    window.closeMessageModal = function() {
+      document.getElementById('message-modal').classList.remove('active');
     };
 
-    window.closeModal = () => {
-      const modal = document.getElementById("custom-modal");
-      modal.classList.remove("modal-show");
-      setTimeout(() => modal.style.display = "none", 200);
-    };
-
-    // --- CORE CALCULATION ENGINE ---
-    // Recycled directly from admin portal for 100% mathematical accuracy
+    // --- ENGINE CALCULATION FUNCTIONS ---
+    
     function calculateDueForMonth(targetMonth, startAmount, schedule) {
         if (targetMonth <= 1) return startAmount;
+        
         let currentAmount = startAmount;
         for (let m = 2; m <= targetMonth; m++) {
             let increment = 0;
             for (let tier of schedule) {
                 if (m >= tier.start && m <= tier.end) {
-                    increment = tier.amount; break;
+                    increment = tier.amount;
+                    break;
                 }
             }
             currentAmount += increment;
@@ -370,12 +515,12 @@
         months += now.getMonth();
         return months <= 0 ? 1 : months + 1; 
     }
-    
-    // NEW ALGORITHM: Deep dynamic timeline calculating from jointAt point
+
     function calculateParticipantExpectedMonth(user, groupData) {
         if (!user || !groupData) return 1;
         const start = user?.joinedAt ? (typeof user.joinedAt.toDate === 'function' ? user.joinedAt.toDate() : new Date(user.joinedAt)) : new Date(groupData?.startDate || new Date());
         const now = new Date();
+        
         let elapsed = (now.getFullYear() - start.getFullYear()) * 12;
         elapsed -= start.getMonth();
         elapsed += now.getMonth();
@@ -389,216 +534,549 @@
         return expected;
     }
 
-    // --- STATE VARIABLES ---
-    let currentUserData = null;
+    // --- Global State for Calculation Engine ---
+    let targetUserId = null;
+    let targetUserName = "";
+    let activeUserObj = null; 
+    let currentCalcMonth = 0;
+    let baselineLastAmount = 0;
+    let activeGroupData = null;
 
-    // --- VERIFY & LOGIN (0-Auth Required, just ID check) ---
-    window.verifyAccess = async () => {
-      const idInput = document.getElementById("custId").value.trim().toUpperCase();
+    // --- ADVANCED LIVE SERVER SEARCH (0-READ WASTE) ---
+    let lastVisibleUser = null;
+    let currentSearchTerm = "";
+    let isNumericSearch = false;
+    let lastSearchType = "default";
+    let searchDebounce;
 
-      if (!idInput) {
-        window.showModal("ID Required", "Please enter your valid Client ID to view your ledger.");
-        return;
-      }
-
-      const btn = document.getElementById("loginBtn");
-      btn.innerText = "Authenticating...";
-      btn.disabled = true;
-
-      try {
-        // 1. Fetch User Data
-        const docRef = doc(db, "users", idInput);
-        const snap = await getDoc(docRef);
-
-        if (!snap.exists()) {
-            throw new Error("Client ID not found. Please contact administration.");
-        }
-
-        currentUserData = snap.data();
-        currentUserData.id = snap.id;
-
-        // Ensure user is in at least one group
-        if (!currentUserData.activeGroups || currentUserData.activeGroups.length === 0) {
-             throw new Error("Your account is currently not assigned to any active groups.");
-        }
-
-        // 2. Transition UI
-        document.getElementById("auth-section").style.display = "none";
-        document.getElementById("dashboard-view").style.display = "block";
-        
-        // Populate Header Profile
-        document.getElementById("userName").innerText = currentUserData.name || "Client";
-        document.getElementById("userId").innerText = `@${currentUserData.id}`;
-        document.getElementById("userAvatar").innerText = currentUserData.name ? currentUserData.name.charAt(0).toUpperCase() : "C";
-
-        // Setup Dropdown
-        const selectEl = document.getElementById("user-group-select");
-        const wrapperEl = document.getElementById("group-selector-wrapper");
-        selectEl.innerHTML = "";
-        
-        if (currentUserData.activeGroups.length > 1) {
-            wrapperEl.style.display = "block";
-            selectEl.innerHTML = '<option value="">-- Select a Group to View --</option>';
-            currentUserData.activeGroups.forEach(gId => {
-                const opt = document.createElement("option");
-                opt.value = gId; opt.innerText = `View Group: @${gId}`;
-                selectEl.appendChild(opt);
-            });
-        } else {
-            // Auto render if only 1 group
-            wrapperEl.style.display = "none";
-            renderGroupLedger(currentUserData.activeGroups[0]);
-        }
-
-      } catch (e) {
-        console.error(e);
-        window.showModal("Access Denied", e.message || "A system error occurred connecting to the database.");
-        btn.innerText = "Access Ledger";
-        btn.disabled = false;
-      }
+    window.openPaymentSearchModal = function() {
+        openModal('payment-modal');
+        document.getElementById('u-search').value = '';
+        currentSearchTerm = '';
+        isNumericSearch = false;
+        lastSearchType = "default";
+        loadUsersFromServer(false);
     };
 
-    // --- RENDER DYNAMIC MATHEMATICAL LEDGER ---
-    window.renderGroupLedger = async function(groupId) {
-        if (!groupId) {
-            document.getElementById("ledger-wrapper").style.display = "none";
+    document.getElementById('u-search').addEventListener('input', (e) => {
+        clearTimeout(searchDebounce);
+        const val = e.target.value.trim();
+        searchDebounce = setTimeout(() => {
+            currentSearchTerm = val;
+            isNumericSearch = /^\d+$/.test(val); 
+            loadUsersFromServer(false);
+        }, 500); 
+    });
+
+    window.loadMoreSearchResults = function() {
+        loadUsersFromServer(true);
+    };
+
+    async function loadUsersFromServer(isLoadMore = false) {
+        const container = document.getElementById('u-results');
+        let loadMoreBtn = document.getElementById('search-load-more-btn');
+        let loader = document.getElementById('u-search-loading');
+
+        if (!isLoadMore) {
+            container.innerHTML = '';
+            lastVisibleUser = null;
+        }
+
+        if (loader) loader.style.display = 'block';
+
+        try {
+            let q;
+            const term = currentSearchTerm;
+            const termUpper = term.toUpperCase();
+            const termName = term.charAt(0).toUpperCase() + term.slice(1).toLowerCase();
+
+            if (term === "") {
+                lastSearchType = "default";
+                if (isLoadMore && lastVisibleUser) {
+                    q = query(collection(db, "users"), orderBy("joinedAt", "desc"), startAfter(lastVisibleUser), limit(10));
+                } else {
+                    q = query(collection(db, "users"), orderBy("joinedAt", "desc"), limit(10));
+                }
+            } else if (isNumericSearch) {
+                lastSearchType = "phone";
+                if (isLoadMore && lastVisibleUser) {
+                    q = query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), orderBy("phone"), startAfter(lastVisibleUser), limit(10));
+                } else {
+                    q = query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), orderBy("phone"), limit(10));
+                }
+            } else {
+                if (isLoadMore && lastVisibleUser) {
+                    if (lastSearchType === "id") {
+                        q = query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), orderBy(documentId()), startAfter(lastVisibleUser), limit(10));
+                    } else if (lastSearchType === "name") {
+                        q = query(collection(db, "users"), where("name", ">=", termName), where("name", "<=", termName + "\uf8ff"), orderBy("name"), startAfter(lastVisibleUser), limit(10));
+                    } else {
+                        q = query(collection(db, "users"), where("name", ">=", term), where("name", "<=", term + "\uf8ff"), orderBy("name"), startAfter(lastVisibleUser), limit(10));
+                    }
+                } else {
+                    q = query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), orderBy(documentId()), limit(10));
+                    lastSearchType = "id";
+                }
+            }
+
+            let querySnapshot;
+            try {
+                querySnapshot = await getDocs(q);
+                
+                if (!isLoadMore && term !== "" && !isNumericSearch && querySnapshot.empty) {
+                    q = query(collection(db, "users"), where("name", ">=", termName), where("name", "<=", termName + "\uf8ff"), orderBy("name"), limit(10));
+                    querySnapshot = await getDocs(q);
+                    lastSearchType = "name";
+                    
+                    if(querySnapshot.empty) {
+                        q = query(collection(db, "users"), where("name", ">=", term), where("name", "<=", term + "\uf8ff"), orderBy("name"), limit(10));
+                        querySnapshot = await getDocs(q);
+                        lastSearchType = "name_exact";
+                    }
+                }
+
+            } catch (idxErr) {
+                console.warn("Index missing for search. Attempting safe fallback...", idxErr);
+                
+                if(idxErr.message && idxErr.message.includes("https://console.firebase.google.com")) {
+                    const urlRegex = /(https:\/\/console\.firebase\.google\.com[^\s]+)/g;
+                    const match = idxErr.message.match(urlRegex);
+                    // BUG FIX: Correct array access to prevent 'undefined' string printing
+                    if(match && match.length > 0) {
+                        setTimeout(() => {
+                            showMessage("Search Index Missing", `Please click the link below to build the required Firebase Index to enable live searching.<br><br><a href="${match}" target="_blank" style="display:inline-block; background:var(--brand-accent); color:white; padding:10px 16px; border-radius:8px; text-decoration:none; font-weight:bold; margin-top:10px;">Build Index</a>`, "error");
+                        }, 500);
+                    }
+                }
+
+                let fallbackQ;
+                if (term === "") {
+                    fallbackQ = (isLoadMore && lastVisibleUser) ? query(collection(db, "users"), startAfter(lastVisibleUser), limit(10)) : query(collection(db, "users"), limit(10));
+                } else if (isNumericSearch) {
+                    fallbackQ = (isLoadMore && lastVisibleUser) ? query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), startAfter(lastVisibleUser), limit(10)) : query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), limit(10));
+                } else {
+                    fallbackQ = (isLoadMore && lastVisibleUser) ? query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), startAfter(lastVisibleUser), limit(10)) : query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), limit(10));
+                }
+                querySnapshot = await getDocs(fallbackQ);
+            }
+
+            if (loader) loader.style.display = 'none';
+
+            if (querySnapshot.empty) {
+                if (!isLoadMore) {
+                    container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px; font-weight: 500;">No participants found matching your search.</div>';
+                }
+                if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+                return;
+            }
+
+            lastVisibleUser = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+            const phoneIconSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>`;
+            
+            querySnapshot.forEach(docSnap => {
+                const user = docSnap.data();
+                user.id = docSnap.id;
+
+                const card = document.createElement('div');
+                card.className = 'u-item';
+                card.onclick = () => selectUserForPayment(user);
+                
+                const phoneText = user.phone ? `${phoneIconSVG} ${user.phone}` : 'No Phone';
+                const userInitial = user.name ? user.name.charAt(0).toUpperCase() : '?';
+                
+                let groupsText = '';
+                if (user.activeGroups && user.activeGroups.length > 0) {
+                    groupsText = `<span style="background: var(--brand-accent-light); color: var(--brand-accent); padding: 2px 6px; border-radius: 4px; font-weight: 800; font-family: monospace;">Grp: ${user.activeGroups.join(', ')}</span>`;
+                } else {
+                    groupsText = `<span style="background: var(--surface-hover); color: var(--text-muted); padding: 2px 6px; border-radius: 4px; font-weight: 800; font-family: monospace;">No Groups</span>`;
+                }
+
+                card.innerHTML = `
+                    <div style="display:flex; gap: 16px; align-items: center;">
+                        <div class="profile-avatar" style="width: 44px; height: 44px; font-size: 16px; flex-shrink: 0; border-radius: 12px; box-shadow: none;">${userInitial}</div>
+                        <div style="flex: 1;">
+                            <div class="sr-top" style="margin-bottom: 4px;">
+                                <span class="u-name">${user.name || 'Unnamed'}</span>
+                                <span class="u-id">@${user.id}</span>
+                            </div>
+                            <div class="sr-bottom" style="font-size: 11px; color: var(--text-muted); font-weight: 600; align-items: center;">
+                                <span style="display:flex; align-items:center;">${phoneText}</span>
+                                ${groupsText}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            if (loadMoreBtn) loadMoreBtn.style.display = querySnapshot.docs.length === 10 ? 'block' : 'none';
+
+        } catch (e) {
+            console.error("Search Error:", e);
+            if (loader) loader.style.display = 'none';
+            if (!isLoadMore) document.getElementById('u-results').innerHTML = '<div style="text-align:center; padding:20px; color:var(--danger-color); font-weight: 700;">Error searching database.</div>';
+        }
+    }
+
+    // --- STEP 2: OPENING THE CALCULATION MODAL ---
+    window.selectUserForPayment = function(userObj) {
+        targetUserId = userObj.id;
+        targetUserName = userObj.name || "Unnamed"; // FIX: Added safety fallback to prevent undefined exceptions destroying the database save
+        activeUserObj = userObj; 
+        
+        document.getElementById('u-name').innerText = userObj.name || "Unnamed";
+        document.getElementById('u-phone').innerText = userObj.phone || "No phone provided";
+        document.getElementById('u-id-display').innerText = `@${userObj.id}`;
+        document.getElementById('u-avatar').innerText = userObj.name ? userObj.name.charAt(0).toUpperCase() : '?';
+        
+        const select = document.getElementById('u-group-select');
+        select.innerHTML = '<option value="">-- Choose a group --</option>';
+        
+        if(userObj.activeGroups && userObj.activeGroups.length > 0) {
+            userObj.activeGroups.forEach(gId => {
+                const opt = document.createElement('option');
+                opt.value = gId;
+                opt.innerText = `@${gId}`;
+                select.appendChild(opt);
+            });
+            // FIX: Safely select the specific array index instead of the whole array object
+            if (userObj.activeGroups.length === 1) {
+                select.value = userObj.activeGroups[0]; 
+                select.dispatchEvent(new Event('change'));
+            }
+        } else {
+            select.innerHTML = '<option value="">No active groups found</option>';
+        }
+
+        document.getElementById('payment-details-view').style.display = 'none';
+        
+        openModal('calc-modal');
+    };
+
+    // --- ADVANCED CALCULATION ENGINE LOGIC ---
+    document.getElementById('u-group-select').addEventListener('change', async (e) => {
+        const groupId = e.target.value;
+        const detailsView = document.getElementById('payment-details-view');
+        const btn = document.getElementById('confirm-payment-btn');
+        const arrearsBox = document.getElementById('arrears-warning');
+        
+        if(!groupId) {
+            detailsView.style.display = 'none';
+            btn.disabled = true;
             return;
         }
 
-        document.getElementById("ledger-wrapper").style.display = "none";
-        document.getElementById("loader-spinner").style.display = "block";
-
+        detailsView.style.display = 'none'; 
+        btn.disabled = true;
+        
         try {
-            // 1. Fetch Group Master Settings
+            // 1. Fetch Group Settings
             const groupSnap = await getDoc(doc(db, "groups", groupId));
-            if (!groupSnap.exists()) throw new Error("Group configuration missing.");
-            
-            const groupData = groupSnap.data();
-            
-            // 2. Find User's specific snapshot inside this group to see how many months they paid
-            let monthsPaid = 0;
-            if (groupData.memberSnapshot) {
-                const userState = groupData.memberSnapshot.find(s => s.id === currentUserData.id);
-                if(userState) monthsPaid = userState.monthsPaid;
+            if(!groupSnap.exists()) {
+                throw new Error("Group data missing");
+            }
+            activeGroupData = groupSnap.data();
+            activeGroupData.id = groupSnap.id;
+
+            // 2. Fetch User's Past Transactions for THIS Group with Safe Fallbacks
+            let txns = [];
+            try {
+                const qTxn = query(collection(db, "transactions"), 
+                    where("subscriberId", "==", targetUserId),
+                    where("groupId", "==", groupId)
+                );
+                const txnSnap = await getDocs(qTxn);
+                txnSnap.forEach(tDoc => txns.push(tDoc.data()));
+            } catch(idxErr) {
+                console.warn("Index fallback...", idxErr);
+                const fallbackQ = query(collection(db, "transactions"), where("subscriberId", "==", targetUserId));
+                const txnSnap = await getDocs(fallbackQ);
+                txnSnap.forEach(tDoc => {
+                    if(tDoc.data().groupId === groupId) txns.push(tDoc.data());
+                });
             }
 
-            // 3. Engine Variables
-            const totalMonths = groupData.totalMonths || 0;
-            const startAmt = groupData.startAmount || 0;
-            const schedule = groupData.installmentSchedule || [];
-            const systemCurrentMonth = calculateCurrentSystemMonth(groupData.startDate);
-            const expectedMonth = calculateParticipantExpectedMonth(currentUserData, groupData);
-            
-            // 4. Update UI Headers
-            document.getElementById("sum-months").innerText = totalMonths;
-            document.getElementById("sum-paid").innerText = monthsPaid;
-            document.getElementById("lg-title").innerText = groupData.groupName || `@${groupId}`;
+            let totalPaid = activeUserObj?.advanceAmount ? Number(activeUserObj.advanceAmount) : 0;
+            let maxMonthPaid = 0;
+            let lastAmountPaid = 0;
 
-            // 5. Generate Rows & Calculate Total Paid Amount
-            const container = document.getElementById("ledger-rows-container");
-            container.innerHTML = "";
-            
-            // STRICT DEFENSIVE CHECK: Safely Integrate Independent Advance Amount into calculation
-            let advanceAmt = currentUserData?.advanceAmount ? Number(currentUserData.advanceAmount) : 0;
-            let cumulativePaidAmount = advanceAmt;
-
-            // Render Advance Amount Row if exists to keep total amount matching logic transparent
-            if (advanceAmt > 0) {
-                const advRow = document.createElement("div");
-                advRow.className = "grid-table";
-                advRow.style.backgroundColor = "var(--success-bg)";
-                advRow.innerHTML = `
-                    <div class="g-col">
-                        <span class="month-badge" style="color: var(--success-txt);">Advance</span>
-                    </div>
-                    <div class="g-col" style="justify-content: right;">
-                        <span class="amount-text" style="color: var(--success-txt);">₹${Number(advanceAmt).toLocaleString('en-IN')}</span>
-                    </div>
-                    <div class="g-col status-cell">
-                        <span class="badge badge-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Paid</span>
-                    </div>
-                `;
-                container.appendChild(advRow);
-            }
-
-            for (let m = 1; m <= totalMonths; m++) {
-                // Calculate exact mathematical amount for this specific tier month
-                const dueAmount = calculateDueForMonth(m, startAmt, schedule);
-                
-                // Determine Status
-                let statusHtml = "";
-                let amountHtml = `<span class="amount-text">₹${Number(dueAmount).toLocaleString('en-IN')}</span>`;
-                
-                if (m <= monthsPaid) {
-                    // Paid
-                    cumulativePaidAmount += dueAmount; // Add to the summary total
-                    statusHtml = `<span class="badge badge-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Paid</span>`;
-                } else if (m <= expectedMonth) {
-                    // Missed / Currently Due
-                    statusHtml = `<span class="badge badge-pending">Pending</span>`;
-                    amountHtml = `<span class="amount-text" style="color:var(--danger-txt);">₹${Number(dueAmount).toLocaleString('en-IN')}</span>`;
-                } else {
-                    // Future Month (Not yet due)
-                    statusHtml = `<span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Upcoming</span>`;
-                    amountHtml = `<span class="amount-text" style="color:var(--text-muted); font-weight: 600;">₹${Number(dueAmount).toLocaleString('en-IN')}</span>`;
+            txns.forEach(tData => {
+                if (tData.type !== "Advance Payment") {
+                    totalPaid += tData.amount;
+                    if(tData.monthAttributed > maxMonthPaid) {
+                        maxMonthPaid = tData.monthAttributed;
+                        lastAmountPaid = tData.amount;
+                    }
                 }
+            });
+            
+            baselineLastAmount = lastAmountPaid; 
 
-                const row = document.createElement("div");
-                row.className = "grid-table";
-                
-                // Highlight current active month slightly
-                if(m === expectedMonth && m > monthsPaid) {
-                    row.style.background = "var(--pending-bg)";
-                }
+            // 3. Determine Next Month
+            currentCalcMonth = maxMonthPaid + 1;
+            let totalMonths = activeGroupData.totalMonths || 0;
 
-                row.innerHTML = `
-                    <div class="g-col">
-                        <span class="month-badge">Month ${m}</span>
-                    </div>
-                    <div class="g-col" style="justify-content: right;">
-                        ${amountHtml}
-                    </div>
-                    <div class="g-col status-cell">
-                        ${statusHtml}
-                    </div>
-                `;
-                container.appendChild(row);
+            if(currentCalcMonth > totalMonths) {
+                document.getElementById('d-amount-due').value = 0;
+                document.getElementById('d-month-label').innerText = 'CHIT COMPLETED';
+                document.getElementById('d-calc-hint').innerText = 'All Dues Paid';
+                document.getElementById('d-last-paid').innerText = `₹${Number(lastAmountPaid).toLocaleString('en-IN')}`;
+                document.getElementById('d-total-paid').innerText = `₹${Number(totalPaid).toLocaleString('en-IN')}`;
+                document.getElementById('d-progress-text').innerText = `${maxMonthPaid} / ${totalMonths} Months`;
+                document.getElementById('d-progress-bar').style.width = `100%`;
+                arrearsBox.style.display = 'none';
+                detailsView.style.display = 'block';
+                return; // Leave button disabled
             }
 
-            // Update the new Total Contribution summary box
-            document.getElementById("sum-total-amount").innerText = `₹${cumulativePaidAmount.toLocaleString('en-IN')}`;
+            // 4. BUSINESS LOGIC: Calculate Target Due Amount
+            const startAmt = activeGroupData.startAmount || 0;
+            let schedule = activeGroupData.installmentSchedule || [];
+            
+            let amountDue = calculateDueForMonth(currentCalcMonth, startAmt, schedule);
 
-            // Show view
-            document.getElementById("loader-spinner").style.display = "none";
-            document.getElementById("ledger-wrapper").style.display = "block";
-            document.getElementById("ledger-container").style.display = "block";
+            if(amountDue === 0 && lastAmountPaid > 0) amountDue = lastAmountPaid;
+            
+            if (currentCalcMonth === 1) {
+                document.getElementById('d-calc-hint').innerText = "Initial Base Amount";
+            } else {
+                document.getElementById('d-calc-hint').innerText = `Calculated via Scheduled Increments`;
+            }
+
+            // 5. Arrears Detection Engine
+            const expectedMonth = calculateParticipantExpectedMonth(activeUserObj, activeGroupData);
+            const arrears = expectedMonth - maxMonthPaid;
+            
+            if (arrears > 0) {
+                arrearsBox.style.display = 'block';
+                let totalPendingArrears = 0;
+                for(let m = maxMonthPaid + 1; m <= expectedMonth; m++) {
+                    totalPendingArrears += calculateDueForMonth(m, startAmt, schedule);
+                }
+                arrearsBox.innerText = `⚠️ Participant is ${arrears} month(s) behind schedule. Pending Dues: ₹${totalPendingArrears.toLocaleString('en-IN')}`;
+            } else {
+                arrearsBox.style.display = 'none';
+            }
+
+            // 6. Push to UI Components
+            document.getElementById('d-last-paid').innerText = `₹${Number(lastAmountPaid).toLocaleString('en-IN')}`;
+            document.getElementById('d-total-paid').innerText = `₹${Number(totalPaid).toLocaleString('en-IN')}`;
+            
+            document.getElementById('d-progress-text').innerText = `${maxMonthPaid} / ${totalMonths} Months`;
+            let progressPercent = totalMonths > 0 ? (maxMonthPaid / totalMonths) * 100 : 0;
+            document.getElementById('d-progress-bar').style.width = `${progressPercent}%`;
+
+            document.getElementById('d-month-label').innerText = `Installment: Month ${currentCalcMonth}`;
+            
+            // CLEANED: Directly pushes the number to the Neo-Banking readonly input
+            document.getElementById('d-amount-due').value = amountDue;
+
+            detailsView.style.display = 'block';
+            btn.disabled = false;
 
         } catch (err) {
-            console.error(err);
-            document.getElementById("loader-spinner").style.display = "none";
-            window.showModal("Engine Error", "Failed to calculate mathematical ledger for this group.");
+            console.error("Calculation Error:", err);
+            showMessage("Calculation Error", `Failed to retrieve ledger math:<br><br>${err.message}`);
         }
-    };
+    });
 
-    // --- DYNAMIC URL AUTO-LOGIN ---
-    const initAutoLogin = () => {
-      // Allows domain.com/public.html?id=RAHUL_101
-      const searchId = new URLSearchParams(window.location.search).get('id');
-      const hashId = window.location.hash.replace('#', '');
-      
-      const autoId = (searchId || hashId || '').trim().toUpperCase();
-      
-      if (autoId) {
-          document.getElementById("custId").value = autoId;
-          verifyAccess();
+    // --- Submit Payment Logic & GPay Animation ---
+    document.getElementById('confirm-payment-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('confirm-payment-btn');
+        const amountToPay = Number(document.getElementById('d-amount-due').value);
+        const groupId = document.getElementById('u-group-select').value;
+
+        if(!amountToPay || amountToPay <= 0) {
+            showMessage("Invalid Amount", "Please enter a valid transaction amount."); return;
+        }
+
+        btn.innerText = "Processing Security..."; btn.disabled = true;
+
+        try {
+            const batch = writeBatch(db);
+
+            // 1. Create Transaction Ledger Entry
+            const newTxRef = doc(collection(db, "transactions"));
+            batch.set(newTxRef, {
+                subscriberId: targetUserId,
+                subscriberName: targetUserName,
+                groupId: groupId,
+                amount: amountToPay,
+                monthAttributed: currentCalcMonth,
+                type: "Monthly Installment",
+                date: serverTimestamp()
+            });
+
+            // 2. Update Group Document Snapshot
+            const groupRef = doc(db, "groups", groupId);
+            
+            let snapshotArray = activeGroupData.memberSnapshot || [];
+            let userSnapIndex = snapshotArray.findIndex(m => m && m.id === targetUserId);
+            
+            if(userSnapIndex > -1) {
+                let amountRemaining = amountToPay;
+                let advancedMonths = 0;
+                let checkingMonth = currentCalcMonth;
+                const startAmt = activeGroupData.startAmount || 0;
+                const schedule = activeGroupData.installmentSchedule || [];
+
+                while(amountRemaining > 0) {
+                    let requiredForThisMonth = calculateDueForMonth(checkingMonth, startAmt, schedule);
+                    
+                    // FIX: Failsafe against infinite zero loop
+                    if (requiredForThisMonth <= 0) {
+                        advancedMonths++; break;
+                    }
+                    
+                    if (amountRemaining >= (requiredForThisMonth * 0.95)) {
+                        advancedMonths++;
+                        amountRemaining -= requiredForThisMonth;
+                        checkingMonth++;
+                    } else {
+                        break; 
+                    }
+                }
+                
+                if (advancedMonths === 0) advancedMonths = 1;
+
+                // Safely Increment to prevent NaN overrides
+                snapshotArray[userSnapIndex].monthsPaid = (snapshotArray[userSnapIndex].monthsPaid || 0) + advancedMonths;
+            } else {
+                snapshotArray.push({
+                    id: targetUserId, name: targetUserName, monthsPaid: currentCalcMonth, balanceDue: 0, hasAdvance: false
+                });
+            }
+            batch.update(groupRef, { 
+                memberSnapshot: snapshotArray,
+                totalPotCollected: increment(amountToPay) 
+            });
+
+            // Execute Database writes
+            await batch.commit();
+
+            // --- Trigger Premium GPay Success Flow ---
+            // FIX: navigator.vibrate() requires an argument (duration in ms). Empty calls throw a TypeError, triggering the catch block AFTER data is saved!
+            if ("vibrate" in navigator && typeof navigator.vibrate === 'function') { navigator.vibrate(200); }
+
+            document.getElementById('gpay-amount-text').innerText = `₹${amountToPay.toLocaleString('en-IN')}`;
+            const overlay = document.getElementById('gpay-overlay');
+            overlay.classList.add('active');
+
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                
+                if (modalStackCount > 0) {
+                    history.go(-modalStackCount);
+                    modalStackCount = 0;
+                }
+                closeAllModals(); 
+                
+                loadTransactions(); 
+                btn.innerText = "Approve Transaction"; btn.disabled = false;
+            }, 2500);
+
+        } catch (err) {
+            console.error("Payment failed", err);
+            showMessage("Payment Failed", "Network error while saving transaction to ledger.");
+            btn.innerText = "Approve Transaction"; btn.disabled = false;
+        }
+    });
+
+    // --- Fetch Transaction History & Pagination ---
+    const txnList = document.getElementById('txn-list');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    let lastVisibleTxn = null;
+
+    async function loadTransactions(isLoadMore = false) {
+      try {
+        let q;
+        if (isLoadMore && lastVisibleTxn) {
+          q = query(collection(db, "transactions"), orderBy("date", "desc"), startAfter(lastVisibleTxn), limit(10));
+        } else {
+          txnList.innerHTML = ''; 
+          q = query(collection(db, "transactions"), orderBy("date", "desc"), limit(10));
+        }
+
+        let querySnapshot;
+        try {
+          querySnapshot = await getDocs(q);
+        } catch (err) {
+          console.warn("Index missing for date sort. Falling back to basic fetch.");
+          const fallbackQ = (isLoadMore && lastVisibleTxn) 
+            ? query(collection(db, "transactions"), startAfter(lastVisibleTxn), limit(10)) 
+            : query(collection(db, "transactions"), limit(10));
+          querySnapshot = await getDocs(fallbackQ);
+        }
+
+        if (querySnapshot.empty) {
+          if(!isLoadMore) txnList.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding: 20px; font-weight: 600;">No recent transactions.</div>';
+          loadMoreBtn.style.display = 'none';
+          return;
+        }
+
+        lastVisibleTxn = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+        querySnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          
+          let displayDate = "Just now";
+          if(data.date && typeof data.date.toDate === 'function') {
+              const d = data.date.toDate();
+              displayDate = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit' });
+          }
+
+          const displayName = data.subscriberName || `@${data.subscriberId}`;
+          const userInitial = displayName.charAt(0).toUpperCase();
+
+          const card = document.createElement('div');
+          card.className = 'txn-card';
+          card.innerHTML = `
+            <div class="txn-left">
+              <div class="txn-icon">${userInitial}</div>
+              <div class="txn-info">
+                <h3>${displayName}</h3>
+                <div class="txn-meta">
+                  <span style="font-weight: 700; color: var(--text-main);">Grp: ${data.groupId}</span> • Mo. ${data.monthAttributed}
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="txn-amount">₹${Number(data.amount).toLocaleString('en-IN')}</div>
+              <div class="txn-date">${displayDate}</div>
+            </div>
+          `;
+          txnList.appendChild(card);
+        });
+
+        loadMoreBtn.style.display = querySnapshot.docs.length === 10 ? 'block' : 'none';
+      } catch (error) { 
+        console.error(error); 
+        
+        // BUG FIX: Correct Index Regex Match extraction
+        if(error.message && error.message.includes("https://console.firebase.google.com")) {
+             const urlRegex = /(https:\/\/console\.firebase\.google\.com[^\s]+)/g;
+             const match = error.message.match(urlRegex);
+             if(match && match.length > 0 && !isLoadMore) {
+                  txnList.innerHTML = `
+                    <div style="text-align:center; padding: 20px;">
+                        <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--warning-color)" style="margin-bottom:12px;"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                        <h3 style="margin:0 0 8px 0; font-size:16px; color:var(--text-main);">Ledger Index Required</h3>
+                        <a href="${match}" target="_blank" style="display:inline-block; background:var(--brand-accent); color:white; padding:10px 16px; border-radius:8px; text-decoration:none; font-weight:800; font-size:13px; margin-top:8px;">Build Feed Index</a>
+                    </div>`;
+                  loadMoreBtn.style.display = 'none';
+                  return;
+             }
+        }
+        
+        if(!isLoadMore) txnList.innerHTML = `<div style="color:var(--danger-color); text-align:center; padding:20px; font-weight: 800;">Error loading ledger feed.</div>`;
       }
-    };
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initAutoLogin);
-    } else {
-        initAutoLogin();
     }
+    
+    document.getElementById('load-more-btn').addEventListener('click', () => loadTransactions(true));
+
+    // Initialize Page
+    loadTransactions(false);
   </script>
 </body>
 </html>
