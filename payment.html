@@ -432,6 +432,7 @@
     let modalStackCount = 0; 
 
     window.openModal = function(modalId) {
+      document.body.style.overflow = 'hidden'; // Locks background scrolling
       document.getElementById(modalId).classList.add('active');
       if (window.location.hash !== `#${modalId}`) {
           history.pushState({ id: modalId }, '', `#${modalId}`);
@@ -448,6 +449,7 @@
     };
     
     function closeAllModals() { 
+      document.body.style.overflow = ''; // Restores background scrolling
       document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
       document.getElementById('payment-details-view').style.display = 'none';
       document.getElementById('u-search').value = '';
@@ -464,6 +466,7 @@
            const targetModal = document.querySelector(window.location.hash);
            if(targetModal) {
                targetModal.classList.add('active');
+               document.body.style.overflow = 'hidden'; // Keeps locked if a modal is still active
            }
        } else {
            closeAllModals();
