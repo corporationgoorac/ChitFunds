@@ -158,18 +158,6 @@
     .modal-title { font-size: 18px; font-weight: 800; margin-left: 14px; letter-spacing: -0.5px;}
     .modal-body { padding: 24px 20px; flex: 1; overflow-y: auto; }
 
-    /* Advanced Participant Search Cards */
-    .search-result-card {
-      background: var(--surface-color); border: 1px solid var(--border-color);
-      border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; flex-direction: column; cursor: pointer; transition: 0.2s;
-      box-shadow: var(--card-shadow);
-    }
-    .search-result-card:active { transform: scale(0.97); background: var(--surface-hover); border-color: var(--brand-accent); }
-    .sr-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .sr-name { font-size: 16px; font-weight: 800; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px;}
-    .sr-id { font-size: 11px; background: var(--brand-accent-light); color: var(--brand-accent); padding: 4px 8px; border-radius: 6px; font-weight: 800; font-family: monospace; letter-spacing: 0.5px;}
-    .sr-bottom { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); font-weight: 600;}
-
     /* Forms & Inputs */
     .input-group { margin-bottom: 24px; position: relative; }
     .input-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
@@ -291,12 +279,23 @@
     .mini-modal-text { font-size: 14px; color: var(--text-muted); margin: 0 0 28px 0; line-height: 1.5; font-weight: 500; word-break: break-word;}
     .mini-btn { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; width: 100%; background-color: var(--brand-accent); color: #fff;}
 
-    /* Search Selection User List Styling */
+    /* REBUILT: Search Selection User List Styling */
     .user-list-box { display: flex; flex-direction: column; }
-    .u-item { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--card-shadow); cursor: pointer; transition: 0.2s;}
+    .u-item { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; flex-direction: column; box-shadow: var(--card-shadow); cursor: pointer; transition: 0.2s;}
     .u-item:active { transform: scale(0.98); background-color: var(--surface-hover); border-color: var(--brand-accent); }
-    .u-name { font-weight: 800; font-size: 16px; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px;}
-    .u-id { font-size: 11px; color: var(--brand-accent); font-weight: 800; font-family: monospace; background: var(--brand-accent-light); padding: 4px 8px; border-radius: 6px; display: inline-block;}
+    
+    .u-top-row { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 12px;}
+    
+    /* 2-Line clamp for long names */
+    .u-name { font-weight: 800; font-size: 16px; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 8px;}
+    
+    /* ID and Phone Stacked */
+    .u-identity-row { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-muted); font-weight: 600;}
+    .u-id { color: var(--brand-accent); font-weight: 800; font-family: monospace; background: var(--brand-accent-light); padding: 4px 8px; border-radius: 6px; letter-spacing: 0.5px;}
+    
+    /* Bottom Dedicated Groups Area */
+    .u-groups-area { border-top: 1px dashed var(--border-color); padding-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center;}
+    .u-group-badge { background: var(--surface-hover); color: var(--text-main); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 6px; font-weight: 800; font-family: monospace; font-size: 11px;}
 
     /* Loading Spinner */
     .loader { border: 3px solid var(--border-color); border-top: 3px solid var(--brand-accent); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 20px auto; }
@@ -330,16 +329,14 @@
 
     .skeleton-user-card {
       background: var(--surface-color); border: 1px solid var(--border-color);
-      border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px;
+      border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column;
       box-shadow: var(--card-shadow);
     }
-    .skeleton-u-body { flex: 1; }
-    .skeleton-u-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
-    .skeleton-u-name { width: 120px; height: 16px; border-radius: 4px; }
-    .skeleton-u-id { width: 60px; height: 18px; border-radius: 6px; }
-    .skeleton-u-bottom { display: flex; justify-content: space-between; }
-    .skeleton-u-phone { width: 90px; height: 12px; border-radius: 4px; }
-    .skeleton-u-group { width: 70px; height: 16px; border-radius: 4px; }
+    .skeleton-u-top { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 12px; }
+    .skeleton-u-name { width: 180px; height: 16px; border-radius: 4px; margin-bottom: 8px;}
+    .skeleton-u-id { width: 120px; height: 18px; border-radius: 6px; }
+    .skeleton-u-bottom { border-top: 1px dashed var(--border-color); padding-top: 12px; display: flex; gap: 6px; }
+    .skeleton-u-group { width: 70px; height: 20px; border-radius: 6px; }
   </style>
 </head>
 <body>
@@ -652,35 +649,31 @@
         let loader = document.getElementById('u-search-loading');
 
         if (!isLoadMore) {
-            // INJECT PREMIUM SKELETON ANIMATIONS FOR SEARCH RESULTS
+            // INJECT PREMIUM REBUILT SKELETON ANIMATIONS FOR SEARCH RESULTS
             let skelHtml = '';
             for(let i=0; i<4; i++) {
                 skelHtml += `
                 <div class="skeleton-user-card">
-                    <div class="skeleton skeleton-icon"></div>
-                    <div class="skeleton-u-body">
-                        <div class="skeleton-u-top">
-                            <div class="skeleton skeleton-u-name"></div>
-                            <div class="skeleton skeleton-u-id"></div>
+                    <div class="skeleton-u-top">
+                        <div class="skeleton-icon skeleton"></div>
+                        <div style="flex:1;">
+                            <div class="skeleton-u-name skeleton"></div>
+                            <div class="skeleton-u-id skeleton"></div>
                         </div>
-                        <div class="skeleton-u-bottom">
-                            <div class="skeleton skeleton-u-phone"></div>
-                            <div class="skeleton skeleton-u-group"></div>
-                        </div>
+                    </div>
+                    <div class="skeleton-u-bottom">
+                        <div class="skeleton-u-group skeleton"></div>
+                        <div class="skeleton-u-group skeleton" style="width: 50px;"></div>
                     </div>
                 </div>`;
             }
             container.innerHTML = skelHtml;
             lastVisibleUser = null;
             
-            // --- FIX: PROACTIVELY HIDE LOAD MORE BUTTON ---
             if (loadMoreBtn) loadMoreBtn.style.display = 'none';
         }
 
-        // FORCE HIDE THE OLD TEXT LOADER WITHOUT DELETING THE LINE
         if (loader) loader.style.display = 'none';
-
-        // SYNTHETIC DELAY FOR LUXURY UX (Ensures shimmer displays cleanly)
         await new Promise(r => setTimeout(r, 350));
 
         try {
@@ -740,7 +733,6 @@
                 if(idxErr.message && idxErr.message.includes("https://console.firebase.google.com")) {
                     const urlRegex = /(https:\/\/console\.firebase\.google\.com[^\s]+)/g;
                     const match = idxErr.message.match(urlRegex);
-                    // BUG FIX: Correct array access to prevent 'undefined' string printing
                     if(match && match.length > 0) {
                         setTimeout(() => {
                             showMessage("Search Index Missing", `Please click the link below to build the required Firebase Index to enable live searching.<br><br><a href="${match}" target="_blank" style="display:inline-block; background:var(--brand-accent); color:white; padding:10px 16px; border-radius:8px; text-decoration:none; font-weight:bold; margin-top:10px;">Build Index</a>`, "error");
@@ -769,11 +761,10 @@
                 return;
             }
 
-            // Clear skeletons safely right before injecting real content
             if (!isLoadMore) container.innerHTML = '';
             lastVisibleUser = querySnapshot.docs[querySnapshot.docs.length - 1];
 
-            const phoneIconSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>`;
+            const phoneIconSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>`;
             
             querySnapshot.forEach(docSnap => {
                 const user = docSnap.data();
@@ -786,26 +777,30 @@
                 const phoneText = user.phone ? `${phoneIconSVG} ${user.phone}` : 'No Phone';
                 const userInitial = user.name ? user.name.charAt(0).toUpperCase() : '?';
                 
-                let groupsText = '';
+                // REBUILT: Wrapping group badges properly at the bottom
+                let groupsHTML = '';
                 if (user.activeGroups && user.activeGroups.length > 0) {
-                    groupsText = `<span style="background: var(--brand-accent-light); color: var(--brand-accent); padding: 2px 6px; border-radius: 4px; font-weight: 800; font-family: monospace;">Grp: ${user.activeGroups.join(', ')}</span>`;
+                    user.activeGroups.forEach(gId => {
+                        groupsHTML += `<div class="u-group-badge">@${gId}</div>`;
+                    });
                 } else {
-                    groupsText = `<span style="background: var(--surface-hover); color: var(--text-muted); padding: 2px 6px; border-radius: 4px; font-weight: 800; font-family: monospace;">No Groups</span>`;
+                    groupsHTML = `<div class="u-group-badge" style="color:var(--text-muted); border-color:transparent;">No Active Groups</div>`;
                 }
 
+                // REBUILT HTML STRUCTURE
                 card.innerHTML = `
-                    <div style="display:flex; gap: 16px; align-items: center;">
-                        <div class="profile-avatar" style="width: 44px; height: 44px; font-size: 16px; flex-shrink: 0; border-radius: 12px; box-shadow: none;">${userInitial}</div>
+                    <div class="u-top-row">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 18px; flex-shrink: 0; border-radius: 14px; box-shadow: none;">${userInitial}</div>
                         <div style="flex: 1;">
-                            <div class="sr-top" style="margin-bottom: 4px;">
-                                <span class="u-name">${user.name || 'Unnamed'}</span>
+                            <div class="u-name">${user.name || 'Unnamed Participant'}</div>
+                            <div class="u-identity-row">
                                 <span class="u-id">@${user.id}</span>
-                            </div>
-                            <div class="sr-bottom" style="font-size: 11px; color: var(--text-muted); font-weight: 600; align-items: center;">
-                                <span style="display:flex; align-items:center;">${phoneText}</span>
-                                ${groupsText}
+                                <span style="display:flex; align-items:center; gap: 4px;">${phoneText}</span>
                             </div>
                         </div>
+                    </div>
+                    <div class="u-groups-area">
+                        ${groupsHTML}
                     </div>
                 `;
                 container.appendChild(card);
