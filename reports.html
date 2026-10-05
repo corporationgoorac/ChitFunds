@@ -853,13 +853,27 @@
 
     window.openUserDetail = function(user) {
         if (!user) return;
+        
+        // --- AGGRESSIVE STATE WIPE TO PREVENT DATA BLEEDING ---
+        document.getElementById('md-u-name').innerText = "Loading...";
+        document.getElementById('md-u-id').innerText = "@LOADING";
+        document.getElementById('txn-history-list').innerHTML = '';
+        document.getElementById('md-u-paid').innerText = "₹0";
+        document.getElementById('md-u-pending').innerText = "₹0";
+        document.getElementById('md-u-progress-text').innerText = "0 / 0 Months";
+        document.getElementById('md-u-progress-bar').style.width = "0%";
+        document.getElementById('arrears-warning').style.display = 'none';
+        document.getElementById('whatsapp-container').style.display = 'none';
+        document.getElementById('md-u-status').innerText = "Calculating...";
+        document.getElementById('md-u-status').className = "status-badge";
+        document.getElementById('static-group-badge-container').innerHTML = '';
+
         activeViewedUser = user;
         
         document.getElementById('md-u-name').innerText = user.name || "Unnamed";
         document.getElementById('md-u-id').innerText = `@${user.id}`;
         
         const badgeContainer = document.getElementById('static-group-badge-container');
-        badgeContainer.innerHTML = '';
         
         if(user.activeGroups && user.activeGroups.length > 0) {
             const activeGroupId = user.activeGroups[0]; // Strict 1 group requirement
@@ -869,7 +883,6 @@
             document.getElementById('ledger-view').style.display = 'none';
         }
         
-        document.getElementById('whatsapp-container').style.display = 'none';
         openModal('user-detail-modal');
     };
 
@@ -974,43 +987,73 @@
                 let dueForM = calculateDueForMonth(m, startAmt, schedule);
                 let txnForThisMonth = txns.find(t => t.monthAttributed === m && t.type !== "Advance Payment");
                 
-                if (m <= maxMonthPaid && txnForThisMonth) {
-                    // PAID STATE: Determine Exact Date String
-                    let dateStr = "Paid";
-                    if(txnForThisMonth.date && typeof txnForThisMonth.date.toDate === 'function') {
-                        dateStr = txnForThisMonth.date.toDate().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-                    }
-                    
-                    // Display Undo ONLY on the very last paid month to preserve ledger integrity
-                    let undoHtml = '';
-                    if (m === maxMonthPaid) {
-                        undoHtml = `<button class="btn-undo" onclick="initiateUndoPay('${txnForThisMonth.id}', ${m}, ${txnForThisMonth.amount})"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg> Undo</button>`;
-                    }
+                if (m <= maxMonthPaid) {
+                    if (txnForThisMonth) {
+                        // PAID STATE: Determine Exact Date String
+                        let dateStr = "Paid";
+                        if(txnForThisMonth.date && typeof txnForThisMonth.date.toDate === 'function') {
+                            dateStr = txnForThisMonth.date.toDate().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                        }
+                        
+                        // Display Undo ONLY on the very last paid month to preserve ledger integrity
+                        let undoHtml = '';
+                        if (m === maxMonthPaid) {
+                            undoHtml = `<button class="btn-undo" onclick="initiateUndoPay('${txnForThisMonth.id}', ${m}, ${txnForThisMonth.amount})"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg> Undo</button>`;
+                        }
 
-                    timelineHtml += `
-                    <div class="t-row paid">
-                        <div class="t-left">
-                            <div class="t-month">Month ${m}</div>
-                            <div class="t-status s-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> ${dateStr}</div>
-                        </div>
-                        <div class="t-right">
-                            <div class="t-amt a-paid">₹${Number(txnForThisMonth.amount).toLocaleString('en-IN')}</div>
-                            ${undoHtml}
-                        </div>
-                    </div>`;
+                        timelineHtml += `
+                        <div class="t-row paid">
+                            <div class="t-left">
+                                <div class="t-month">Month ${m}</div>
+                                <div class="t-status s-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> ${dateStr}</div>
+                            </div>
+                            <div class="t-right">
+                                <div class="t-amt a-paid">₹${Number(txnForThisMonth.amount).toLocaleString('en-IN')}</div>
+                                ${undoHtml}
+                            </div>
+                        </div>`;
+                    } else {
+                        // LEGACY/MISSING RECORD FALLBACK
+                        timelineHtml += `
+                        <div class="t-row paid">
+                            <div class="t-left">
+                                <div class="t-month">Month ${m}</div>
+                                <div class="t-status s-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Paid</div>
+                            </div>
+                            <div class="t-right">
+                                <div class="t-amt a-paid">₹${Number(dueForM).toLocaleString('en-IN')}</div>
+                            </div>
+                        </div>`;
+                    }
                 } else if (m === maxMonthPaid + 1) {
                     // ACTIONABLE STATE (Always Next)
-                    timelineHtml += `
-                    <div class="t-row actionable" id="active-pay-row">
-                        <div class="t-left">
-                            <div class="t-month">Month ${m}</div>
-                            <div class="t-status s-action"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> Due Now</div>
-                        </div>
-                        <div class="t-right">
-                            <div class="t-amt a-action">₹${Number(dueForM).toLocaleString('en-IN')}</div>
-                            <button class="btn-action-pay" onclick="initiateDirectPay(${m}, ${dueForM})">Pay Now</button>
-                        </div>
-                    </div>`;
+                    if (m < evalMonth) {
+                        // OVERDUE ACTIONABLE STATE
+                        timelineHtml += `
+                        <div class="t-row actionable" id="active-pay-row" style="border-color: var(--warning-color); background: var(--warning-light);">
+                            <div class="t-left">
+                                <div class="t-month">Month ${m}</div>
+                                <div class="t-status s-warn"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C22 2 22 12 22 12s0 10-10 10S2 22 2 12 2 2 12 2zm-1 15h2v2h-2v-2zm0-10h2v8h-2V7z"/></svg> Pending</div>
+                            </div>
+                            <div class="t-right">
+                                <div class="t-amt a-action" style="color: var(--warning-color);">₹${Number(dueForM).toLocaleString('en-IN')}</div>
+                                <button class="btn-action-pay" onclick="initiateDirectPay(${m}, ${dueForM})">Pay Now</button>
+                            </div>
+                        </div>`;
+                    } else {
+                        // NORMAL ACTIONABLE STATE
+                        timelineHtml += `
+                        <div class="t-row actionable" id="active-pay-row">
+                            <div class="t-left">
+                                <div class="t-month">Month ${m}</div>
+                                <div class="t-status s-action"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> Due Now</div>
+                            </div>
+                            <div class="t-right">
+                                <div class="t-amt a-action">₹${Number(dueForM).toLocaleString('en-IN')}</div>
+                                <button class="btn-action-pay" onclick="initiateDirectPay(${m}, ${dueForM})">Pay Now</button>
+                            </div>
+                        </div>`;
+                    }
                 } else if (m > maxMonthPaid + 1 && m <= evalMonth) {
                     // PENDING OVERDUE STATE (Amber Warning)
                     timelineHtml += `
@@ -1243,6 +1286,7 @@
             pendingUndoState = null;
         }
     });
+
 
     // --- USER EDIT LOGIC WITH LIVE VALIDATION & ADVANCED MIGRATION ---
     
