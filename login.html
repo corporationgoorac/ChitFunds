@@ -16,6 +16,7 @@
       --btn-bg: #f2f2f2;
       --btn-hover: #e5e5e5;
       --brand-accent: #065fd4;
+      --input-border: #e0e0e0;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -26,6 +27,7 @@
         --btn-bg: #272727;
         --btn-hover: #3f3f3f;
         --brand-accent: #3ea6ff;
+        --input-border: #333333;
       }
     }
 
@@ -138,11 +140,102 @@
     }
 
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* New Profile Setup Styles */
+    .avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      margin-bottom: 24px;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 2px solid var(--btn-bg);
+    }
+
+    .input-group {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 16px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .styled-input {
+      width: 100%;
+      padding: 14px 16px;
+      background-color: transparent;
+      color: var(--text-main);
+      border: 1.5px solid var(--input-border);
+      border-radius: 12px;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .styled-input:focus {
+      border-color: var(--brand-accent);
+      background-color: var(--btn-bg);
+    }
+
+    .phone-input-wrapper {
+      display: flex;
+      align-items: center;
+      background-color: transparent;
+      border: 1.5px solid var(--input-border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    .phone-input-wrapper:focus-within {
+      border-color: var(--brand-accent);
+      background-color: var(--btn-bg);
+    }
+
+    .phone-prefix {
+      padding: 14px 12px 14px 16px;
+      color: var(--text-main);
+      font-size: 16px;
+      font-weight: 500;
+      background-color: var(--btn-bg);
+      border-right: 1.5px solid var(--input-border);
+      user-select: none;
+    }
+
+    .phone-input-wrapper .styled-input {
+      border: none;
+      border-radius: 0;
+      background-color: transparent;
+    }
+    
+    .phone-input-wrapper .styled-input:focus {
+      background-color: transparent;
+    }
+
+    .save-btn {
+      background-color: var(--text-main);
+      color: var(--bg-color);
+      margin-top: 12px;
+    }
+    
+    .save-btn:hover {
+      background-color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
 
-  <div class="content-wrapper">
+  <!-- Original Login Section -->
+  <div id="login-wrapper" class="content-wrapper">
     
     <h1 class="brand-title">Meena Chitfunds</h1>
     <div class="brand-subtitle">By Goorac</div>
@@ -171,6 +264,31 @@
 
   </div>
 
+  <!-- New Profile Setup Section (Hidden by Default) -->
+  <div id="setup-wrapper" class="content-wrapper" style="display: none;">
+    <h2 class="brand-title" style="font-size: 24px; margin-bottom: 24px;">Complete Profile</h2>
+    
+    <img id="profile-pic" src="" alt="Profile" class="avatar">
+    
+    <div class="input-group">
+      <label for="user-name">Full Name</label>
+      <input type="text" id="user-name" class="styled-input" placeholder="Enter your name">
+    </div>
+
+    <div class="input-group">
+      <label for="mobile-number">Mobile Number</label>
+      <div class="phone-input-wrapper">
+        <span class="phone-prefix">+91</span>
+        <input type="tel" id="mobile-number" class="styled-input" placeholder="Enter 10-digit number" maxlength="10">
+      </div>
+    </div>
+
+    <button id="save-profile-btn" class="google-btn save-btn">
+      <span id="save-btn-text">Save & Continue</span>
+      <div id="save-loader" class="loader" style="border-top-color: var(--bg-color);"></div>
+    </button>
+  </div>
+
   <script type="module">
     import { auth } from './config.js';
     import { 
@@ -178,27 +296,86 @@
       signInWithPopup, 
       onAuthStateChanged 
     } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      getDoc, 
+      setDoc 
+    } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
+    const db = getFirestore();
     const provider = new GoogleAuthProvider();
+    
+    // Login Elements
+    const loginWrapper = document.getElementById('login-wrapper');
     const loginBtn = document.getElementById('google-login-btn');
     const btnText = document.getElementById('btn-text');
     const loader = document.getElementById('loader');
     const googleIcon = document.getElementById('google-icon');
 
-    // Redirect if already logged in
-    onAuthStateChanged(auth, (user) => {
-      if (user) window.location.replace('home.html');
+    // Setup Elements
+    const setupWrapper = document.getElementById('setup-wrapper');
+    const profilePic = document.getElementById('profile-pic');
+    const userNameInput = document.getElementById('user-name');
+    const mobileNumberInput = document.getElementById('mobile-number');
+    const saveProfileBtn = document.getElementById('save-profile-btn');
+    const saveBtnText = document.getElementById('save-btn-text');
+    const saveLoader = document.getElementById('save-loader');
+
+    let currentUser = null;
+
+    // Haptic Feedback Function
+    function triggerHaptic(duration = 15) {
+      if (navigator.vibrate) {
+        navigator.vibrate(duration);
+      }
+    }
+
+    // Global Haptic Feedback on all clicks
+    document.body.addEventListener('click', () => triggerHaptic(10));
+
+    // Redirect if already logged in (Check Firestore to ensure setup is complete)
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userRef = doc(db, 'users', user.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          window.location.replace('home.html');
+        } else {
+          showSetupPage(user);
+        }
+      }
     });
 
+    function showSetupPage(user) {
+      currentUser = user;
+      loginWrapper.style.display = 'none';
+      setupWrapper.style.display = 'flex';
+      
+      profilePic.src = user.photoURL || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
+      userNameInput.value = user.displayName || '';
+    }
+
     loginBtn.addEventListener('click', async () => {
+      triggerHaptic(30); // Slightly stronger haptic for main action
       btnText.style.display = 'none';
       googleIcon.style.display = 'none';
       loader.style.display = 'block';
       loginBtn.disabled = true;
 
       try {
-        await signInWithPopup(auth, provider);
-        window.location.replace('home.html');
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        
+        // Check if user exists in Firestore
+        const userRef = doc(db, 'users', user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          window.location.replace('home.html');
+        } else {
+          showSetupPage(user);
+        }
       } catch (error) {
         console.error(error);
         alert("Authentication failed.");
@@ -206,6 +383,44 @@
         googleIcon.style.display = 'block';
         loader.style.display = 'none';
         loginBtn.disabled = false;
+      }
+    });
+
+    saveProfileBtn.addEventListener('click', async () => {
+      triggerHaptic(30);
+      const name = userNameInput.value.trim();
+      const mobile = mobileNumberInput.value.trim();
+
+      if (!name) {
+        alert("Please enter your name");
+        return;
+      }
+      
+      if (!mobile || mobile.length < 10) {
+        alert("Please enter a valid 10-digit mobile number");
+        return;
+      }
+
+      saveBtnText.style.display = 'none';
+      saveLoader.style.display = 'block';
+      saveProfileBtn.disabled = true;
+
+      try {
+        await setDoc(doc(db, 'users', currentUser.uid), {
+          uid: currentUser.uid,
+          name: name,
+          mobile: '+91' + mobile,
+          email: currentUser.email,
+          photoURL: currentUser.photoURL,
+          createdAt: new Date().toISOString()
+        });
+        window.location.replace('home.html');
+      } catch (error) {
+        console.error("Error saving profile: ", error);
+        alert("Failed to save profile. Please try again.");
+        saveBtnText.style.display = 'block';
+        saveLoader.style.display = 'none';
+        saveProfileBtn.disabled = false;
       }
     });
   </script>
