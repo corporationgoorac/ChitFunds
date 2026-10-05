@@ -221,7 +221,7 @@
 
     /* Participant User Cards */
     .user-card { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--card-shadow); cursor: pointer; transition: 0.2s;}
-    .user-card:active { transform: scale(0.98); background: var(--surface-hover); border-color: var(--brand-accent); }
+    .user-card:active { transform: scale(0.98); background-color: var(--surface-hover); border-color: var(--brand-accent); }
     .u-left { display: flex; align-items: center; gap: 14px; width: 100%;}
     .u-avatar { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: 800; flex-shrink: 0;}
     .u-info { flex: 1; }
@@ -310,19 +310,6 @@
     .mini-btn-cancel { background-color: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); margin-top: 10px; }
     .mini-btn-danger { background-color: var(--danger-color); color: #fff; }
 
-    /* Forms & Inputs */
-    .input-group { margin-bottom: 24px; position: relative; text-align: left; }
-    .input-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
-    .input-group input, .input-group select {
-      width: 100%; background-color: var(--surface-color); border: 2px solid var(--border-color);
-      color: var(--text-main); padding: 16px; border-radius: 14px; font-size: 16px; outline: none; appearance: none; font-weight: 700; transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .input-group input:focus, .input-group select:focus { border-color: var(--brand-accent); box-shadow: 0 0 0 4px var(--brand-accent-light); }
-    .validation-icon { position: absolute; right: 16px; bottom: 16px; font-size: 18px; }
-    .valid { color: var(--success-color); }
-    .invalid { color: var(--danger-color); }
-    .loading-text { font-size: 11px; color: var(--brand-accent); position: absolute; right: 14px; top: 0; display: none; font-weight: 800; text-transform: uppercase;}
-
     /* GPay Style Overlay */
     .gpay-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -374,49 +361,7 @@
       </div>
       
       <div id="main-groups-list">
-        <!-- Professional Embedded Skeletons replaced the old spinner -->
-        <div class="skeleton-user-card">
-            <div class="skeleton-u-top">
-                <div class="skeleton skeleton-icon"></div>
-                <div class="skeleton-lines">
-                    <div class="skeleton skeleton-text-lg"></div>
-                    <div class="skeleton skeleton-text-md"></div>
-                    <div class="skeleton skeleton-text-sm"></div>
-                </div>
-            </div>
-            <div class="skeleton-u-actions">
-                <div class="skeleton skeleton-btn"></div>
-                <div class="skeleton skeleton-btn"></div>
-            </div>
-        </div>
-        <div class="skeleton-user-card">
-            <div class="skeleton-u-top">
-                <div class="skeleton skeleton-icon"></div>
-                <div class="skeleton-lines">
-                    <div class="skeleton skeleton-text-lg"></div>
-                    <div class="skeleton skeleton-text-md"></div>
-                    <div class="skeleton skeleton-text-sm"></div>
-                </div>
-            </div>
-            <div class="skeleton-u-actions">
-                <div class="skeleton skeleton-btn"></div>
-                <div class="skeleton skeleton-btn"></div>
-            </div>
-        </div>
-        <div class="skeleton-user-card">
-            <div class="skeleton-u-top">
-                <div class="skeleton skeleton-icon"></div>
-                <div class="skeleton-lines">
-                    <div class="skeleton skeleton-text-lg"></div>
-                    <div class="skeleton skeleton-text-md"></div>
-                    <div class="skeleton skeleton-text-sm"></div>
-                </div>
-            </div>
-            <div class="skeleton-u-actions">
-                <div class="skeleton skeleton-btn"></div>
-                <div class="skeleton skeleton-btn"></div>
-            </div>
-        </div>
+        <!-- Skeletons load instantly -->
       </div>
       <button id="main-load-more-btn" class="load-more-btn" style="display: none;" onclick="loadMoreGroups()">Load More Groups</button>
     </div>
@@ -577,46 +522,17 @@
     </div>
   </aside>
 
-  <aside id="edit-participant-modal" class="modal">
-    <div class="modal-header">
-      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
-      <div class="modal-title">Edit Participant</div>
+  <!-- GPay Style Success Overlay -->
+  <div id="gpay-overlay" class="gpay-overlay">
+    <div class="gpay-circle">
+      <svg class="gpay-check" viewBox="0 0 24 24">
+        <path d="M4 12 l5 5 l11 -11" />
+      </svg>
     </div>
-    <div class="modal-body">
-      <form id="edit-participant-form">
-        <input type="hidden" id="original-p-id">
-        <div class="input-group">
-          <label>Participant ID (Unique)</label>
-          <span class="loading-text" id="edit-p-id-loading">Checking...</span>
-          <input type="text" id="edit-p-id" required style="text-transform: uppercase; font-family: monospace; font-weight: 800; letter-spacing: 1px;" autocomplete="off">
-          <span class="validation-icon" id="edit-p-id-icon"></span>
-        </div>
-        <div class="input-group">
-          <label>Full Name</label>
-          <input type="text" id="edit-p-name" required>
-        </div>
-        <div class="input-group">
-          <label>Phone Number</label>
-          <input type="tel" id="edit-p-phone" required>
-        </div>
-        <button type="submit" class="m-btn btn-primary" id="edit-p-submit-btn" style="background: var(--brand-accent); box-shadow: 0 8px 20px rgba(6, 95, 212, 0.25);">Save Changes</button>
-      </form>
-    </div>
-  </aside>
-
-  <aside id="delete-participant-modal" class="center-modal">
-    <div class="mini-modal-content">
-      <div class="msg-icon">
-          <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--danger-color)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-      </div>
-      <h3 class="mini-modal-title">Delete Participant</h3>
-      <p class="mini-modal-text">Are you sure you want to permanently remove this participant from the system? This action cannot be undone.</p>
-      <div style="display:flex; flex-direction:column; gap:12px;">
-          <button class="mini-btn mini-btn-danger" id="confirm-delete-participant-btn">Delete Permanently</button>
-          <button class="mini-btn mini-btn-cancel" onclick="closeModal()">Cancel</button>
-      </div>
-    </div>
-  </aside>
+    <div class="gpay-title">Payment Successful</div>
+    <div class="gpay-amount" id="gpay-amount-text">₹0</div>
+    <div class="gpay-footer">Verified transaction</div>
+  </div>
 
   <aside id="message-modal" class="center-modal">
     <div class="mini-modal-content">
@@ -629,18 +545,6 @@
       </div>
     </div>
   </aside>
-
-  <!-- GPay Style Success Overlay -->
-  <div id="gpay-overlay" class="gpay-overlay">
-    <div class="gpay-circle">
-      <svg class="gpay-check" viewBox="0 0 24 24">
-        <path d="M4 12 l5 5 l11 -11" />
-      </svg>
-    </div>
-    <div class="gpay-title">Payment Successful</div>
-    <div class="gpay-amount" id="gpay-amount-text">₹0</div>
-    <div class="gpay-footer">Verified transaction</div>
-  </div>
 
   <script type="module">
     import { auth, db } from './config.js';
@@ -1507,13 +1411,13 @@
     };
 
     document.getElementById('execute-pay-btn').addEventListener('click', async () => {
-        if(!pendingPaymentState || !activeGroupDataCache || !activeViewedUser) return;
+        if(!pendingPaymentState || !activeGroupData || !activeViewedUser) return;
         const btn = document.getElementById('execute-pay-btn');
         btn.innerText = "Processing..."; btn.disabled = true;
 
         try {
             const batch = writeBatch(db);
-            const groupId = activeGroupDataCache.id;
+            const groupId = activeGroupData.id;
 
             const newTxRef = doc(collection(db, "transactions"));
             batch.set(newTxRef, {
@@ -1527,7 +1431,7 @@
             });
 
             const groupRef = doc(db, "groups", groupId);
-            let snapshotArray = activeGroupDataCache.memberSnapshot || [];
+            let snapshotArray = activeGroupData.memberSnapshot || [];
             let userSnapIndex = snapshotArray.findIndex(m => m && m.id === activeViewedUser.id);
             
             if(userSnapIndex > -1) {
@@ -1573,18 +1477,18 @@
     };
 
     document.getElementById('execute-undo-btn').addEventListener('click', async () => {
-        if(!pendingUndoState || !activeGroupDataCache || !activeViewedUser) return;
+        if(!pendingUndoState || !activeGroupData || !activeViewedUser) return;
         const btn = document.getElementById('execute-undo-btn');
         btn.innerText = "Reversing..."; btn.disabled = true;
 
         try {
             const batch = writeBatch(db);
-            const groupId = activeGroupDataCache.id;
+            const groupId = activeGroupData.id;
 
             batch.delete(doc(db, "transactions", pendingUndoState.txnId));
 
             const groupRef = doc(db, "groups", groupId);
-            let snapshotArray = activeGroupDataCache.memberSnapshot || [];
+            let snapshotArray = activeGroupData.memberSnapshot || [];
             let userSnapIndex = snapshotArray.findIndex(m => m && m.id === activeViewedUser.id);
             
             if(userSnapIndex > -1) {
@@ -1614,8 +1518,8 @@
         }
     });
 
-    // Execute Initial Load
-    window.onload = () => loadGroupsFromServer(false);
+    // Execute Initial Load directly (fixes the infinite skeleton race condition in ES modules)
+    loadGroupsFromServer(false);
 
   </script>
 </body>
