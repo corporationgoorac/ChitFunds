@@ -52,6 +52,10 @@
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+    /* HIDE NATIVE SCROLLBARS FOR APP-LIKE FEEL */
+    ::-webkit-scrollbar { display: none; }
+    html, body { scrollbar-width: none; -ms-overflow-style: none; }
+
     body {
       background-color: var(--bg-color);
       color: var(--text-main);
@@ -111,7 +115,7 @@
     .section-title { font-size: 15px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; margin-bottom: 0; color: var(--text-muted); }
     
     .search-wrapper { position: relative; width: 100%; margin-bottom: 20px;}
-    .search-input { width: 100%; padding: 14px 14px 14px 44px; border-radius: 14px; border: 2px solid var(--border-color); background: var(--surface-color); color: var(--text-main); font-size: 15px; font-weight: 600; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: var(--card-shadow);}
+    .search-input { width: 100%; padding: 14px 14px 14px 44px; border-radius: 14px; border: 2px solid var(--border-color); background: var(--surface-color); color: var(--text-main); font-size: 15px; font-weight: 600; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: var(--card-shadow); text-transform: uppercase;}
     .search-input:focus { border-color: var(--brand-accent); box-shadow: 0 0 0 4px var(--brand-accent-light); }
     .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
 
@@ -140,23 +144,23 @@
     .skeleton-u-actions { display: flex; justify-content: flex-end; gap: 12px; border-top: 1px dashed var(--border-color); padding-top: 12px; }
     .skeleton-btn { width: 60px; height: 24px; border-radius: 8px; }
 
-    /* Group Card */
-    .group-card {
-      background-color: var(--surface-color); border: 1px solid var(--border-color);
-      border-radius: 16px; padding: 20px; margin-bottom: 16px; display: flex; flex-direction: column; cursor: pointer; transition: 0.2s;
-      box-shadow: var(--card-shadow);
-    }
-    .group-card:active { transform: scale(0.98); background-color: var(--surface-hover); border-color: var(--brand-accent); }
-    
-    .group-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px;}
-    .group-name { font-size: 18px; font-weight: 800; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: -0.5px; word-break: break-word;}
-    .group-id-badge { font-size: 11px; background: var(--brand-accent-light); color: var(--brand-accent); padding: 4px 8px; border-radius: 6px; font-weight: 800; font-family: monospace; letter-spacing: 0.5px;}
-    
-    .g-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .g-stat { display: flex; flex-direction: column; gap: 4px; }
-    .g-stat-label { font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px;}
-    .g-stat-val { font-size: 15px; font-weight: 800; color: var(--text-main); }
-    .g-stat-val.highlight { color: var(--brand-accent); }
+    /* Participant User Cards (Redesigned for Full Width & Wrapping) */
+    .user-card { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; box-shadow: var(--card-shadow); cursor: pointer; transition: 0.2s;}
+    .user-card:active { transform: scale(0.98); background-color: var(--surface-hover); border-color: var(--brand-accent); }
+    .u-left { display: flex; align-items: flex-start; gap: 14px; width: 100%;}
+    .u-avatar { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: 800; flex-shrink: 0;}
+    .u-info { flex: 1; min-width: 0; } 
+    .u-info h3 { margin: 0 0 4px 0; font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; white-space: normal; word-break: break-word; line-height: 1.3;}
+    .u-meta { font-size: 12px; color: var(--brand-accent); font-weight: 800; font-family: monospace; letter-spacing: 0.5px; background: var(--brand-accent-light); padding: 2px 6px; border-radius: 6px; display: inline-block; margin-bottom: 6px;}
+    .u-loc { font-size: 11px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 4px; white-space: normal; word-break: break-word;}
+
+    /* Compact Card Actions */
+    .user-card-actions { display: flex; gap: 12px; border-top: 1px dashed var(--border-color); padding-top: 12px; margin-top: 16px; width: 100%; justify-content: flex-end; align-items: center;}
+    .u-action-btn { background: none; border: none; font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 8px 14px; border-radius: 10px; color: var(--text-muted); transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px;}
+    .u-action-btn:active { transform: scale(0.95); }
+    .u-action-btn.delete { color: var(--danger-color); background: var(--danger-light); }
+    .u-action-btn.edit { color: var(--brand-accent); background: var(--brand-accent-light); }
+    .u-action-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
     .load-more-btn { width: 100%; background: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 16px; border-radius: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; box-shadow: var(--card-shadow); }
     .load-more-btn:active { background: var(--surface-hover); transform: scale(0.98);}
@@ -180,9 +184,19 @@
     .back-btn svg { width: 20px; height: 20px; fill: currentColor; }
     .modal-title { font-size: 18px; font-weight: 800; margin-left: 14px; letter-spacing: -0.5px;}
     .modal-subtitle { font-size: 11px; color: var(--brand-accent); font-weight: 700; margin-left: 14px; font-family: monospace;}
-    .modal-body { padding: 24px 20px; flex: 1; overflow-y: auto; scroll-behavior: smooth; }
+    
+    /* HIDE NATIVE SCROLLBARS FOR APP-LIKE FEEL */
+    .modal-body { padding: 24px 20px; flex: 1; overflow-y: auto; scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none;}
+    .modal-body::-webkit-scrollbar { display: none; }
 
-    /* Advanced Engine Detail Card (Refined for Sleek Look) */
+    /* Static Group Badge */
+    .group-header-card { background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; padding: 16px 20px; border-radius: 16px; margin-bottom: 24px; box-shadow: 0 8px 20px rgba(6, 95, 212, 0.25); display: flex; justify-content: space-between; align-items: center;}
+    @media (prefers-color-scheme: dark) { .group-header-card { background: linear-gradient(135deg, #3ea6ff, #065fd4); } }
+    .gh-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; opacity: 0.8; margin-bottom: 4px; }
+    .gh-name { font-size: 18px; font-weight: 800; text-transform: uppercase; margin: 0;}
+    .gh-id { font-family: monospace; font-size: 14px; font-weight: 800; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 8px; }
+
+    /* Neo-Banking Dashboard */
     .detail-card { background: var(--surface-color); padding: 24px; border-radius: 20px; margin-bottom: 24px; border: 1px solid var(--border-color); box-shadow: var(--card-shadow); text-align: center; }
     
     .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; background: var(--success-light); color: var(--success-color);}
@@ -214,7 +228,7 @@
 
     /* Participant User Cards */
     .user-card { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--card-shadow); cursor: pointer; transition: 0.2s;}
-    .user-card:active { transform: scale(0.98); background-color: var(--surface-hover); border-color: var(--brand-accent); }
+    .user-card:active { transform: scale(0.98); background: var(--surface-hover); border-color: var(--brand-accent); }
     .u-left { display: flex; align-items: center; gap: 14px; width: 100%;}
     .u-avatar { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: 800; flex-shrink: 0;}
     .u-info { flex: 1; }
@@ -292,7 +306,7 @@
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     /* System Alert Modals */
-    .center-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);}
+    .center-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);}
     .center-modal.active { opacity: 1; pointer-events: all; }
     .mini-modal-content { background-color: var(--surface-color); width: 90%; max-width: 340px; border-radius: 24px; padding: 30px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid var(--border-color); text-align: center; }
     .center-modal.active .mini-modal-content { transform: scale(1); }
@@ -302,6 +316,19 @@
     .mini-btn { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; width: 100%; background-color: var(--brand-accent); color: #fff;}
     .mini-btn-cancel { background-color: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); margin-top: 10px; }
     .mini-btn-danger { background-color: var(--danger-color); color: #fff; }
+
+    /* Forms & Inputs */
+    .input-group { margin-bottom: 24px; position: relative; text-align: left; }
+    .input-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
+    .input-group input, .input-group select {
+      width: 100%; background-color: var(--surface-color); border: 2px solid var(--border-color);
+      color: var(--text-main); padding: 16px; border-radius: 14px; font-size: 16px; outline: none; appearance: none; font-weight: 700; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-group input:focus, .input-group select:focus { border-color: var(--brand-accent); box-shadow: 0 0 0 4px var(--brand-accent-light); }
+    .validation-icon { position: absolute; right: 16px; bottom: 16px; font-size: 18px; }
+    .valid { color: var(--success-color); }
+    .invalid { color: var(--danger-color); }
+    .loading-text { font-size: 11px; color: var(--brand-accent); position: absolute; right: 14px; top: 0; display: none; font-weight: 800; text-transform: uppercase;}
 
     /* GPay Style Overlay */
     .gpay-overlay {
@@ -346,7 +373,7 @@
         <span class="search-icon">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
         </span>
-        <input type="text" id="master-search" class="search-input" placeholder="Search Groups by ID or Name...">
+        <input type="text" id="master-search" class="search-input" placeholder="Search Groups by ID or Name..." autocomplete="off">
       </div>
       
       <div class="section-header-row">
@@ -355,6 +382,20 @@
       
       <div id="main-groups-list">
         <!-- Professional Embedded Skeletons replaced the old spinner -->
+        <div class="skeleton-user-card">
+            <div class="skeleton-u-top">
+                <div class="skeleton skeleton-icon"></div>
+                <div class="skeleton-lines">
+                    <div class="skeleton skeleton-text-lg"></div>
+                    <div class="skeleton skeleton-text-md"></div>
+                    <div class="skeleton skeleton-text-sm"></div>
+                </div>
+            </div>
+            <div class="skeleton-u-actions">
+                <div class="skeleton skeleton-btn"></div>
+                <div class="skeleton skeleton-btn"></div>
+            </div>
+        </div>
         <div class="skeleton-user-card">
             <div class="skeleton-u-top">
                 <div class="skeleton skeleton-icon"></div>
@@ -543,17 +584,46 @@
     </div>
   </aside>
 
-  <!-- GPay Style Success Overlay -->
-  <div id="gpay-overlay" class="gpay-overlay">
-    <div class="gpay-circle">
-      <svg class="gpay-check" viewBox="0 0 24 24">
-        <path d="M4 12 l5 5 l11 -11" />
-      </svg>
+  <aside id="edit-participant-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div class="modal-title">Edit Participant</div>
     </div>
-    <div class="gpay-title">Payment Successful</div>
-    <div class="gpay-amount" id="gpay-amount-text">₹0</div>
-    <div class="gpay-footer">Verified transaction</div>
-  </div>
+    <div class="modal-body">
+      <form id="edit-participant-form">
+        <input type="hidden" id="original-p-id">
+        <div class="input-group">
+          <label>Participant ID (Unique)</label>
+          <span class="loading-text" id="edit-p-id-loading">Checking...</span>
+          <input type="text" id="edit-p-id" required style="text-transform: uppercase; font-family: monospace; font-weight: 800; letter-spacing: 1px;" autocomplete="off">
+          <span class="validation-icon" id="edit-p-id-icon"></span>
+        </div>
+        <div class="input-group">
+          <label>Full Name</label>
+          <input type="text" id="edit-p-name" required>
+        </div>
+        <div class="input-group">
+          <label>Phone Number</label>
+          <input type="tel" id="edit-p-phone" required>
+        </div>
+        <button type="submit" class="m-btn btn-primary" id="edit-p-submit-btn" style="background: var(--brand-accent); box-shadow: 0 8px 20px rgba(6, 95, 212, 0.25);">Save Changes</button>
+      </form>
+    </div>
+  </aside>
+
+  <aside id="delete-participant-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div class="msg-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--danger-color)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      </div>
+      <h3 class="mini-modal-title">Delete Participant</h3>
+      <p class="mini-modal-text">Are you sure you want to permanently remove this participant from the system? This action cannot be undone.</p>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+          <button class="mini-btn mini-btn-danger" id="confirm-delete-participant-btn">Delete Permanently</button>
+          <button class="mini-btn mini-btn-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </aside>
 
   <aside id="message-modal" class="center-modal">
     <div class="mini-modal-content">
@@ -566,6 +636,18 @@
       </div>
     </div>
   </aside>
+
+  <!-- GPay Style Success Overlay -->
+  <div id="gpay-overlay" class="gpay-overlay">
+    <div class="gpay-circle">
+      <svg class="gpay-check" viewBox="0 0 24 24">
+        <path d="M4 12 l5 5 l11 -11" />
+      </svg>
+    </div>
+    <div class="gpay-title">Payment Successful</div>
+    <div class="gpay-amount" id="gpay-amount-text">₹0</div>
+    <div class="gpay-footer">Verified transaction</div>
+  </div>
 
   <script type="module">
     import { auth, db } from './config.js';
@@ -584,7 +666,7 @@
         } catch(e) { }
     };
 
-    // --- FLAWLESS MODAL NAVIGATION (Hash Based) ---
+    // --- FLAWLESS MODAL NAVIGATION (Intelligent Stack Based) ---
     window.openModal = function(modalId) {
       haptic('light');
       document.getElementById(modalId).classList.add('active');
@@ -608,10 +690,16 @@
     }
     
     window.addEventListener('popstate', (e) => {
-       closeAllModals();
-       if(e.state && e.state.id) {
-           const targetModal = document.getElementById(e.state.id);
-           if(targetModal) targetModal.classList.add('active');
+       // Intelligently identify and remove only the top-most modal
+       const modals = Array.from(document.querySelectorAll('.modal.active, .center-modal.active'));
+       if (modals.length > 0) {
+           // Sort by z-index to reliably find the topmost modal
+           modals.sort((a, b) => {
+               const zA = parseInt(window.getComputedStyle(a).zIndex) || 0;
+               const zB = parseInt(window.getComputedStyle(b).zIndex) || 0;
+               return zB - zA;
+           });
+           modals[0].classList.remove('active');
        }
     });
 
@@ -634,6 +722,10 @@
     window.closeMessageModal = function() {
       document.getElementById('message-modal').classList.remove('active');
     };
+
+    // --- HELPER ICONS ---
+    const phoneIconSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>`;
+    const locIconSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
 
     // --- GLOBAL CACHE & SEARCH ENGINE ---
     let allGroupsCache = []; 
@@ -1422,13 +1514,13 @@
     };
 
     document.getElementById('execute-pay-btn').addEventListener('click', async () => {
-        if(!pendingPaymentState || !activeGroupData || !activeViewedUser) return;
+        if(!pendingPaymentState || !activeGroupDataCache || !activeViewedUser) return;
         const btn = document.getElementById('execute-pay-btn');
         btn.innerText = "Processing..."; btn.disabled = true;
 
         try {
             const batch = writeBatch(db);
-            const groupId = activeGroupData.id;
+            const groupId = activeGroupDataCache.id;
 
             const newTxRef = doc(collection(db, "transactions"));
             batch.set(newTxRef, {
@@ -1442,7 +1534,7 @@
             });
 
             const groupRef = doc(db, "groups", groupId);
-            let snapshotArray = activeGroupData.memberSnapshot || [];
+            let snapshotArray = activeGroupDataCache.memberSnapshot || [];
             let userSnapIndex = snapshotArray.findIndex(m => m && m.id === activeViewedUser.id);
             
             if(userSnapIndex > -1) {
@@ -1488,18 +1580,18 @@
     };
 
     document.getElementById('execute-undo-btn').addEventListener('click', async () => {
-        if(!pendingUndoState || !activeGroupData || !activeViewedUser) return;
+        if(!pendingUndoState || !activeGroupDataCache || !activeViewedUser) return;
         const btn = document.getElementById('execute-undo-btn');
         btn.innerText = "Reversing..."; btn.disabled = true;
 
         try {
             const batch = writeBatch(db);
-            const groupId = activeGroupData.id;
+            const groupId = activeGroupDataCache.id;
 
             batch.delete(doc(db, "transactions", pendingUndoState.txnId));
 
             const groupRef = doc(db, "groups", groupId);
-            let snapshotArray = activeGroupData.memberSnapshot || [];
+            let snapshotArray = activeGroupDataCache.memberSnapshot || [];
             let userSnapIndex = snapshotArray.findIndex(m => m && m.id === activeViewedUser.id);
             
             if(userSnapIndex > -1) {
