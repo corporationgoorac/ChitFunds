@@ -50,7 +50,19 @@
       }
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    /* Scrollbar removal and global resets */
+    * { 
+        box-sizing: border-box; 
+        -webkit-tap-highlight-color: transparent; 
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    }
+    
+    ::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+        display: none; /* Chrome, Safari, Opera */
+    }
 
     body {
       background-color: var(--bg-color);
@@ -644,6 +656,30 @@
             
             // PROACTIVE RESET: Guarantee button is hidden during animation phase
             if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+        } else {
+            // DYNAMIC BOTTOM SKELETON LOADER INJECTION
+            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+            if (!document.getElementById('bottom-pagination-skeleton')) {
+                const skel = document.createElement('div');
+                skel.id = 'bottom-pagination-skeleton';
+                skel.className = 'skeleton-user-card';
+                skel.style.opacity = '0.8';
+                skel.innerHTML = `
+                    <div class="skeleton-u-top">
+                        <div class="skeleton skeleton-icon"></div>
+                        <div class="skeleton-lines">
+                            <div class="skeleton skeleton-text-lg"></div>
+                            <div class="skeleton skeleton-text-md"></div>
+                            <div class="skeleton skeleton-text-sm"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-u-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>`;
+                usersList.appendChild(skel);
+                skel.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
         }
 
         // SYNTHETIC DELAY FOR LUXURY UX
@@ -730,6 +766,10 @@
                 querySnapshot = await getDocs(fallbackQ);
             }
 
+            // Remove bottom skeleton instantly on network response
+            const bottomSkel = document.getElementById('bottom-pagination-skeleton');
+            if (bottomSkel) bottomSkel.remove();
+
             if (!isLoadMore) usersList.innerHTML = '';
 
             if (querySnapshot.empty) {
@@ -792,6 +832,10 @@
 
         } catch (e) {
             console.error("Fetch Error:", e);
+            // Ensure skeleton is removed on error
+            const bottomSkel = document.getElementById('bottom-pagination-skeleton');
+            if (bottomSkel) bottomSkel.remove();
+            
             usersList.innerHTML = `<div style="color:var(--danger-color); text-align:center; padding: 20px; font-weight:700;">Error Loading Directory</div>`;
         }
     }
