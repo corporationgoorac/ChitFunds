@@ -614,6 +614,7 @@
     let currentCalcMonth = 0;
     let baselineLastAmount = 0;
     let activeGroupData = null;
+    let cachedGroups = {}; // <-- 1-Read Memory Cache (Stores Promises)
 
     // --- ADVANCED LIVE SERVER SEARCH (0-READ WASTE) ---
     let lastVisibleUser = null;
@@ -822,7 +823,7 @@
     // --- STEP 2: OPENING THE CALCULATION MODAL ---
     window.selectUserForPayment = function(userObj) {
         targetUserId = userObj.id;
-        targetUserName = userObj.name || "Unnamed"; // FIX: Added safety fallback to prevent undefined exceptions destroying the database save
+        targetUserName = userObj.name || "Unnamed"; 
         activeUserObj = userObj; 
         
         document.getElementById('u-name').innerText = userObj.name || "Unnamed";
@@ -840,7 +841,7 @@
                 opt.innerText = `@${gId}`;
                 select.appendChild(opt);
             });
-            // FIX: Safely select the specific array index instead of the whole array object
+            
             if (userObj.activeGroups.length === 1) {
                 select.value = userObj.activeGroups[0]; 
                 select.dispatchEvent(new Event('change'));
@@ -849,7 +850,7 @@
             select.innerHTML = '<option value="">No active groups found</option>';
         }
 
-        // --- PROFESSIONAL GRAY GROUP BOX INJECTION ---
+        // --- PROFESSIONAL GRAY GROUP BOX INJECTION (1-READ MEMORY CACHE) ---
         const blueContainer = document.getElementById('blue-group-box-container');
         blueContainer.innerHTML = '';
         
@@ -857,19 +858,24 @@
             userObj.activeGroups.forEach(gId => {
                 const box = document.createElement('div');
                 box.className = 'group-display-box';
-                // Add a unique ID for the group name text so we can update it after fetching
                 box.innerHTML = `<div><div style="font-size:11px; color:var(--text-muted); margin-bottom:4px; text-transform:uppercase; font-weight:700;">Active Group</div><div class="g-name" id="gname-display-${gId}">Loading...</div></div><div class="g-id">@${gId}</div>`;
                 
-                // Fetch the actual group name from the database
-                getDoc(doc(db, "groups", gId)).then(gSnap => {
-                    const nameEl = document.getElementById(`gname-display-${gId}`);
-                    if (nameEl) {
-                        if (gSnap.exists() && gSnap.data().groupName) {
-                            nameEl.innerText = gSnap.data().groupName;
-                        } else {
-                            nameEl.innerText = `Group ${gId}`;
+                // 1-READ OPTIMIZATION: Check if the promise exists. If not, trigger the network request.
+                if (!cachedGroups[gId]) {
+                    cachedGroups[gId] = getDoc(doc(db, "groups", gId)).then(snap => {
+                        if (snap.exists()) {
+                            let data = snap.data();
+                            data.id = snap.id;
+                            return data;
                         }
-                    }
+                        throw new Error("Group not found");
+                    });
+                }
+                
+                // Tie the UI update to the successful resolution of the promise
+                cachedGroups[gId].then(gData => {
+                    const nameEl = document.getElementById(`gname-display-${gId}`);
+                    if (nameEl) nameEl.innerText = gData.groupName || `Group ${gId}`;
                 }).catch(err => {
                     const nameEl = document.getElementById(`gname-display-${gId}`);
                     if (nameEl) nameEl.innerText = `Group ${gId}`;
@@ -890,7 +896,7 @@
         openModal('calc-modal');
     };
 
-    // --- ADVANCED CALCULATION ENGINE LOGIC ---
+    // --- ADVANCED CALCULATION ENGINE LOGIC (CACHED) ---
     document.getElementById('u-group-select').addEventListener('change', async (e) => {
         const groupId = e.target.value;
         const detailsView = document.getElementById('payment-details-view');
@@ -907,13 +913,18 @@
         btn.disabled = true;
         
         try {
-            // 1. Fetch Group Settings
-            const groupSnap = await getDoc(doc(db, "groups", groupId));
-            if(!groupSnap.exists()) {
-                throw new Error("Group data missing");
+            // 1. Fetch Group Settings (Optimized: Uses the 1-Read Memory Cache)
+            if (!cachedGroups[groupId]) {
+                cachedGroups[groupId] = getDoc(doc(db, "groups", groupId)).then(snap => {
+                    if (snap.exists()) {
+                        let data = snap.data();
+                        data.id = snap.id;
+                        return data;
+                    }
+                    throw new Error("Group not found");
+                });
             }
-            activeGroupData = groupSnap.data();
-            activeGroupData.id = groupSnap.id;
+            activeGroupData = await cachedGroups[groupId];
 
             // 2. Fetch User's Past Transactions for THIS Group with Safe Fallbacks
             let txns = [];
