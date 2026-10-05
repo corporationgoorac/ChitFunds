@@ -4,34 +4,40 @@ service cloud.firestore {
 
     // -------------------------------------------------------------------------
     // SECURITY ENGINE: WORKSPACE ADMIN VERIFICATION
-    // This function guarantees that the request is coming from an authenticated 
-    // user who holds a valid profile in the 'admins' collection with 'admin: true'.
     // -------------------------------------------------------------------------
     function isWorkspaceAdmin() {
-      // Ensure the user is actually logged in via Firebase Auth
       let isAuthenticated = request.auth != null;
-      
-      // Point dynamically to the user's specific document in the admins collection
       let adminProfilePath = /databases/$(database)/documents/admins/$(request.auth.uid);
       
-      // Validate that the profile exists AND the admin boolean is strictly true
       return isAuthenticated && 
              exists(adminProfilePath) && 
              get(adminProfilePath).data.admin == true;
     }
 
     // -------------------------------------------------------------------------
-    // GLOBAL DATABASE ROUTING
-    // Applies the logic across all collections (users, groups, transactions, etc.)
+    // 1. SPECIFIC ROUTING: ADMINS COLLECTION (Fixes Profile Setup)
+    // -------------------------------------------------------------------------
+    match /admins/{userId} {
+      // Allows new users to complete their profile setup in login.html.
+      // CRITICAL SECURITY: They can only save to their own UID, and the request 
+      // is immediately rejected if they try to grant themselves 'admin: true'.
+      allow write: if request.auth != null && 
+                      request.auth.uid == userId && 
+                      (!("admin" in request.resource.data) || request.resource.data.admin == false);
+    }
+
+    // -------------------------------------------------------------------------
+    // 2. GLOBAL ROUTING: ALL COLLECTIONS (Users, Groups, Transactions, etc.)
+    // Note: In Firestore, if ANY rule evaluates to true, access is granted.
     // -------------------------------------------------------------------------
     match /{document=**} {
       
       // REQUIREMENT 1: Public Read Access
-      // Anyone (even without logging in) can read the database.
       allow read: if true;
       
       // REQUIREMENT 2: Restricted Write Access
-      // Only users who pass the isWorkspaceAdmin() function can create, edit, or delete data.
+      // This allows fully verified Admins to write anywhere in the database, 
+      // including updating other admins or promoting them to 'admin: true'.
       allow write: if isWorkspaceAdmin();
       
     }
