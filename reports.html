@@ -50,7 +50,23 @@
       }
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    /* Scrollbar removal and global resets */
+    * { 
+        box-sizing: border-box; 
+        -webkit-tap-highlight-color: transparent; 
+    }
+    
+    /* PERFORMANCE FIX: Targeted scrollbar removal prevents global CPU recalculation */
+    body, .modal, .modal-body, .list-container, #user-modal-scroll-area {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    }
+    
+    body::-webkit-scrollbar, .modal::-webkit-scrollbar, .modal-body::-webkit-scrollbar, .list-container::-webkit-scrollbar, #user-modal-scroll-area::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+        display: none; /* Chrome, Safari, Opera */
+    }
 
     body {
       background-color: var(--bg-color);
@@ -644,6 +660,30 @@
             
             // PROACTIVE RESET: Guarantee button is hidden during animation phase
             if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+        } else {
+            // DYNAMIC BOTTOM SKELETON LOADER INJECTION
+            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+            if (!document.getElementById('bottom-pagination-skeleton')) {
+                const skel = document.createElement('div');
+                skel.id = 'bottom-pagination-skeleton';
+                skel.className = 'skeleton-user-card';
+                skel.style.opacity = '0.8';
+                skel.innerHTML = `
+                    <div class="skeleton-u-top">
+                        <div class="skeleton skeleton-icon"></div>
+                        <div class="skeleton-lines">
+                            <div class="skeleton skeleton-text-lg"></div>
+                            <div class="skeleton skeleton-text-md"></div>
+                            <div class="skeleton skeleton-text-sm"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-u-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>`;
+                usersList.appendChild(skel);
+                skel.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
         }
 
         // SYNTHETIC DELAY FOR LUXURY UX
@@ -730,6 +770,10 @@
                 querySnapshot = await getDocs(fallbackQ);
             }
 
+            // Remove bottom skeleton instantly on network response
+            const bottomSkel = document.getElementById('bottom-pagination-skeleton');
+            if (bottomSkel) bottomSkel.remove();
+
             if (!isLoadMore) usersList.innerHTML = '';
 
             if (querySnapshot.empty) {
@@ -792,6 +836,10 @@
 
         } catch (e) {
             console.error("Fetch Error:", e);
+            // Ensure skeleton is removed on error
+            const bottomSkel = document.getElementById('bottom-pagination-skeleton');
+            if (bottomSkel) bottomSkel.remove();
+            
             usersList.innerHTML = `<div style="color:var(--danger-color); text-align:center; padding: 20px; font-weight:700;">Error Loading Directory</div>`;
         }
     }
@@ -875,15 +923,21 @@
         
         const badgeContainer = document.getElementById('static-group-badge-container');
         
+        // PERFECT UI FIX: Trigger CSS Modal Slide immediately
+        openModal('user-detail-modal');
+        
         if(user.activeGroups && user.activeGroups.length > 0) {
             const activeGroupId = user.activeGroups[0]; // Strict 1 group requirement
-            analyzeUserLedger(activeGroupId);
+            
+            // PERFECT PERFORMANCE FIX: Delay execution allowing smooth 0.35s GPU modal slide
+            setTimeout(() => {
+                analyzeUserLedger(activeGroupId);
+            }, 350); 
+            
         } else {
             badgeContainer.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-weight:700;">Participant is not active in any group.</div>`;
             document.getElementById('ledger-view').style.display = 'none';
         }
-        
-        openModal('user-detail-modal');
     };
 
     async function analyzeUserLedger(groupId) {
