@@ -195,7 +195,7 @@
     .user-name { font-size: 20px; font-weight: 800; margin: 0 0 4px 0; text-transform: uppercase;}
     .user-phone { font-size: 13px; color: var(--text-muted); font-weight: 500; }
     
-    /* NEW: Beautiful Blue Gradient Group Display Box */
+    /* NEW: Beautiful Blue Gradient Group Display Box (STATIC) */
     .group-display-box {
         background: linear-gradient(135deg, var(--brand-accent), #004ba0);
         color: #ffffff;
@@ -206,8 +206,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        cursor: pointer;
-        transition: transform 0.2s, opacity 0.2s;
+        transition: opacity 0.2s; 
     }
     @media (prefers-color-scheme: dark) {
         .group-display-box {
@@ -215,7 +214,6 @@
             box-shadow: 0 8px 20px rgba(6, 95, 212, 0.4);
         }
     }
-    .group-display-box:active { transform: scale(0.97); }
     .group-display-box .g-name { font-size: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
     .group-display-box .g-id { font-size: 13px; font-family: monospace; font-weight: 800; background: rgba(255,255,255,0.2); padding: 6px 10px; border-radius: 8px; letter-spacing: 1px;}
 
@@ -822,7 +820,7 @@
     }
 
     // --- STEP 2: OPENING THE CALCULATION MODAL ---
-    window.selectUserForPayment = function(userObj) {
+    window.selectUserForPayment = async function(userObj) {
         targetUserId = userObj.id;
         targetUserName = userObj.name || "Unnamed"; // FIX: Added safety fallback to prevent undefined exceptions destroying the database save
         activeUserObj = userObj; 
@@ -835,39 +833,52 @@
         const select = document.getElementById('u-group-select');
         select.innerHTML = '<option value="">-- Choose a group --</option>';
         
+        // --- NEW BLUE BOX GRADIENT INJECTION ---
+        const blueContainer = document.getElementById('blue-group-box-container');
+        
         if(userObj.activeGroups && userObj.activeGroups.length > 0) {
+            blueContainer.innerHTML = '<div style="padding:16px; text-align:center; color:var(--brand-accent); font-weight:800; font-size:12px;">Loading group details...</div>';
+            
             userObj.activeGroups.forEach(gId => {
                 const opt = document.createElement('option');
                 opt.value = gId;
                 opt.innerText = `@${gId}`;
                 select.appendChild(opt);
             });
-            // FIX: Safely select the specific array index instead of the whole array object
-            if (userObj.activeGroups.length === 1) {
-                select.value = userObj.activeGroups[0]; 
-                select.dispatchEvent(new Event('change'));
-            }
-        } else {
-            select.innerHTML = '<option value="">No active groups found</option>';
-        }
-
-        // --- NEW BLUE BOX GRADIENT INJECTION ---
-        const blueContainer = document.getElementById('blue-group-box-container');
-        blueContainer.innerHTML = '';
-        
-        if(userObj.activeGroups && userObj.activeGroups.length > 0) {
-            userObj.activeGroups.forEach(gId => {
+            
+            blueContainer.innerHTML = '';
+            
+            for (let i = 0; i < userObj.activeGroups.length; i++) {
+                const gId = userObj.activeGroups[i];
+                let groupName = `Group ${gId}`;
+                
+                // Fetch the actual Group Name from the database dynamically
+                try {
+                    const gSnap = await getDoc(doc(db, "groups", gId));
+                    if (gSnap.exists() && gSnap.data().name) {
+                        groupName = gSnap.data().name;
+                    }
+                } catch(e) { console.error(e); }
+                
                 const box = document.createElement('div');
                 box.className = 'group-display-box';
-                box.innerHTML = `<div><div style="font-size:11px; opacity:0.8; margin-bottom:4px; text-transform:uppercase; font-weight:700;">Active Group</div><div class="g-name">Group ${gId}</div></div><div class="g-id">@${gId}</div>`;
-                box.onclick = () => {
-                    select.value = gId;
-                    select.dispatchEvent(new Event('change'));
-                    document.querySelectorAll('.group-display-box').forEach(b => b.style.opacity = '0.5');
-                    box.style.opacity = '1';
-                };
+                // Display the dynamic Group Name, then the Group ID
+                box.innerHTML = `<div><div style="font-size:11px; opacity:0.8; margin-bottom:4px; text-transform:uppercase; font-weight:700;">Active Group</div><div class="g-name">${groupName}</div></div><div class="g-id">@${gId}</div>`;
+                
+                // If there are multiple active groups, allow switching but prevent static reloading
+                if (userObj.activeGroups.length > 1) {
+                    box.style.cursor = 'pointer';
+                    box.onclick = () => {
+                        if (select.value === gId) return; // FIX: Prevent reloading if it's already selected
+                        select.value = gId;
+                        select.dispatchEvent(new Event('change'));
+                        document.querySelectorAll('.group-display-box').forEach(b => b.style.opacity = '0.5');
+                        box.style.opacity = '1';
+                    };
+                }
+                
                 blueContainer.appendChild(box);
-            });
+            }
             
             // Auto-select the first one to trigger calculations
             select.value = userObj.activeGroups[0];
@@ -877,6 +888,7 @@
                 blueContainer.firstChild.style.opacity = '1';
             }
         } else {
+             select.innerHTML = '<option value="">No active groups found</option>';
              blueContainer.innerHTML = '<div style="color:var(--danger-color); padding:16px; text-align:center; font-weight:800;">No active groups found</div>';
         }
 
