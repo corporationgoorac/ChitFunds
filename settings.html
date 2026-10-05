@@ -9,7 +9,7 @@
   <title>Settings - Meena Chitfunds</title>
   
   <style>
-    /* Premium Theme Variables (From Payment Engine) */
+    /* Premium Theme Variables */
     :root {
       --bg-color: #f4f7f6;
       --text-main: #111111;
@@ -57,7 +57,7 @@
       overflow-x: hidden;
     }
 
-    /* Premium Header */
+    /* Premium Header - Shatterproof Flexbox */
     header {
       position: sticky;
       top: 0;
@@ -70,11 +70,12 @@
       background-color: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
+      gap: 16px;
     }
     @media (prefers-color-scheme: dark) { header { background-color: rgba(20, 20, 20, 0.85); } }
 
-    .header-left { display: flex; align-items: center; gap: 12px; }
-    .header-title { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+    .header-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+    .header-title { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
     .icon-btn {
       background: none;
@@ -87,6 +88,7 @@
       justify-content: center;
       border-radius: 50%;
       transition: background-color 0.2s;
+      flex-shrink: 0;
     }
     .icon-btn:active { background-color: var(--surface-hover); }
     .icon-btn svg { width: 24px; height: 24px; fill: currentColor; }
@@ -98,40 +100,50 @@
     main { padding: 24px 20px 80px; }
     .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; margin-bottom: 16px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;}
 
-    /* Premium Settings Cards - Highly Responsive for Text Wrapping */
+    /* REBUILT: Premium Settings Cards - Highly Responsive Text Wrapping Engine */
     .settings-card {
       background-color: var(--surface-color); border: 1px solid var(--border-color);
-      border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 14px;
+      border-radius: 16px; padding: 18px 16px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 14px;
       box-shadow: var(--card-shadow); transition: transform 0.2s; cursor: pointer;
     }
     .settings-card:active { transform: scale(0.98); background-color: var(--surface-hover); }
     
-    .sc-avatar { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: #fff; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 20px; box-shadow: 0 4px 10px rgba(6, 95, 212, 0.2); flex-shrink: 0;}
+    .sc-avatar { width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: #fff; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 22px; box-shadow: 0 4px 10px rgba(6, 95, 212, 0.2); flex-shrink: 0; }
     .sc-avatar.other { background: var(--brand-accent-light); color: var(--brand-accent); box-shadow: none; }
     
-    /* Text Wrapping Engine for Long Names/Numbers */
-    .sc-info { flex: 1; min-width: 0; }
-    .sc-info h3 { margin: 0 0 4px 0; font-size: 16px; font-weight: 800; letter-spacing: 0.5px; word-break: break-word; line-height: 1.3;}
-    .sc-meta { font-size: 13px; color: var(--text-muted); font-weight: 500; word-break: break-word;}
+    .sc-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
     
-    .admin-badge { background: var(--success-light); color: var(--success-color); font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; margin-left: 6px; letter-spacing: 0.5px; border: 1px solid rgba(15, 157, 88, 0.2); display: inline-block; vertical-align: middle; margin-bottom: 2px;}
+    /* 2-Line Name Clamp */
+    .sc-name { margin: 0; font-size: 17px; font-weight: 800; letter-spacing: 0.3px; word-break: break-word; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--text-main); }
+    
+    /* Phone / Meta Row */
+    .sc-meta-row { display: flex; align-items: center; gap: 6px; }
+    .sc-phone { font-size: 13px; color: var(--text-muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
+    
+    /* Bottom Identity & Badges Area */
+    .sc-bottom-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .sc-uid { font-size: 11px; font-family: monospace; background: var(--surface-hover); color: var(--text-muted); padding: 4px 10px; border-radius: 8px; font-weight: 800; letter-spacing: 0.5px; border: 1px solid var(--border-color); }
+    .admin-badge { background: var(--success-light); color: var(--success-color); font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid rgba(15, 157, 88, 0.2); margin: 0; }
+    
+    .sc-icon { flex-shrink: 0; width: 24px; height: 24px; color: var(--border-color); margin-top: 14px; }
 
     .load-more-btn { width: 100%; background: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 16px; border-radius: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; box-shadow: var(--card-shadow); }
     .load-more-btn:active { background: var(--surface-hover); transform: scale(0.98);}
 
     /* Forms & Inputs */
     .input-group { margin-bottom: 24px; position: relative; }
-    .input-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
+    .input-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; word-break: break-word;}
     .input-group input {
       width: 100%; background-color: var(--surface-hover); border: 2px solid var(--border-color);
       color: var(--text-main); padding: 16px; border-radius: 14px; font-size: 16px; outline: none; font-weight: 700; transition: border-color 0.2s, box-shadow 0.2s;
     }
     .input-group input:focus { border-color: var(--brand-accent); box-shadow: 0 0 0 4px var(--brand-accent-light); background: var(--surface-color); }
 
-    /* iOS Style Toggle Switch */
-    .toggle-row { display: flex; justify-content: space-between; align-items: center; background: var(--surface-hover); padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); margin-bottom: 24px;}
-    .toggle-labels h4 { margin: 0 0 4px 0; font-size: 15px; font-weight: 800; color: var(--text-main); }
-    .toggle-labels p { margin: 0; font-size: 12px; color: var(--text-muted); font-weight: 500; }
+    /* REBUILT: iOS Style Toggle Switch */
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; background: var(--surface-hover); padding: 18px 16px; border-radius: 14px; border: 1px solid var(--border-color); margin-bottom: 24px; gap: 16px;}
+    .toggle-labels { flex: 1; min-width: 0; }
+    .toggle-labels h4 { margin: 0 0 4px 0; font-size: 15px; font-weight: 800; color: var(--text-main); word-break: break-word; line-height: 1.3;}
+    .toggle-labels p { margin: 0; font-size: 13px; color: var(--text-muted); font-weight: 500; word-break: break-word; line-height: 1.4;}
     
     .switch { position: relative; display: inline-block; width: 52px; height: 30px; flex-shrink: 0;}
     .switch input { opacity: 0; width: 0; height: 0; }
@@ -142,13 +154,13 @@
 
     /* Action Buttons */
     .btn-row { display: flex; gap: 12px; }
-    .btn { flex: 1; padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; transition: 0.2s; text-align: center;}
+    .btn { flex: 1; min-width: 0; padding: 16px 12px; border-radius: 14px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; transition: 0.2s; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
     .btn:active { transform: scale(0.97); }
     
     .btn-primary { background: var(--brand-accent); color: #fff; box-shadow: 0 4px 12px rgba(6, 95, 212, 0.2); }
     .btn-cancel { background: var(--surface-hover); color: var(--text-main); border: 1px solid var(--border-color); }
     
-    .btn-danger-outline { width: 100%; background: var(--danger-light); color: var(--danger-color); border: 1px solid rgba(220, 53, 69, 0.3); padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 12px; transition: 0.2s;}
+    .btn-danger-outline { width: 100%; background: var(--danger-light); color: var(--danger-color); border: 1px solid rgba(220, 53, 69, 0.3); padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 12px; transition: 0.2s; white-space: normal; word-break: break-word; line-height: 1.4;}
     .btn-danger-outline:active { transform: scale(0.97); background: #f8d7da; }
 
     /* Bottom Sheets */
@@ -158,12 +170,12 @@
     .bottom-sheet { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--bg-color); z-index: 200; transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1); border-radius: 24px 24px 0 0; padding: 20px 20px calc(20px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 40px rgba(0,0,0,0.15); max-height: 92vh; overflow-y: auto; display: flex; flex-direction: column;}
     .bottom-sheet.active { transform: translateY(0); }
     
-    .sheet-handle { width: 40px; height: 5px; background: var(--border-color); border-radius: 3px; margin: 0 auto 20px; }
+    .sheet-handle { width: 40px; height: 5px; background: var(--border-color); border-radius: 3px; margin: 0 auto 20px; flex-shrink: 0; }
     
     .sheet-header-profile { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; }
     .sheet-avatar { width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; display: flex; justify-content: center; align-items: center; font-size: 32px; font-weight: 800; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(6, 95, 212, 0.3); flex-shrink: 0;}
-    .sheet-header-profile h3 { margin: 0; font-size: 20px; font-weight: 800; color: var(--text-main); text-align: center; word-break: break-word; padding: 0 16px; line-height: 1.3;}
-    #manage-uid-display { font-size: 12px; font-family: monospace; color: var(--text-muted); font-weight: 800; margin-top: 6px; word-break: break-all; text-align: center; padding: 0 16px;}
+    .sheet-header-profile h3 { margin: 0; font-size: 20px; font-weight: 800; color: var(--text-main); text-align: center; word-break: break-word; padding: 0 16px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;}
+    #manage-uid-display { font-size: 13px; font-family: monospace; color: var(--text-muted); font-weight: 800; margin-top: 10px; word-break: break-all; text-align: center; background: var(--surface-hover); border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 8px;}
 
     /* Center Alert Modals */
     .center-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); z-index: 300; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);}
@@ -187,9 +199,9 @@
     @keyframes shimmer { 0% { background-position: -500px 0; } 100% { background-position: 500px 0; } }
     .skeleton { background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border-color) 50%, var(--surface-hover) 75%); background-size: 1000px 100%; animation: shimmer 2s infinite linear; border-radius: 4px; }
     
-    .skeleton-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 14px; box-shadow: var(--card-shadow); }
-    .skeleton-avatar { width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0; }
-    .skeleton-text-lg { width: 140px; height: 16px; margin-bottom: 8px; border-radius: 4px; margin-top: 4px;}
+    .skeleton-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 18px 16px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 16px; box-shadow: var(--card-shadow); }
+    .skeleton-avatar { width: 52px; height: 52px; border-radius: 16px; flex-shrink: 0; }
+    .skeleton-text-lg { width: 140px; height: 16px; border-radius: 4px; margin-top: 4px;}
     .skeleton-text-sm { width: 90px; height: 12px; border-radius: 4px; }
   </style>
 </head>
@@ -214,9 +226,13 @@
         <!-- Skeleton Loader -->
         <div class="skeleton-card">
             <div class="skeleton-avatar skeleton"></div>
-            <div style="flex:1; min-width:0;">
+            <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:8px;">
                 <div class="skeleton-text-lg skeleton"></div>
                 <div class="skeleton-text-sm skeleton"></div>
+                <div style="display:flex; gap:8px; margin-top:4px;">
+                    <div class="skeleton-text-sm skeleton" style="width:70px; height:20px; border-radius:6px;"></div>
+                    <div class="skeleton-text-sm skeleton" style="width:60px; height:20px; border-radius:6px;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -230,9 +246,28 @@
     </div>
     <div id="users-list-container">
         <!-- Skeletons -->
-        <div class="skeleton-card"><div class="skeleton-avatar skeleton"></div><div style="flex:1; min-width:0;"><div class="skeleton-text-lg skeleton"></div><div class="skeleton-text-sm skeleton"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton-avatar skeleton"></div><div style="flex:1; min-width:0;"><div class="skeleton-text-lg skeleton"></div><div class="skeleton-text-sm skeleton"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton-avatar skeleton"></div><div style="flex:1; min-width:0;"><div class="skeleton-text-lg skeleton"></div><div class="skeleton-text-sm skeleton"></div></div></div>
+        <div class="skeleton-card">
+            <div class="skeleton-avatar skeleton"></div>
+            <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:8px;">
+                <div class="skeleton-text-lg skeleton"></div>
+                <div class="skeleton-text-sm skeleton"></div>
+                <div style="display:flex; gap:8px; margin-top:4px;">
+                    <div class="skeleton-text-sm skeleton" style="width:70px; height:20px; border-radius:6px;"></div>
+                    <div class="skeleton-text-sm skeleton" style="width:60px; height:20px; border-radius:6px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="skeleton-card">
+            <div class="skeleton-avatar skeleton"></div>
+            <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:8px;">
+                <div class="skeleton-text-lg skeleton"></div>
+                <div class="skeleton-text-sm skeleton"></div>
+                <div style="display:flex; gap:8px; margin-top:4px;">
+                    <div class="skeleton-text-sm skeleton" style="width:70px; height:20px; border-radius:6px;"></div>
+                    <div class="skeleton-text-sm skeleton" style="width:60px; height:20px; border-radius:6px;"></div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <button id="load-more-btn" class="load-more-btn" style="display: none;" onclick="loadUsers(true)">Load More Admins</button>
@@ -353,7 +388,7 @@
   <script type="module">
     import { auth, db } from './config.js';
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
-    import { collection, query, limit, getDocs, getDoc, doc, updateDoc, deleteDoc, startAfter, orderBy } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+    import { collection, query, limit, getDocs, getDoc, doc, updateDoc, deleteDoc, startAfter } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
     let loggedInUid = null;
     let loggedInUserData = null;
@@ -440,8 +475,8 @@
       }
     });
 
-    // --- Render Cards Logic ---
-    function createUserCardHTML(data, isSelf = false) {
+    // --- REBUILT: Highly Resilient Card HTML Generator ---
+    function createUserCardHTML(data, isSelf = false, docId = '') {
         const name = data.name || "Unnamed User";
         const initial = name.charAt(0).toUpperCase();
         const phone = data.mobile || data.phone || data.email || "No details added"; 
@@ -450,20 +485,28 @@
         const avatarClass = isSelf ? "sc-avatar" : "sc-avatar other";
         const badgeHTML = isAdmin ? `<span class="admin-badge">Admin</span>` : "";
         
+        const phoneIcon = `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="flex-shrink:0;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>`;
+
         return `
             <div class="${avatarClass}">${initial}</div>
             <div class="sc-info">
-                <h3>${name} ${badgeHTML}</h3>
-                <div class="sc-meta">${phone}</div>
+                <h3 class="sc-name">${name}</h3>
+                <div class="sc-meta-row">
+                    <span class="sc-phone">${phoneIcon} ${phone}</span>
+                </div>
+                <div class="sc-bottom-row">
+                    <span class="sc-uid">@${docId}</span>
+                    ${badgeHTML}
+                </div>
             </div>
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--border-color)" style="flex-shrink: 0;"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+            <svg class="sc-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
         `;
     }
 
     // --- Load Current User Data ---
     async function loadCurrentUserProfile() {
         try {
-            // UPDATED: Fetching strictly from 'admins' collection
+            // Fetching strictly from 'admins' collection
             const docRef = doc(db, "admins", loggedInUid);
             const snap = await getDoc(docRef);
             const container = document.getElementById('current-user-container');
@@ -473,7 +516,7 @@
                 
                 const card = document.createElement('div');
                 card.className = 'settings-card';
-                card.innerHTML = createUserCardHTML(loggedInUserData, true);
+                card.innerHTML = createUserCardHTML(loggedInUserData, true, loggedInUid);
                 
                 card.onclick = () => {
                     document.getElementById('edit-self-avatar').innerText = (loggedInUserData.name || '?').charAt(0).toUpperCase();
@@ -487,11 +530,11 @@
                 container.innerHTML = '';
                 container.appendChild(card);
             } else {
-                container.innerHTML = '<div style="color:var(--danger-color); font-weight:800;">Profile data missing</div>';
+                container.innerHTML = '<div style="color:var(--danger-color); font-weight:800; padding:16px;">Profile data missing</div>';
             }
         } catch(e) {
             console.error(e);
-            document.getElementById('current-user-container').innerHTML = '<div style="color:var(--danger-color); font-weight:800;">Error loading profile</div>';
+            document.getElementById('current-user-container').innerHTML = '<div style="color:var(--danger-color); font-weight:800; padding:16px;">Error loading profile</div>';
         }
     }
 
@@ -505,7 +548,7 @@
         }
 
         try {
-            // UPDATED: Fetching strictly from 'admins' collection
+            // Fetching strictly from 'admins' collection
             let q = query(collection(db, "admins"), limit(10));
             if(isLoadMore && lastVisibleUser) {
                 q = query(collection(db, "admins"), startAfter(lastVisibleUser), limit(10));
@@ -532,7 +575,7 @@
 
                 const card = document.createElement('div');
                 card.className = 'settings-card';
-                card.innerHTML = createUserCardHTML(data, false);
+                card.innerHTML = createUserCardHTML(data, false, uId);
                 
                 card.onclick = () => {
                     currentlyManagingUserId = uId;
@@ -555,7 +598,7 @@
 
         } catch(e) {
             console.error("Fetch error", e);
-            if(!isLoadMore) container.innerHTML = '<div style="color:var(--danger-color); font-weight:800; text-align:center;">Failed to load users.</div>';
+            if(!isLoadMore) container.innerHTML = '<div style="color:var(--danger-color); font-weight:800; text-align:center; padding:16px;">Failed to load users.</div>';
         }
     };
 
@@ -570,7 +613,7 @@
 
         btn.innerText = "Saving..."; btn.disabled = true;
         try {
-            // UPDATED: Updating strictly in 'admins' collection
+            // Updating strictly in 'admins' collection
             await updateDoc(doc(db, "admins", loggedInUid), {
                 name: newName,
                 mobile: newPhone,
@@ -603,7 +646,7 @@
 
         btn.innerText = "Updating..."; btn.disabled = true;
         try {
-            // UPDATED: Updating strictly in 'admins' collection
+            // Updating strictly in 'admins' collection
             await updateDoc(doc(db, "admins", currentlyManagingUserId), {
                 name: newName,
                 mobile: newPhone,
@@ -630,7 +673,7 @@
         
         btn.innerText = "Deleting..."; btn.disabled = true;
         try {
-            // UPDATED: Deleting strictly from 'admins' collection
+            // Deleting strictly from 'admins' collection
             await deleteDoc(doc(db, "admins", currentlyManagingUserId));
             
             if("vibrate" in navigator) navigator.vibrate([40, 50, 40]);
