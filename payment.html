@@ -50,7 +50,19 @@
       }
     }
 
+    /* Target specifically only the scrolling containers */
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    body, .modal, .modal-body, .list-container {
+        scrollbar-width: none; 
+        -ms-overflow-style: none;  
+    }
+    
+    body::-webkit-scrollbar, .modal::-webkit-scrollbar, .modal-body::-webkit-scrollbar, .list-container::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+        display: none; 
+    }
 
     body {
       background-color: var(--bg-color);
@@ -194,6 +206,13 @@
     .profile-details { flex: 1; }
     .user-name { font-size: 20px; font-weight: 800; margin: 0 0 4px 0; text-transform: uppercase;}
     .user-phone { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+
+    /* STATIC GROUP BADGE STYLING */
+    .group-header-card { background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; padding: 16px 20px; border-radius: 16px; margin-bottom: 24px; box-shadow: 0 8px 20px rgba(6, 95, 212, 0.25); display: flex; justify-content: space-between; align-items: center;}
+    @media (prefers-color-scheme: dark) { .group-header-card { background: linear-gradient(135deg, #3ea6ff, #065fd4); } }
+    .gh-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; opacity: 0.8; margin-bottom: 4px; }
+    .gh-name { font-size: 18px; font-weight: 800; text-transform: uppercase; margin: 0;}
+    .gh-id { font-family: monospace; font-size: 14px; font-weight: 800; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 8px; }
     
     /* Chit Progress Bar */
     .progress-container { margin-bottom: 20px; }
@@ -376,6 +395,9 @@
     </div>
     <div class="modal-body">
       
+      <!-- Static Group Badge Container -->
+      <div id="static-group-badge-container"></div>
+
       <div id="calc-card" class="calc-card">
         <div class="user-profile">
           <div class="profile-avatar" id="u-avatar">?</div>
@@ -384,13 +406,6 @@
             <div class="user-phone" id="u-phone">+91 XXXXX XXXXX</div>
             <div style="font-size: 11px; font-family: monospace; color: var(--brand-accent); font-weight: 800; margin-top: 6px; letter-spacing: 0.5px;" id="u-id-display"></div>
           </div>
-        </div>
-
-        <div class="input-group" style="margin-bottom: 24px;">
-          <label>Select Active Group</label>
-          <select id="u-group-select">
-            <option value="">-- Choose a group --</option>
-          </select>
         </div>
 
         <div id="payment-details-view" style="display: none;">
@@ -467,10 +482,21 @@
 
     onAuthStateChanged(auth, (user) => { if (!user) window.location.replace('login.html'); });
 
+    // --- SYSTEM HAPTIC ENGINE ---
+    window.haptic = function(type) {
+        if (!("vibrate" in navigator)) return;
+        try {
+            if (type === 'light') navigator.vibrate(50);
+            else if (type === 'success') navigator.vibrate([50, 50, 50]);
+            else if (type === 'heavy') navigator.vibrate([100, 50, 100]);
+        } catch(e) { }
+    };
+
     // --- FLAWLESS HASH-BASED MODAL NAVIGATION (Fixed Back Button Trap) ---
     let modalStackCount = 0; 
 
     window.openModal = function(modalId) {
+      haptic('light'); // Added Haptic feedback on open
       document.body.style.overflow = 'hidden'; // Locks background scrolling
       document.getElementById(modalId).classList.add('active');
       if (window.location.hash !== `#${modalId}`) {
@@ -480,6 +506,7 @@
     };
     
     window.closeModal = function() {
+      haptic('light'); // Added Haptic feedback on close
       if (window.location.hash) {
           history.back(); 
       } else {
@@ -519,8 +546,10 @@
       
       if (type === 'success') {
         iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--success-color)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+        haptic('success');
       } else {
         iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--warning-color)"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
+        haptic('heavy');
       }
       
       document.getElementById('message-modal').classList.add('active');
@@ -788,10 +817,11 @@
         }
     }
 
-    // --- STEP 2: OPENING THE CALCULATION MODAL ---
+    // --- STEP 2: OPENING THE CALCULATION MODAL & INITIALIZING LEDGER ---
     window.selectUserForPayment = function(userObj) {
+        haptic('light'); // Trigger haptic on card click
         targetUserId = userObj.id;
-        targetUserName = userObj.name || "Unnamed"; // FIX: Added safety fallback to prevent undefined exceptions destroying the database save
+        targetUserName = userObj.name || "Unnamed"; 
         activeUserObj = userObj; 
         
         document.getElementById('u-name').innerText = userObj.name || "Unnamed";
@@ -799,45 +829,28 @@
         document.getElementById('u-id-display').innerText = `@${userObj.id}`;
         document.getElementById('u-avatar').innerText = userObj.name ? userObj.name.charAt(0).toUpperCase() : '?';
         
-        const select = document.getElementById('u-group-select');
-        select.innerHTML = '<option value="">-- Choose a group --</option>';
-        
-        if(userObj.activeGroups && userObj.activeGroups.length > 0) {
-            userObj.activeGroups.forEach(gId => {
-                const opt = document.createElement('option');
-                opt.value = gId;
-                opt.innerText = `@${gId}`;
-                select.appendChild(opt);
-            });
-            // FIX: Safely select the specific array index instead of the whole array object
-            if (userObj.activeGroups.length === 1) {
-                select.value = userObj.activeGroups[0]; 
-                select.dispatchEvent(new Event('change'));
-            }
-        } else {
-            select.innerHTML = '<option value="">No active groups found</option>';
-        }
-
+        const badgeContainer = document.getElementById('static-group-badge-container');
         document.getElementById('payment-details-view').style.display = 'none';
         
         openModal('calc-modal');
+        
+        // --- Single Group Auto-Calculation Logic (Like Reports Page) ---
+        if(userObj.activeGroups && userObj.activeGroups.length > 0) {
+            const activeGroupId = userObj.activeGroups[0]; 
+            // Allow CSS transition to fire before hitting the main thread CPU
+            setTimeout(() => {
+                executeEngineCalculation(activeGroupId);
+            }, 350);
+        } else {
+            badgeContainer.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-weight:700;">Participant is not active in any group.</div>`;
+        }
     };
 
     // --- ADVANCED CALCULATION ENGINE LOGIC ---
-    document.getElementById('u-group-select').addEventListener('change', async (e) => {
-        const groupId = e.target.value;
+    async function executeEngineCalculation(groupId) {
         const detailsView = document.getElementById('payment-details-view');
         const btn = document.getElementById('confirm-payment-btn');
         const arrearsBox = document.getElementById('arrears-warning');
-        
-        if(!groupId) {
-            detailsView.style.display = 'none';
-            btn.disabled = true;
-            return;
-        }
-
-        detailsView.style.display = 'none'; 
-        btn.disabled = true;
         
         try {
             // 1. Fetch Group Settings
@@ -847,6 +860,17 @@
             }
             activeGroupData = groupSnap.data();
             activeGroupData.id = groupSnap.id;
+            
+            // INJECT STATIC PREMIUM GROUP BADGE
+            document.getElementById('static-group-badge-container').innerHTML = `
+                <div class="group-header-card">
+                    <div>
+                        <div class="gh-label">Active Group</div>
+                        <h2 class="gh-name">${activeGroupData.groupName}</h2>
+                    </div>
+                    <div class="gh-id">@${groupId}</div>
+                </div>
+            `;
 
             // 2. Fetch User's Past Transactions for THIS Group with Safe Fallbacks
             let txns = [];
@@ -896,7 +920,8 @@
                 document.getElementById('d-progress-bar').style.width = `100%`;
                 arrearsBox.style.display = 'none';
                 detailsView.style.display = 'block';
-                return; // Leave button disabled
+                btn.disabled = true; // Block Payment Execution
+                return; 
             }
 
             // 4. BUSINESS LOGIC: Calculate Target Due Amount
@@ -948,13 +973,13 @@
             console.error("Calculation Error:", err);
             showMessage("Calculation Error", `Failed to retrieve ledger math:<br><br>${err.message}`);
         }
-    });
+    }
 
     // --- Submit Payment Logic & GPay Animation ---
     document.getElementById('confirm-payment-btn').addEventListener('click', async () => {
         const btn = document.getElementById('confirm-payment-btn');
         const amountToPay = Number(document.getElementById('d-amount-due').value);
-        const groupId = document.getElementById('u-group-select').value;
+        const groupId = activeGroupData.id;
 
         if(!amountToPay || amountToPay <= 0) {
             showMessage("Invalid Amount", "Please enter a valid transaction amount."); return;
@@ -1025,8 +1050,7 @@
             await batch.commit();
 
             // --- Trigger Premium GPay Success Flow ---
-            // FIX: navigator.vibrate() requires an argument (duration in ms). Empty calls throw a TypeError, triggering the catch block AFTER data is saved!
-            if ("vibrate" in navigator && typeof navigator.vibrate === 'function') { navigator.vibrate(200); }
+            haptic('success');
 
             document.getElementById('gpay-amount-text').innerText = `₹${amountToPay.toLocaleString('en-IN')}`;
             const overlay = document.getElementById('gpay-overlay');
