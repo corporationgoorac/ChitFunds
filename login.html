@@ -31,7 +31,7 @@
       }
     }
 
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
       background-color: var(--bg-color);
@@ -230,6 +230,96 @@
     .save-btn:hover {
       background-color: var(--text-muted);
     }
+
+    /* --- Custom Modal Alert Styles --- */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: var(--bg-color);
+      border: 1px solid var(--input-border);
+      border-radius: 24px;
+      padding: 28px 24px;
+      width: 90%;
+      max-width: 320px;
+      text-align: center;
+      transform: scale(0.9) translateY(15px);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-icon {
+      margin-bottom: 16px;
+      color: #ef4444; /* Standard Danger Color */
+      display: flex;
+      justify-content: center;
+    }
+
+    .modal-icon svg {
+      width: 48px;
+      height: 48px;
+      fill: currentColor;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 0 10px 0;
+      color: var(--text-main);
+    }
+
+    .modal-message {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin: 0 0 28px 0;
+      line-height: 1.5;
+    }
+
+    .modal-btn {
+      background: var(--text-main);
+      color: var(--bg-color);
+      border: none;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      width: 100%;
+      cursor: pointer;
+      transition: transform 0.1s, background-color 0.2s;
+    }
+
+    .modal-btn:active {
+      transform: scale(0.96);
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      .modal-overlay { background: rgba(0, 0, 0, 0.7); }
+      .modal-content { box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4); }
+    }
   </style>
 </head>
 <body>
@@ -289,6 +379,20 @@
     </button>
   </div>
 
+  <!-- Custom Alert Modal -->
+  <div id="custom-alert-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+        </svg>
+      </div>
+      <h3 class="modal-title">Action Required</h3>
+      <p id="alert-message" class="modal-message">Please check your inputs.</p>
+      <button class="modal-btn" onclick="closeCustomAlert()">Got it</button>
+    </div>
+  </div>
+
   <script type="module">
     import { auth } from './config.js';
     import { 
@@ -322,17 +426,55 @@
     const saveBtnText = document.getElementById('save-btn-text');
     const saveLoader = document.getElementById('save-loader');
 
+    // Modal Elements
+    const alertModal = document.getElementById('custom-alert-modal');
+    const alertMessage = document.getElementById('alert-message');
+
     let currentUser = null;
 
-    // Haptic Feedback Function
-    function triggerHaptic(duration = 15) {
+    // Enhanced Haptic Feedback Function
+    function triggerHaptic(pattern = 15) {
       if (navigator.vibrate) {
-        navigator.vibrate(duration);
+        navigator.vibrate(pattern);
       }
     }
 
-    // Global Haptic Feedback on all clicks
-    document.body.addEventListener('click', () => triggerHaptic(10));
+    // Global Haptic Feedback on all clicks (ignoring specific buttons handled later)
+    document.body.addEventListener('click', (e) => {
+      // Don't double trigger if it's our primary buttons
+      if (!e.target.closest('#google-login-btn') && !e.target.closest('#save-profile-btn') && !e.target.closest('.modal-btn')) {
+        triggerHaptic(10);
+      }
+    });
+
+    // --- Custom Alert HTML Modal Logic (Mobile Back Button Supported) ---
+    window.showCustomAlert = function(msg) {
+      alertMessage.innerText = msg;
+      alertModal.classList.add('active');
+      triggerHaptic([30, 50, 30]); // Error haptic pattern
+      
+      // Push history state to support native back button
+      if (window.location.hash !== '#alert') {
+        history.pushState({ modal: 'alert' }, '', '#alert');
+      }
+    };
+
+    window.closeCustomAlert = function() {
+      triggerHaptic(15);
+      if (window.location.hash === '#alert') {
+        history.back(); // Triggers popstate which handles the closing
+      } else {
+        alertModal.classList.remove('active');
+      }
+    };
+
+    // Listen for mobile back button or browser back
+    window.addEventListener('popstate', (e) => {
+      if (window.location.hash !== '#alert') {
+        alertModal.classList.remove('active');
+      }
+    });
+    // -------------------------------------------------------------------
 
     // Redirect if already logged in (Check Firestore to ensure setup is complete)
     onAuthStateChanged(auth, async (user) => {
@@ -357,7 +499,7 @@
     }
 
     loginBtn.addEventListener('click', async () => {
-      triggerHaptic(30); // Slightly stronger haptic for main action
+      triggerHaptic(40); // Stronger haptic for main action
       btnText.style.display = 'none';
       googleIcon.style.display = 'none';
       loader.style.display = 'block';
@@ -378,7 +520,7 @@
         }
       } catch (error) {
         console.error(error);
-        alert("Authentication failed.");
+        showCustomAlert("Authentication failed. Please try again.");
         btnText.style.display = 'block';
         googleIcon.style.display = 'block';
         loader.style.display = 'none';
@@ -387,17 +529,17 @@
     });
 
     saveProfileBtn.addEventListener('click', async () => {
-      triggerHaptic(30);
+      triggerHaptic(40);
       const name = userNameInput.value.trim();
       const mobile = mobileNumberInput.value.trim();
 
       if (!name) {
-        alert("Please enter your name");
+        showCustomAlert("Please enter your full name to proceed.");
         return;
       }
       
       if (!mobile || mobile.length < 10) {
-        alert("Please enter a valid 10-digit mobile number");
+        showCustomAlert("Please enter a valid 10-digit mobile number.");
         return;
       }
 
@@ -417,7 +559,7 @@
         window.location.replace('home.html');
       } catch (error) {
         console.error("Error saving profile: ", error);
-        alert("Failed to save profile. Please try again.");
+        showCustomAlert("Failed to save profile. Please try again.");
         saveBtnText.style.display = 'block';
         saveLoader.style.display = 'none';
         saveProfileBtn.disabled = false;
