@@ -145,18 +145,17 @@
     .user-card:active { transform: scale(0.98); background-color: var(--surface-hover); border-color: var(--brand-accent); }
     .u-left { display: flex; align-items: flex-start; gap: 14px; width: 100%;}
     .u-avatar { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: 800; flex-shrink: 0;}
-    .u-info { flex: 1; min-width: 0; } /* min-width 0 forces flex child to allow text wrapping */
+    .u-info { flex: 1; min-width: 0; } 
     .u-info h3 { margin: 0 0 4px 0; font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; white-space: normal; word-break: break-word; line-height: 1.3;}
     .u-meta { font-size: 12px; color: var(--brand-accent); font-weight: 800; font-family: monospace; letter-spacing: 0.5px; background: var(--brand-accent-light); padding: 2px 6px; border-radius: 6px; display: inline-block; margin-bottom: 6px;}
     .u-loc { font-size: 11px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 4px; white-space: normal; word-break: break-word;}
 
-    /* Card Actions */
-    .user-card-actions { display: flex; gap: 12px; border-top: 1px dashed var(--border-color); padding-top: 12px; margin-top: 16px; width: 100%; justify-content: flex-end; }
+    /* Compact Card Actions */
+    .user-card-actions { display: flex; gap: 12px; border-top: 1px dashed var(--border-color); padding-top: 12px; margin-top: 16px; width: 100%; justify-content: flex-end; align-items: center;}
     .u-action-btn { background: none; border: none; font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 8px 14px; border-radius: 10px; color: var(--text-muted); transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px;}
     .u-action-btn:active { transform: scale(0.95); }
     .u-action-btn.delete { color: var(--danger-color); background: var(--danger-light); }
     .u-action-btn.edit { color: var(--brand-accent); background: var(--brand-accent-light); }
-    .u-action-btn.select { color: var(--success-color); background: var(--success-light); }
     .u-action-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
     .load-more-btn { width: 100%; background: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 16px; border-radius: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; box-shadow: var(--card-shadow); }
@@ -227,6 +226,7 @@
     
     .t-row.paid { border-left: 4px solid var(--success-color); }
     .t-row.actionable { border: 2px solid var(--brand-accent); background: var(--brand-accent-light); transform: scale(1.02); box-shadow: 0 8px 20px rgba(6, 95, 212, 0.15); margin: 8px 0; z-index: 2; position: relative;}
+    .t-row.overdue { border: 1px solid var(--warning-color); background: var(--warning-light); }
     .t-row.pending { opacity: 0.6; background: transparent; border-style: dashed; }
     
     .t-left { display: flex; flex-direction: column; gap: 4px; }
@@ -234,12 +234,14 @@
     .t-status { font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.5px;}
     .t-status.s-paid { color: var(--success-color); }
     .t-status.s-action { color: var(--brand-accent); }
+    .t-status.s-warn { color: var(--warning-color); }
     .t-status.s-pend { color: var(--text-muted); }
     
     .t-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
     .t-amt { font-size: 18px; font-weight: 800; color: var(--text-main); }
     .t-amt.a-paid { color: var(--success-color); }
     .t-amt.a-action { color: var(--brand-accent); font-size: 20px; }
+    .t-amt.a-warn { color: var(--warning-color); }
     
     .btn-action-pay { background: var(--brand-accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 10px rgba(6, 95, 212, 0.3); transition: 0.2s;}
     .btn-action-pay:active { transform: scale(0.95); }
@@ -323,7 +325,49 @@
       </div>
       
       <div id="main-user-list">
-        <div class="loader" id="main-loader"></div>
+        <!-- Professional Embedded Skeletons replaced the old spinner -->
+        <div class="skeleton-user-card">
+            <div class="skeleton-u-top">
+                <div class="skeleton skeleton-icon"></div>
+                <div class="skeleton-lines">
+                    <div class="skeleton skeleton-text-lg"></div>
+                    <div class="skeleton skeleton-text-md"></div>
+                    <div class="skeleton skeleton-text-sm"></div>
+                </div>
+            </div>
+            <div class="skeleton-u-actions">
+                <div class="skeleton skeleton-btn"></div>
+                <div class="skeleton skeleton-btn"></div>
+            </div>
+        </div>
+        <div class="skeleton-user-card">
+            <div class="skeleton-u-top">
+                <div class="skeleton skeleton-icon"></div>
+                <div class="skeleton-lines">
+                    <div class="skeleton skeleton-text-lg"></div>
+                    <div class="skeleton skeleton-text-md"></div>
+                    <div class="skeleton skeleton-text-sm"></div>
+                </div>
+            </div>
+            <div class="skeleton-u-actions">
+                <div class="skeleton skeleton-btn"></div>
+                <div class="skeleton skeleton-btn"></div>
+            </div>
+        </div>
+        <div class="skeleton-user-card">
+            <div class="skeleton-u-top">
+                <div class="skeleton skeleton-icon"></div>
+                <div class="skeleton-lines">
+                    <div class="skeleton skeleton-text-lg"></div>
+                    <div class="skeleton skeleton-text-md"></div>
+                    <div class="skeleton skeleton-text-sm"></div>
+                </div>
+            </div>
+            <div class="skeleton-u-actions">
+                <div class="skeleton skeleton-btn"></div>
+                <div class="skeleton skeleton-btn"></div>
+            </div>
+        </div>
       </div>
       <button id="main-load-more-btn" class="load-more-btn" style="display: none;" onclick="loadUsers(true)">Load More Users</button>
     </div>
@@ -489,8 +533,19 @@
 
     onAuthStateChanged(auth, (user) => { if (!user) window.location.replace('login.html'); });
 
+    // --- SYSTEM HAPTIC ENGINE ---
+    window.haptic = function(type) {
+        if (!("vibrate" in navigator)) return;
+        try {
+            if (type === 'light') navigator.vibrate(50);
+            else if (type === 'success') navigator.vibrate([50, 50, 50]);
+            else if (type === 'heavy') navigator.vibrate([100, 50, 100]);
+        } catch(e) { }
+    };
+
     // --- FLAWLESS MODAL NAVIGATION ---
     window.openModal = function(modalId) {
+      haptic('light');
       document.getElementById(modalId).classList.add('active');
       try {
           if (window.location.hash !== `#${modalId}`) {
@@ -502,6 +557,7 @@
     };
     
     window.closeModal = function() {
+      haptic('light');
       if (window.location.hash) {
           history.back(); 
       } else {
@@ -533,8 +589,10 @@
       
       if (type === 'success') {
         iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--success-color)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+        haptic('success');
       } else {
         iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--warning-color)"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
+        haptic('heavy');
       }
       
       document.getElementById('message-modal').classList.add('active');
@@ -576,7 +634,6 @@
                         </div>
                     </div>
                     <div class="skeleton-u-actions">
-                        <div class="skeleton skeleton-btn"></div>
                         <div class="skeleton skeleton-btn"></div>
                         <div class="skeleton skeleton-btn"></div>
                     </div>
@@ -719,9 +776,6 @@
                         </div>
                     </div>
                     <div class="user-card-actions">
-                        <button class="u-action-btn select" onclick="event.stopPropagation(); this.closest('.user-card').click();">
-                            <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg> Select
-                        </button>
                         <button class="u-action-btn edit" onclick="event.stopPropagation(); openEditParticipant('${user.id}')">
                             <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> Edit
                         </button>
@@ -756,10 +810,7 @@
 
     // --- CORE ENGINE LOGIC WITH NEW DYNAMIC MONTH ALGORITHM ---
     function calculateParticipantExpectedMonth(user, groupData) {
-        // Defensive check to prevent "Cannot read properties of undefined"
         if (!user || !groupData) return 1;
-        
-        // Tie calculation precisely to the user's explicit Join Date rather than group start date
         const start = user?.joinedAt ? (typeof user.joinedAt.toDate === 'function' ? user.joinedAt.toDate() : new Date(user.joinedAt)) : new Date(groupData?.startDate || new Date());
         const now = new Date();
         let elapsed = (now.getFullYear() - start.getFullYear()) * 12;
@@ -795,13 +846,12 @@
     let activeGroupDataCache = null;
 
     window.openUserDetailById = function(id) {
-        // Safely extract the user object from the cache
+        haptic('light');
         const u = allUsersCache.find(x => x && x.id === id);
         if(u) openUserDetail(u);
     };
 
     window.openUserDetail = function(user) {
-        // Ensure user is valid before assigning
         if (!user) return;
         activeViewedUser = user;
         
@@ -824,7 +874,6 @@
     };
 
     async function analyzeUserLedger(groupId) {
-        // Defensive Fail-Safe: If the participant object is empty/lost, stop immediately.
         if (!activeViewedUser) {
             showMessage("Error", "No active participant selected. Please refresh.", "error");
             return;
@@ -926,20 +975,31 @@
                 let txnForThisMonth = txns.find(t => t.monthAttributed === m && t.type !== "Advance Payment");
                 
                 if (m <= maxMonthPaid && txnForThisMonth) {
-                    // PAID STATE
+                    // PAID STATE: Determine Exact Date String
+                    let dateStr = "Paid";
+                    if(txnForThisMonth.date && typeof txnForThisMonth.date.toDate === 'function') {
+                        dateStr = txnForThisMonth.date.toDate().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                    }
+                    
+                    // Display Undo ONLY on the very last paid month to preserve ledger integrity
+                    let undoHtml = '';
+                    if (m === maxMonthPaid) {
+                        undoHtml = `<button class="btn-undo" onclick="initiateUndoPay('${txnForThisMonth.id}', ${m}, ${txnForThisMonth.amount})"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg> Undo</button>`;
+                    }
+
                     timelineHtml += `
                     <div class="t-row paid">
                         <div class="t-left">
                             <div class="t-month">Month ${m}</div>
-                            <div class="t-status s-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Paid</div>
+                            <div class="t-status s-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> ${dateStr}</div>
                         </div>
                         <div class="t-right">
                             <div class="t-amt a-paid">₹${Number(txnForThisMonth.amount).toLocaleString('en-IN')}</div>
-                            <button class="btn-undo" onclick="initiateUndoPay('${txnForThisMonth.id}', ${m}, ${txnForThisMonth.amount})"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg> Undo</button>
+                            ${undoHtml}
                         </div>
                     </div>`;
                 } else if (m === maxMonthPaid + 1) {
-                    // ACTIONABLE STATE
+                    // ACTIONABLE STATE (Always Next)
                     timelineHtml += `
                     <div class="t-row actionable" id="active-pay-row">
                         <div class="t-left">
@@ -951,8 +1011,20 @@
                             <button class="btn-action-pay" onclick="initiateDirectPay(${m}, ${dueForM})">Pay Now</button>
                         </div>
                     </div>`;
+                } else if (m > maxMonthPaid + 1 && m <= evalMonth) {
+                    // PENDING OVERDUE STATE (Amber Warning)
+                    timelineHtml += `
+                    <div class="t-row overdue">
+                        <div class="t-left">
+                            <div class="t-month">Month ${m}</div>
+                            <div class="t-status s-warn"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C22 2 22 12 22 12s0 10-10 10S2 22 2 12 2 2 12 2zm-1 15h2v2h-2v-2zm0-10h2v8h-2V7z"/></svg> Pending</div>
+                        </div>
+                        <div class="t-right">
+                            <div class="t-amt a-warn">₹${Number(dueForM).toLocaleString('en-IN')}</div>
+                        </div>
+                    </div>`;
                 } else {
-                    // PENDING STATE
+                    // UPCOMING STATE
                     timelineHtml += `
                     <div class="t-row pending">
                         <div class="t-left">
@@ -1049,6 +1121,7 @@
     // --- PAY NOW DIRECT LOGIC ---
     let pendingPaymentState = null;
     window.initiateDirectPay = function(month, amount) {
+        haptic('light');
         pendingPaymentState = { month, amount };
         document.getElementById('confirm-pay-text').innerHTML = `Approve transaction of <b>₹${amount.toLocaleString('en-IN')}</b> for <b>Month ${month}</b>?`;
         openModal('confirm-pay-modal');
@@ -1096,7 +1169,7 @@
             await batch.commit();
 
             // GPay Premium Success Trigger
-            if ("vibrate" in navigator && typeof navigator.vibrate === 'function') navigator.vibrate(200);
+            haptic('success');
             
             document.getElementById('gpay-amount-text').innerText = `₹${pendingPaymentState.amount.toLocaleString('en-IN')}`;
             closeModal(); // Close confirm modal
@@ -1120,6 +1193,7 @@
     // --- UNDO PAYMENT LOGIC ---
     let pendingUndoState = null;
     window.initiateUndoPay = function(txnId, month, amount) {
+        haptic('heavy');
         pendingUndoState = { txnId, month, amount };
         document.getElementById('undo-pay-text').innerHTML = `Are you sure you want to reverse the payment of <b>₹${amount.toLocaleString('en-IN')}</b> for <b>Month ${month}</b>? This will permanently delete the ledger entry.`;
         openModal('undo-pay-modal');
@@ -1169,7 +1243,6 @@
             pendingUndoState = null;
         }
     });
-
 
     // --- USER EDIT LOGIC WITH LIVE VALIDATION & ADVANCED MIGRATION ---
     
@@ -1231,6 +1304,7 @@
     document.getElementById('edit-p-id').addEventListener('input', validateEditUniqueId);
 
     window.openEditParticipant = async function(userId) {
+        haptic('light');
         // Safe check for undefined user fetch
         let userToEdit = allUsersCache.find(u => u && u.id === userId);
         
@@ -1424,6 +1498,7 @@
     // --- USER DELETE LOGIC (Deep Wipe) ---
     let targetParticipantIdToDelete = null;
     window.initiateParticipantDelete = function(userId) {
+        haptic('heavy');
         targetParticipantIdToDelete = userId;
         openModal('delete-participant-modal');
     };
