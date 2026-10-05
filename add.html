@@ -227,6 +227,26 @@
       padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 12px; font-size: 13px;
     }
     
+    /* Highly Detailed Skeleton Loading Animations */
+    .skeleton {
+      background: var(--surface-color);
+      background-image: linear-gradient(90deg, var(--surface-color) 0px, var(--surface-hover) 40px, var(--surface-color) 80px);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite linear;
+      border-radius: 8px;
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .skeleton-text { height: 14px; margin-bottom: 8px; border-radius: 4px; }
+    .skeleton-title { height: 20px; width: 60%; margin-bottom: 12px; }
+    .skeleton-badge { height: 16px; width: 30%; }
+    .skeleton-stat-label { height: 10px; width: 60%; margin-bottom: 6px; }
+    .skeleton-stat-val { height: 18px; width: 80%; }
+    .skeleton-box { height: 60px; width: 100%; border-radius: 12px; }
+    .skeleton-btn { height: 32px; width: 90px; border-radius: 8px; }
+
     /* Loading Spinner */
     .loader { border: 3px solid var(--border-color); border-top: 3px solid var(--brand-accent); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -537,7 +557,43 @@
       const loadBtn = document.getElementById('load-more-btn');
       
       if (!isLoadMore) {
-        container.innerHTML = '<div style="text-align:center; padding: 20px;"><div class="loader" style="margin:0 auto;"></div></div>';
+        // High fidelity Skeleton Loading injection without relying on old ugly spinners
+        let skeletonHTML = '';
+        for(let i=0; i<3; i++) {
+          skeletonHTML += `
+            <div class="group-card">
+                <div class="group-header">
+                    <div style="width: 60%;">
+                        <div class="skeleton skeleton-title"></div>
+                        <div class="skeleton skeleton-badge"></div>
+                    </div>
+                    <div style="width: 30%; text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
+                        <div class="skeleton skeleton-title" style="width: 80%; margin-bottom: 4px;"></div>
+                        <div class="skeleton skeleton-text" style="width: 50%;"></div>
+                    </div>
+                </div>
+                <div class="g-stats-row">
+                    <div class="g-stat">
+                        <div class="skeleton skeleton-stat-label"></div>
+                        <div class="skeleton skeleton-stat-val"></div>
+                    </div>
+                    <div class="g-stat">
+                        <div class="skeleton skeleton-stat-label"></div>
+                        <div class="skeleton skeleton-stat-val"></div>
+                    </div>
+                    <div class="g-stat">
+                        <div class="skeleton skeleton-stat-label"></div>
+                        <div class="skeleton skeleton-stat-val"></div>
+                    </div>
+                </div>
+                <div class="skeleton skeleton-box" style="margin-top: 14px; margin-bottom: 12px;"></div>
+                <div class="group-actions">
+                    <div class="skeleton skeleton-btn"></div>
+                    <div class="skeleton skeleton-btn" style="margin-left: auto;"></div>
+                </div>
+            </div>`;
+        }
+        container.innerHTML = skeletonHTML;
         lastVisibleDoc = null;
       } else {
         loadBtn.innerText = "Loading...";
