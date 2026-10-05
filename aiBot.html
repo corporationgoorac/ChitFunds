@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
     <title>Meena AI Assistant - Meena Chitfunds</title>
     
-    <meta name="theme-color" content="#ffffff">
+    <!-- Dynamic Theme Color for Toolbar matching the surface -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#141414" />
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
@@ -1099,8 +1102,8 @@
             });
         })();
 
-        // Update BACKEND_URL according to the new Hugging Face Space setup if needed
-        const BACKEND_URL = ''; 
+        // Production Hugging Face Backend Routing
+        const BACKEND_URL = 'https://shiva757-chitai.hf.space'; 
         let currentChatEndpoint = '/chat';
         
         let conversationHistory = [];
