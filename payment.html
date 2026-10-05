@@ -195,27 +195,30 @@
     .user-name { font-size: 20px; font-weight: 800; margin: 0 0 4px 0; text-transform: uppercase;}
     .user-phone { font-size: 13px; color: var(--text-muted); font-weight: 500; }
     
-    /* NEW: Beautiful Blue Gradient Group Display Box (STATIC) */
+    /* Professional Slate Gradient Group Display Box */
     .group-display-box {
-        background: linear-gradient(135deg, var(--brand-accent), #004ba0);
+        background: linear-gradient(135deg, #64748b, #334155);
         color: #ffffff;
         padding: 16px 20px;
         border-radius: 16px;
         margin-bottom: 24px;
-        box-shadow: 0 8px 20px rgba(6, 95, 212, 0.3);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        transition: opacity 0.2s; 
+        cursor: pointer;
+        transition: transform 0.2s, opacity 0.2s, border-color 0.2s;
+        border: 2px solid transparent;
     }
     @media (prefers-color-scheme: dark) {
         .group-display-box {
-            background: linear-gradient(135deg, #3ea6ff, #065fd4);
-            box-shadow: 0 8px 20px rgba(6, 95, 212, 0.4);
+            background: linear-gradient(135deg, #334155, #0f172a);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
     }
+    .group-display-box:active { transform: scale(0.97); }
     .group-display-box .g-name { font-size: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-    .group-display-box .g-id { font-size: 13px; font-family: monospace; font-weight: 800; background: rgba(255,255,255,0.2); padding: 6px 10px; border-radius: 8px; letter-spacing: 1px;}
+    .group-display-box .g-id { font-size: 11px; font-family: monospace; font-weight: 700; background: rgba(0,0,0,0.25); padding: 4px 8px; border-radius: 6px; letter-spacing: 1px;}
 
     /* Chit Progress Bar */
     .progress-container { margin-bottom: 20px; }
@@ -340,6 +343,17 @@
     .skeleton-u-bottom { display: flex; justify-content: space-between; }
     .skeleton-u-phone { width: 90px; height: 12px; border-radius: 4px; }
     .skeleton-u-group { width: 70px; height: 16px; border-radius: 4px; }
+
+    /* --- NEW DETAILED CALCULATION MODAL SKELETON --- */
+    .skel-avatar { width: 50px; height: 50px; border-radius: 14px; flex-shrink: 0; }
+    .skel-line-h1 { width: 140px; height: 20px; border-radius: 6px; margin-bottom: 8px; }
+    .skel-line-sub { width: 100px; height: 12px; border-radius: 4px; margin-bottom: 8px; }
+    .skel-line-id { width: 80px; height: 12px; border-radius: 4px; }
+    .skel-group-box { background: var(--surface-color); border: 1px solid var(--border-color); padding: 16px 20px; border-radius: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--card-shadow); }
+    .skel-group-left { display: flex; flex-direction: column; gap: 8px; }
+    .skel-group-lbl { width: 70px; height: 10px; border-radius: 4px; }
+    .skel-group-name { width: 120px; height: 18px; border-radius: 6px; }
+    .skel-group-right { width: 50px; height: 18px; border-radius: 6px; }
   </style>
 </head>
 <body>
@@ -398,6 +412,49 @@
     </div>
     <div class="modal-body">
       
+      <!-- NEW HIGHLY DETAILED SKELETON OVERLAY -->
+      <div id="calc-skeleton" style="display: none;">
+        <div class="user-profile" style="border-bottom: 1px dashed var(--border-color); padding-bottom: 16px; margin-bottom: 24px;">
+          <div class="skeleton skel-avatar"></div>
+          <div class="skel-prof-info" style="flex:1;">
+            <div class="skeleton skel-line-h1"></div>
+            <div class="skeleton skel-line-sub"></div>
+            <div class="skeleton skel-line-id"></div>
+          </div>
+        </div>
+
+        <div class="skel-group-box">
+           <div class="skel-group-left">
+              <div class="skeleton skel-group-lbl"></div>
+              <div class="skeleton skel-group-name"></div>
+           </div>
+           <div class="skeleton skel-group-right"></div>
+        </div>
+        <div class="skel-group-box" style="opacity: 0.6;">
+           <div class="skel-group-left">
+              <div class="skeleton skel-group-lbl"></div>
+              <div class="skeleton skel-group-name" style="width: 90px;"></div>
+           </div>
+           <div class="skeleton skel-group-right"></div>
+        </div>
+        
+        <div style="margin-top: 32px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <div class="skeleton" style="width: 80px; height: 12px; border-radius: 4px;"></div>
+              <div class="skeleton" style="width: 60px; height: 12px; border-radius: 4px;"></div>
+          </div>
+          <div class="skeleton" style="width: 100%; height: 8px; margin-bottom: 24px; border-radius: 4px;"></div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+              <div class="skeleton" style="height: 68px; border-radius: 12px;"></div>
+              <div class="skeleton" style="height: 68px; border-radius: 12px;"></div>
+          </div>
+          
+          <div class="skeleton" style="width: 100%; height: 130px; border-radius: 16px; margin-bottom: 20px;"></div>
+          <div class="skeleton" style="width: 100%; height: 58px; border-radius: 16px;"></div>
+        </div>
+      </div>
+
       <div id="calc-card" class="calc-card">
         <div class="user-profile">
           <div class="profile-avatar" id="u-avatar">?</div>
@@ -474,7 +531,7 @@
 
   <aside id="message-modal" class="center-modal">
     <div class="mini-modal-content">
-      <div id="msg-icon" class="msg-icon">⚠️</div>
+      <div id="msg-icon" class="msg-icon">⚠</div>
       <h3 class="mini-modal-title" id="msg-title">Error</h3>
       <p class="mini-modal-text" id="msg-body">Something went wrong.</p>
       <div class="mini-modal-actions">
@@ -498,11 +555,11 @@
         }
     });
 
-    // --- FLAWLESS HASH-BASED MODAL NAVIGATION (Fixed Back Button Trap) ---
+    // --- FLAWLESS HASH-BASED MODAL NAVIGATION ---
     let modalStackCount = 0; 
 
     window.openModal = function(modalId) {
-      document.body.style.overflow = 'hidden'; // Locks background scrolling
+      document.body.style.overflow = 'hidden';
       document.getElementById(modalId).classList.add('active');
       if (window.location.hash !== `#${modalId}`) {
           history.pushState({ id: modalId }, '', `#${modalId}`);
@@ -519,7 +576,7 @@
     };
     
     function closeAllModals() { 
-      document.body.style.overflow = ''; // Restores background scrolling
+      document.body.style.overflow = ''; 
       document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
       document.getElementById('payment-details-view').style.display = 'none';
       document.getElementById('u-search').value = '';
@@ -536,7 +593,7 @@
            const targetModal = document.querySelector(window.location.hash);
            if(targetModal) {
                targetModal.classList.add('active');
-               document.body.style.overflow = 'hidden'; // Keeps locked if a modal is still active
+               document.body.style.overflow = 'hidden'; 
            }
        } else {
            closeAllModals();
@@ -561,10 +618,8 @@
     };
 
     // --- ENGINE CALCULATION FUNCTIONS ---
-    
     function calculateDueForMonth(targetMonth, startAmount, schedule) {
         if (targetMonth <= 1) return startAmount;
-        
         let currentAmount = startAmount;
         for (let m = 2; m <= targetMonth; m++) {
             let increment = 0;
@@ -577,16 +632,6 @@
             currentAmount += increment;
         }
         return currentAmount;
-    }
-
-    function calculateCurrentSystemMonth(startDateStr) {
-        if(!startDateStr) return 1; 
-        const start = new Date(startDateStr);
-        const now = new Date();
-        let months = (now.getFullYear() - start.getFullYear()) * 12;
-        months -= start.getMonth();
-        months += now.getMonth();
-        return months <= 0 ? 1 : months + 1; 
     }
 
     function calculateParticipantExpectedMonth(user, groupData) {
@@ -607,7 +652,7 @@
         return expected;
     }
 
-    // --- Global State for Calculation Engine ---
+    // --- Global State ---
     let targetUserId = null;
     let targetUserName = "";
     let activeUserObj = null; 
@@ -615,7 +660,6 @@
     let baselineLastAmount = 0;
     let activeGroupData = null;
 
-    // --- ADVANCED LIVE SERVER SEARCH (0-READ WASTE) ---
     let lastVisibleUser = null;
     let currentSearchTerm = "";
     let isNumericSearch = false;
@@ -651,7 +695,6 @@
         let loader = document.getElementById('u-search-loading');
 
         if (!isLoadMore) {
-            // INJECT PREMIUM SKELETON ANIMATIONS FOR SEARCH RESULTS
             let skelHtml = '';
             for(let i=0; i<4; i++) {
                 skelHtml += `
@@ -671,15 +714,10 @@
             }
             container.innerHTML = skelHtml;
             lastVisibleUser = null;
-            
-            // --- FIX: PROACTIVELY HIDE LOAD MORE BUTTON ---
             if (loadMoreBtn) loadMoreBtn.style.display = 'none';
         }
 
-        // FORCE HIDE THE OLD TEXT LOADER WITHOUT DELETING THE LINE
         if (loader) loader.style.display = 'none';
-
-        // SYNTHETIC DELAY FOR LUXURY UX (Ensures shimmer displays cleanly)
         await new Promise(r => setTimeout(r, 350));
 
         try {
@@ -690,27 +728,15 @@
 
             if (term === "") {
                 lastSearchType = "default";
-                if (isLoadMore && lastVisibleUser) {
-                    q = query(collection(db, "users"), orderBy("joinedAt", "desc"), startAfter(lastVisibleUser), limit(10));
-                } else {
-                    q = query(collection(db, "users"), orderBy("joinedAt", "desc"), limit(10));
-                }
+                q = (isLoadMore && lastVisibleUser) ? query(collection(db, "users"), orderBy("joinedAt", "desc"), startAfter(lastVisibleUser), limit(10)) : query(collection(db, "users"), orderBy("joinedAt", "desc"), limit(10));
             } else if (isNumericSearch) {
                 lastSearchType = "phone";
-                if (isLoadMore && lastVisibleUser) {
-                    q = query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), orderBy("phone"), startAfter(lastVisibleUser), limit(10));
-                } else {
-                    q = query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), orderBy("phone"), limit(10));
-                }
+                q = (isLoadMore && lastVisibleUser) ? query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), orderBy("phone"), startAfter(lastVisibleUser), limit(10)) : query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), orderBy("phone"), limit(10));
             } else {
                 if (isLoadMore && lastVisibleUser) {
-                    if (lastSearchType === "id") {
-                        q = query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), orderBy(documentId()), startAfter(lastVisibleUser), limit(10));
-                    } else if (lastSearchType === "name") {
-                        q = query(collection(db, "users"), where("name", ">=", termName), where("name", "<=", termName + "\uf8ff"), orderBy("name"), startAfter(lastVisibleUser), limit(10));
-                    } else {
-                        q = query(collection(db, "users"), where("name", ">=", term), where("name", "<=", term + "\uf8ff"), orderBy("name"), startAfter(lastVisibleUser), limit(10));
-                    }
+                    if (lastSearchType === "id") q = query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), orderBy(documentId()), startAfter(lastVisibleUser), limit(10));
+                    else if (lastSearchType === "name") q = query(collection(db, "users"), where("name", ">=", termName), where("name", "<=", termName + "\uf8ff"), orderBy("name"), startAfter(lastVisibleUser), limit(10));
+                    else q = query(collection(db, "users"), where("name", ">=", term), where("name", "<=", term + "\uf8ff"), orderBy("name"), startAfter(lastVisibleUser), limit(10));
                 } else {
                     q = query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), orderBy(documentId()), limit(10));
                     lastSearchType = "id";
@@ -720,77 +746,48 @@
             let querySnapshot;
             try {
                 querySnapshot = await getDocs(q);
-                
                 if (!isLoadMore && term !== "" && !isNumericSearch && querySnapshot.empty) {
                     q = query(collection(db, "users"), where("name", ">=", termName), where("name", "<=", termName + "\uf8ff"), orderBy("name"), limit(10));
                     querySnapshot = await getDocs(q);
                     lastSearchType = "name";
-                    
                     if(querySnapshot.empty) {
                         q = query(collection(db, "users"), where("name", ">=", term), where("name", "<=", term + "\uf8ff"), orderBy("name"), limit(10));
                         querySnapshot = await getDocs(q);
                         lastSearchType = "name_exact";
                     }
                 }
-
             } catch (idxErr) {
                 console.warn("Index missing for search. Attempting safe fallback...", idxErr);
-                
-                if(idxErr.message && idxErr.message.includes("https://console.firebase.google.com")) {
-                    const urlRegex = /(https:\/\/console\.firebase\.google\.com[^\s]+)/g;
-                    const match = idxErr.message.match(urlRegex);
-                    // BUG FIX: Correct array access to prevent 'undefined' string printing
-                    if(match && match.length > 0) {
-                        setTimeout(() => {
-                            showMessage("Search Index Missing", `Please click the link below to build the required Firebase Index to enable live searching.<br><br><a href="${match}" target="_blank" style="display:inline-block; background:var(--brand-accent); color:white; padding:10px 16px; border-radius:8px; text-decoration:none; font-weight:bold; margin-top:10px;">Build Index</a>`, "error");
-                        }, 500);
-                    }
-                }
-
                 let fallbackQ;
-                if (term === "") {
-                    fallbackQ = (isLoadMore && lastVisibleUser) ? query(collection(db, "users"), startAfter(lastVisibleUser), limit(10)) : query(collection(db, "users"), limit(10));
-                } else if (isNumericSearch) {
-                    fallbackQ = (isLoadMore && lastVisibleUser) ? query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), startAfter(lastVisibleUser), limit(10)) : query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), limit(10));
-                } else {
-                    fallbackQ = (isLoadMore && lastVisibleUser) ? query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), startAfter(lastVisibleUser), limit(10)) : query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), limit(10));
-                }
+                if (term === "") fallbackQ = (isLoadMore && lastVisibleUser) ? query(collection(db, "users"), startAfter(lastVisibleUser), limit(10)) : query(collection(db, "users"), limit(10));
+                else if (isNumericSearch) fallbackQ = (isLoadMore && lastVisibleUser) ? query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), startAfter(lastVisibleUser), limit(10)) : query(collection(db, "users"), where("phone", ">=", term), where("phone", "<=", term + "\uf8ff"), limit(10));
+                else fallbackQ = (isLoadMore && lastVisibleUser) ? query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), startAfter(lastVisibleUser), limit(10)) : query(collection(db, "users"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), limit(10));
                 querySnapshot = await getDocs(fallbackQ);
             }
 
             if (loader) loader.style.display = 'none';
-
             if (querySnapshot.empty) {
-                if (!isLoadMore) {
-                    container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px; font-weight: 500;">No participants found matching your search.</div>';
-                }
+                if (!isLoadMore) container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px; font-weight: 500;">No participants found matching your search.</div>';
                 if (loadMoreBtn) loadMoreBtn.style.display = 'none';
                 return;
             }
 
-            // Clear skeletons safely right before injecting real content
             if (!isLoadMore) container.innerHTML = '';
             lastVisibleUser = querySnapshot.docs[querySnapshot.docs.length - 1];
-
             const phoneIconSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>`;
             
             querySnapshot.forEach(docSnap => {
                 const user = docSnap.data();
                 user.id = docSnap.id;
-
                 const card = document.createElement('div');
                 card.className = 'u-item';
                 card.onclick = () => selectUserForPayment(user);
                 
                 const phoneText = user.phone ? `${phoneIconSVG} ${user.phone}` : 'No Phone';
                 const userInitial = user.name ? user.name.charAt(0).toUpperCase() : '?';
-                
-                let groupsText = '';
-                if (user.activeGroups && user.activeGroups.length > 0) {
-                    groupsText = `<span style="background: var(--brand-accent-light); color: var(--brand-accent); padding: 2px 6px; border-radius: 4px; font-weight: 800; font-family: monospace;">Grp: ${user.activeGroups.join(', ')}</span>`;
-                } else {
-                    groupsText = `<span style="background: var(--surface-hover); color: var(--text-muted); padding: 2px 6px; border-radius: 4px; font-weight: 800; font-family: monospace;">No Groups</span>`;
-                }
+                let groupsText = user.activeGroups && user.activeGroups.length > 0 
+                    ? `<span style="background: var(--brand-accent-light); color: var(--brand-accent); padding: 2px 6px; border-radius: 4px; font-weight: 800; font-family: monospace;">Grp: ${user.activeGroups.join(', ')}</span>`
+                    : `<span style="background: var(--surface-hover); color: var(--text-muted); padding: 2px 6px; border-radius: 4px; font-weight: 800; font-family: monospace;">No Groups</span>`;
 
                 card.innerHTML = `
                     <div style="display:flex; gap: 16px; align-items: center;">
@@ -819,12 +816,16 @@
         }
     }
 
-    // --- STEP 2: OPENING THE CALCULATION MODAL ---
+    // --- STEP 2: OPENING THE CALCULATION MODAL (Upgraded) ---
     window.selectUserForPayment = async function(userObj) {
         targetUserId = userObj.id;
-        targetUserName = userObj.name || "Unnamed"; // FIX: Added safety fallback to prevent undefined exceptions destroying the database save
+        targetUserName = userObj.name || "Unnamed";
         activeUserObj = userObj; 
         
+        // Ensure highly detailed skeleton is visible and real card is hidden
+        document.getElementById('calc-skeleton').style.display = 'block';
+        document.getElementById('calc-card').style.display = 'none';
+
         document.getElementById('u-name').innerText = userObj.name || "Unnamed";
         document.getElementById('u-phone').innerText = userObj.phone || "No phone provided";
         document.getElementById('u-id-display').innerText = `@${userObj.id}`;
@@ -833,68 +834,81 @@
         const select = document.getElementById('u-group-select');
         select.innerHTML = '<option value="">-- Choose a group --</option>';
         
-        // --- NEW BLUE BOX GRADIENT INJECTION ---
         const blueContainer = document.getElementById('blue-group-box-container');
+        blueContainer.innerHTML = '<div class="loader" style="width: 24px; height: 24px; margin: 30px auto; border-color: var(--border-color); border-top-color: var(--brand-accent);"></div>';
+        document.getElementById('payment-details-view').style.display = 'none';
         
+        openModal('calc-modal');
+
         if(userObj.activeGroups && userObj.activeGroups.length > 0) {
-            blueContainer.innerHTML = '<div style="padding:16px; text-align:center; color:var(--brand-accent); font-weight:800; font-size:12px;">Loading group details...</div>';
             
+            // Build Select Options First
             userObj.activeGroups.forEach(gId => {
                 const opt = document.createElement('option');
                 opt.value = gId;
                 opt.innerText = `@${gId}`;
                 select.appendChild(opt);
             });
-            
-            blueContainer.innerHTML = '';
-            
-            for (let i = 0; i < userObj.activeGroups.length; i++) {
-                const gId = userObj.activeGroups[i];
-                let groupName = `Group ${gId}`;
-                
-                // Fetch the actual Group Name from the database dynamically
+
+            // Perform targeted async fetches for actual group names
+            const groupPromises = userObj.activeGroups.map(async (gId) => {
                 try {
                     const gSnap = await getDoc(doc(db, "groups", gId));
-                    if (gSnap.exists() && gSnap.data().name) {
-                        groupName = gSnap.data().name;
-                    }
-                } catch(e) { console.error(e); }
-                
+                    return { id: gId, name: gSnap.exists() ? (gSnap.data().name || `Group ${gId}`) : `Group ${gId}` };
+                } catch(e) {
+                    console.error("Failed to fetch group info", e);
+                    return { id: gId, name: `Group ${gId}` };
+                }
+            });
+
+            // Artificial delay to allow smooth cinematic skeleton display
+            await new Promise(r => setTimeout(r, 650));
+
+            const fetchedGroups = await Promise.all(groupPromises);
+            blueContainer.innerHTML = ''; // Clear loader
+            
+            fetchedGroups.forEach(gData => {
                 const box = document.createElement('div');
                 box.className = 'group-display-box';
-                // Display the dynamic Group Name, then the Group ID
-                box.innerHTML = `<div><div style="font-size:11px; opacity:0.8; margin-bottom:4px; text-transform:uppercase; font-weight:700;">Active Group</div><div class="g-name">${groupName}</div></div><div class="g-id">@${gId}</div>`;
-                
-                // If there are multiple active groups, allow switching but prevent static reloading
-                if (userObj.activeGroups.length > 1) {
-                    box.style.cursor = 'pointer';
-                    box.onclick = () => {
-                        if (select.value === gId) return; // FIX: Prevent reloading if it's already selected
-                        select.value = gId;
-                        select.dispatchEvent(new Event('change'));
-                        document.querySelectorAll('.group-display-box').forEach(b => b.style.opacity = '0.5');
-                        box.style.opacity = '1';
-                    };
-                }
-                
+                box.innerHTML = `<div><div style="font-size:11px; opacity:0.7; margin-bottom:4px; text-transform:uppercase; font-weight:700;">Active Group</div><div class="g-name">${gData.name}</div></div><div class="g-id">@${gData.id}</div>`;
+                box.onclick = () => {
+                    select.value = gData.id;
+                    select.dispatchEvent(new Event('change'));
+                    document.querySelectorAll('.group-display-box').forEach(b => {
+                        b.style.opacity = '0.5';
+                        b.style.borderColor = 'transparent';
+                    });
+                    box.style.opacity = '1';
+                    box.style.borderColor = 'var(--brand-accent)';
+                };
                 blueContainer.appendChild(box);
-            }
+            });
             
+            // Hide skeleton, show live content
+            document.getElementById('calc-skeleton').style.display = 'none';
+            document.getElementById('calc-card').style.display = 'block';
+
             // Auto-select the first one to trigger calculations
-            select.value = userObj.activeGroups[0];
-            select.dispatchEvent(new Event('change'));
-            if(blueContainer.firstChild) {
-                document.querySelectorAll('.group-display-box').forEach(b => b.style.opacity = '0.5');
-                blueContainer.firstChild.style.opacity = '1';
+            if (userObj.activeGroups.length > 0) {
+                select.value = userObj.activeGroups[0]; 
+                select.dispatchEvent(new Event('change'));
+                if(blueContainer.firstChild) {
+                    document.querySelectorAll('.group-display-box').forEach(b => {
+                        b.style.opacity = '0.5';
+                        b.style.borderColor = 'transparent';
+                    });
+                    blueContainer.firstChild.style.opacity = '1';
+                    blueContainer.firstChild.style.borderColor = 'var(--brand-accent)';
+                }
             }
         } else {
-             select.innerHTML = '<option value="">No active groups found</option>';
-             blueContainer.innerHTML = '<div style="color:var(--danger-color); padding:16px; text-align:center; font-weight:800;">No active groups found</div>';
-        }
+            await new Promise(r => setTimeout(r, 500));
+            document.getElementById('calc-skeleton').style.display = 'none';
+            document.getElementById('calc-card').style.display = 'block';
 
-        document.getElementById('payment-details-view').style.display = 'none';
-        
-        openModal('calc-modal');
+            select.innerHTML = '<option value="">No active groups found</option>';
+            blueContainer.innerHTML = '<div style="color:var(--danger-color); padding:16px; text-align:center; font-weight:800;">No active groups found</div>';
+        }
     };
 
     // --- ADVANCED CALCULATION ENGINE LOGIC ---
@@ -914,15 +928,11 @@
         btn.disabled = true;
         
         try {
-            // 1. Fetch Group Settings
             const groupSnap = await getDoc(doc(db, "groups", groupId));
-            if(!groupSnap.exists()) {
-                throw new Error("Group data missing");
-            }
+            if(!groupSnap.exists()) throw new Error("Group data missing");
             activeGroupData = groupSnap.data();
             activeGroupData.id = groupSnap.id;
 
-            // 2. Fetch User's Past Transactions for THIS Group with Safe Fallbacks
             let txns = [];
             try {
                 const qTxn = query(collection(db, "transactions"), 
@@ -932,7 +942,6 @@
                 const txnSnap = await getDocs(qTxn);
                 txnSnap.forEach(tDoc => txns.push(tDoc.data()));
             } catch(idxErr) {
-                console.warn("Index fallback...", idxErr);
                 const fallbackQ = query(collection(db, "transactions"), where("subscriberId", "==", targetUserId));
                 const txnSnap = await getDocs(fallbackQ);
                 txnSnap.forEach(tDoc => {
@@ -955,8 +964,6 @@
             });
             
             baselineLastAmount = lastAmountPaid; 
-
-            // 3. Determine Next Month
             currentCalcMonth = maxMonthPaid + 1;
             let totalMonths = activeGroupData.totalMonths || 0;
 
@@ -970,24 +977,18 @@
                 document.getElementById('d-progress-bar').style.width = `100%`;
                 arrearsBox.style.display = 'none';
                 detailsView.style.display = 'block';
-                return; // Leave button disabled
+                return; 
             }
 
-            // 4. BUSINESS LOGIC: Calculate Target Due Amount
             const startAmt = activeGroupData.startAmount || 0;
             let schedule = activeGroupData.installmentSchedule || [];
-            
             let amountDue = calculateDueForMonth(currentCalcMonth, startAmt, schedule);
 
             if(amountDue === 0 && lastAmountPaid > 0) amountDue = lastAmountPaid;
             
-            if (currentCalcMonth === 1) {
-                document.getElementById('d-calc-hint').innerText = "Initial Base Amount";
-            } else {
-                document.getElementById('d-calc-hint').innerText = `Calculated via Scheduled Increments`;
-            }
+            if (currentCalcMonth === 1) document.getElementById('d-calc-hint').innerText = "Initial Base Amount";
+            else document.getElementById('d-calc-hint').innerText = `Calculated via Scheduled Increments`;
 
-            // 5. Arrears Detection Engine
             const expectedMonth = calculateParticipantExpectedMonth(activeUserObj, activeGroupData);
             const arrears = expectedMonth - maxMonthPaid;
             
@@ -1002,20 +1003,29 @@
                 arrearsBox.style.display = 'none';
             }
 
-            // 6. Push to UI Components
             document.getElementById('d-last-paid').innerText = `₹${Number(lastAmountPaid).toLocaleString('en-IN')}`;
             document.getElementById('d-total-paid').innerText = `₹${Number(totalPaid).toLocaleString('en-IN')}`;
-            
             document.getElementById('d-progress-text').innerText = `${maxMonthPaid} / ${totalMonths} Months`;
+            
             let progressPercent = totalMonths > 0 ? (maxMonthPaid / totalMonths) * 100 : 0;
             document.getElementById('d-progress-bar').style.width = `${progressPercent}%`;
-
             document.getElementById('d-month-label').innerText = `Installment: Month ${currentCalcMonth}`;
-            
-            // CLEANED: Directly pushes the number to the Neo-Banking readonly input
             document.getElementById('d-amount-due').value = amountDue;
 
+            // Enable View with Smooth Cinematic Reveal & Scroll
             detailsView.style.display = 'block';
+            detailsView.style.opacity = '0';
+            detailsView.style.transform = 'translateY(-15px)';
+            detailsView.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+            
+            requestAnimationFrame(() => {
+                detailsView.style.opacity = '1';
+                detailsView.style.transform = 'translateY(0)';
+                setTimeout(() => {
+                    detailsView.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 150);
+            });
+
             btn.disabled = false;
 
         } catch (err) {
@@ -1039,7 +1049,6 @@
         try {
             const batch = writeBatch(db);
 
-            // 1. Create Transaction Ledger Entry
             const newTxRef = doc(collection(db, "transactions"));
             batch.set(newTxRef, {
                 subscriberId: targetUserId,
@@ -1051,9 +1060,7 @@
                 date: serverTimestamp()
             });
 
-            // 2. Update Group Document Snapshot
             const groupRef = doc(db, "groups", groupId);
-            
             let snapshotArray = activeGroupData.memberSnapshot || [];
             let userSnapIndex = snapshotArray.findIndex(m => m && m.id === targetUserId);
             
@@ -1066,11 +1073,7 @@
 
                 while(amountRemaining > 0) {
                     let requiredForThisMonth = calculateDueForMonth(checkingMonth, startAmt, schedule);
-                    
-                    // FIX: Failsafe against infinite zero loop
-                    if (requiredForThisMonth <= 0) {
-                        advancedMonths++; break;
-                    }
+                    if (requiredForThisMonth <= 0) { advancedMonths++; break; }
                     
                     if (amountRemaining >= (requiredForThisMonth * 0.95)) {
                         advancedMonths++;
@@ -1080,26 +1083,21 @@
                         break; 
                     }
                 }
-                
                 if (advancedMonths === 0) advancedMonths = 1;
-
-                // Safely Increment to prevent NaN overrides
                 snapshotArray[userSnapIndex].monthsPaid = (snapshotArray[userSnapIndex].monthsPaid || 0) + advancedMonths;
             } else {
                 snapshotArray.push({
                     id: targetUserId, name: targetUserName, monthsPaid: currentCalcMonth, balanceDue: 0, hasAdvance: false
                 });
             }
+            
             batch.update(groupRef, { 
                 memberSnapshot: snapshotArray,
                 totalPotCollected: increment(amountToPay) 
             });
 
-            // Execute Database writes
             await batch.commit();
 
-            // --- Trigger Premium GPay Success Flow ---
-            // FIX: navigator.vibrate() requires an argument (duration in ms). Empty calls throw a TypeError, triggering the catch block AFTER data is saved!
             if ("vibrate" in navigator && typeof navigator.vibrate === 'function') { navigator.vibrate(200); }
 
             document.getElementById('gpay-amount-text').innerText = `₹${amountToPay.toLocaleString('en-IN')}`;
@@ -1108,13 +1106,11 @@
 
             setTimeout(() => {
                 overlay.classList.remove('active');
-                
                 if (modalStackCount > 0) {
                     history.go(-modalStackCount);
                     modalStackCount = 0;
                 }
                 closeAllModals(); 
-                
                 loadTransactions(); 
                 btn.innerText = "Approve Transaction"; btn.disabled = false;
             }, 2500);
@@ -1137,7 +1133,6 @@
         if (isLoadMore && lastVisibleTxn) {
           q = query(collection(db, "transactions"), orderBy("date", "desc"), startAfter(lastVisibleTxn), limit(10));
         } else {
-          // INJECT PREMIUM SKELETON ANIMATIONS FOR LEDGER
           let skelHtml = '';
           for(let i=0; i<5; i++) {
               skelHtml += `
@@ -1156,14 +1151,11 @@
               </div>`;
           }
           txnList.innerHTML = skelHtml; 
-          
-          // --- FIX: PROACTIVELY HIDE LOAD MORE BUTTON ---
           loadMoreBtn.style.display = 'none';
 
           q = query(collection(db, "transactions"), orderBy("date", "desc"), limit(10));
         }
 
-        // SYNTHETIC DELAY FOR LUXURY UX (Ensures shimmer displays cleanly)
         await new Promise(r => setTimeout(r, 350));
 
         let querySnapshot;
@@ -1183,13 +1175,11 @@
           return;
         }
 
-        // Clear skeletons safely right before injecting real content
         if (!isLoadMore) txnList.innerHTML = '';
         lastVisibleTxn = querySnapshot.docs[querySnapshot.docs.length - 1];
 
         querySnapshot.forEach((docSnap) => {
           const data = docSnap.data();
-          
           let displayDate = "Just now";
           if(data.date && typeof data.date.toDate === 'function') {
               const d = data.date.toDate();
@@ -1198,7 +1188,6 @@
 
           const displayName = data.subscriberName || `@${data.subscriberId}`;
           const userInitial = displayName.charAt(0).toUpperCase();
-
           const card = document.createElement('div');
           card.className = 'txn-card';
           card.innerHTML = `
@@ -1222,8 +1211,6 @@
         loadMoreBtn.style.display = querySnapshot.docs.length === 10 ? 'block' : 'none';
       } catch (error) { 
         console.error(error); 
-        
-        // BUG FIX: Correct Index Regex Match extraction
         if(error.message && error.message.includes("https://console.firebase.google.com")) {
              const urlRegex = /(https:\/\/console\.firebase\.google\.com[^\s]+)/g;
              const match = error.message.match(urlRegex);
@@ -1238,14 +1225,12 @@
                   return;
              }
         }
-        
         if(!isLoadMore) txnList.innerHTML = `<div style="color:var(--danger-color); text-align:center; padding:20px; font-weight: 800;">Error loading ledger feed.</div>`;
       }
     }
     
     document.getElementById('load-more-btn').addEventListener('click', () => loadTransactions(true));
 
-    // Initialize Page
     loadTransactions(false);
   </script>
 </body>
