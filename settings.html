@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f0f" />
+  <link rel="manifest" href="manifest.json">
+  <title>Settings - Meena Chitfunds</title>
+  
+  <style>
+    /* Premium Theme Variables (From Payment Engine) */
+    :root {
+      --bg-color: #f4f7f6;
+      --text-main: #111111;
+      --text-muted: #6b7280;
+      --surface-color: #ffffff;
+      --surface-hover: #f9fafb;
+      --border-color: #e5e7eb;
+      --brand-accent: #065fd4;
+      --brand-accent-light: #e6f0fa;
+      --danger-color: #dc3545;
+      --danger-light: #fde8e8;
+      --success-color: #0f9d58;
+      --success-light: #e6f4ea;
+      --modal-overlay: rgba(0, 0, 0, 0.6);
+      --card-shadow: 0 4px 12px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #0a0a0a;
+        --text-main: #f8f9fa;
+        --text-muted: #9ca3af;
+        --surface-color: #141414;
+        --surface-hover: #1f1f1f;
+        --border-color: #2d2d2d;
+        --brand-accent: #3ea6ff;
+        --brand-accent-light: rgba(62, 166, 255, 0.15);
+        --danger-color: #ff4e45;
+        --danger-light: rgba(255, 78, 69, 0.15);
+        --success-color: #34a853;
+        --success-light: rgba(52, 168, 83, 0.15);
+        --modal-overlay: rgba(0, 0, 0, 0.85);
+        --card-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Premium Header */
+    header {
+      position: sticky;
+      top: 0;
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 20px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    @media (prefers-color-scheme: dark) { header { background-color: rgba(20, 20, 20, 0.85); } }
+
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-title { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+    
+    .icon-btn {
+      background: none;
+      border: none;
+      color: var(--text-main);
+      cursor: pointer;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+    }
+    .icon-btn:active { background-color: var(--surface-hover); }
+    .icon-btn svg { width: 24px; height: 24px; fill: currentColor; }
+    
+    .logout-btn { color: var(--danger-color); }
+    .logout-btn:active { background-color: var(--danger-light); }
+
+    /* Layout */
+    main { padding: 24px 20px 80px; }
+    .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; margin-bottom: 16px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;}
+
+    /* Premium Settings Cards */
+    .settings-card {
+      background-color: var(--surface-color); border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
+      box-shadow: var(--card-shadow); transition: transform 0.2s; cursor: pointer;
+    }
+    .settings-card:active { transform: scale(0.98); background-color: var(--surface-hover); }
+    
+    .sc-left { display: flex; align-items: center; gap: 14px; }
+    .sc-avatar { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: #fff; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 20px; box-shadow: 0 4px 10px rgba(6, 95, 212, 0.2);}
+    .sc-avatar.other { background: var(--brand-accent-light); color: var(--brand-accent); box-shadow: none; }
+    
+    .sc-info h3 { margin: 0 0 4px 0; font-size: 16px; font-weight: 800; letter-spacing: 0.5px; display: flex; align-items: center;}
+    .sc-meta { font-size: 13px; color: var(--text-muted); font-weight: 500;}
+    
+    .admin-badge { background: var(--success-light); color: var(--success-color); font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; margin-left: 8px; letter-spacing: 0.5px; border: 1px solid rgba(15, 157, 88, 0.2);}
+
+    .load-more-btn { width: 100%; background: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 16px; border-radius: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; box-shadow: var(--card-shadow); }
+    .load-more-btn:active { background: var(--surface-hover); transform: scale(0.98);}
+
+    /* Forms & Inputs */
+    .input-group { margin-bottom: 24px; position: relative; }
+    .input-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
+    .input-group input {
+      width: 100%; background-color: var(--surface-hover); border: 2px solid var(--border-color);
+      color: var(--text-main); padding: 16px; border-radius: 14px; font-size: 16px; outline: none; font-weight: 700; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-group input:focus { border-color: var(--brand-accent); box-shadow: 0 0 0 4px var(--brand-accent-light); background: var(--surface-color); }
+
+    /* iOS Style Toggle Switch */
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; background: var(--surface-hover); padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); margin-bottom: 24px;}
+    .toggle-labels h4 { margin: 0 0 4px 0; font-size: 15px; font-weight: 800; color: var(--text-main); }
+    .toggle-labels p { margin: 0; font-size: 12px; color: var(--text-muted); font-weight: 500; }
+    
+    .switch { position: relative; display: inline-block; width: 52px; height: 30px; flex-shrink: 0;}
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .3s; border-radius: 34px; }
+    .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
+    input:checked + .slider { background-color: var(--success-color); }
+    input:checked + .slider:before { transform: translateX(22px); }
+
+    /* Action Buttons */
+    .btn-row { display: flex; gap: 12px; }
+    .btn { flex: 1; padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; transition: 0.2s; text-align: center;}
+    .btn:active { transform: scale(0.97); }
+    
+    .btn-primary { background: var(--brand-accent); color: #fff; box-shadow: 0 4px 12px rgba(6, 95, 212, 0.2); }
+    .btn-cancel { background: var(--surface-hover); color: var(--text-main); border: 1px solid var(--border-color); }
+    
+    .btn-danger-outline { width: 100%; background: var(--danger-light); color: var(--danger-color); border: 1px solid rgba(220, 53, 69, 0.3); padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 12px; transition: 0.2s;}
+    .btn-danger-outline:active { transform: scale(0.97); background: #f8d7da; }
+
+    /* Bottom Sheets */
+    .sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); z-index: 150; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);}
+    .sheet-overlay.active { opacity: 1; pointer-events: all; }
+    
+    .bottom-sheet { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--bg-color); z-index: 200; transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1); border-radius: 24px 24px 0 0; padding: 20px 20px calc(20px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 40px rgba(0,0,0,0.15); max-height: 92vh; overflow-y: auto; display: flex; flex-direction: column;}
+    .bottom-sheet.active { transform: translateY(0); }
+    
+    .sheet-handle { width: 40px; height: 5px; background: var(--border-color); border-radius: 3px; margin: 0 auto 20px; }
+    
+    .sheet-header-profile { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; }
+    .sheet-avatar { width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; display: flex; justify-content: center; align-items: center; font-size: 32px; font-weight: 800; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(6, 95, 212, 0.3); }
+
+    /* Center Alert Modals */
+    .center-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); z-index: 300; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);}
+    .center-modal.active { opacity: 1; pointer-events: all; }
+    
+    .mini-modal-content { background-color: var(--surface-color); width: 90%; max-width: 320px; border-radius: 24px; padding: 28px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid var(--border-color); text-align: center; }
+    .center-modal.active .mini-modal-content { transform: scale(1); }
+    
+    .msg-icon { font-size: 48px; margin-bottom: 16px; display: flex; justify-content: center;}
+    .mini-modal-title { font-size: 20px; font-weight: 800; margin: 0 0 12px 0; color: var(--text-main); }
+    .mini-modal-text { font-size: 14px; color: var(--text-muted); margin: 0 0 28px 0; line-height: 1.5; font-weight: 500;}
+    
+    .mini-btn-danger { background: var(--danger-color); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; width: 100%; margin-bottom: 12px;}
+    .mini-btn-danger:active { background: #b02a37; }
+    
+    .mini-btn-cancel { background: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; width: 100%;}
+    
+    .mini-btn-primary { background: var(--brand-accent); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; width: 100%;}
+
+    /* --- Advanced Skeleton Animations --- */
+    @keyframes shimmer { 0% { background-position: -500px 0; } 100% { background-position: 500px 0; } }
+    .skeleton { background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border-color) 50%, var(--surface-hover) 75%); background-size: 1000px 100%; animation: shimmer 2s infinite linear; border-radius: 4px; }
+    
+    .skeleton-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 14px; box-shadow: var(--card-shadow); }
+    .skeleton-avatar { width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0; }
+    .skeleton-text-lg { width: 140px; height: 16px; margin-bottom: 8px; border-radius: 4px; }
+    .skeleton-text-sm { width: 90px; height: 12px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <button onclick="window.history.back()" class="icon-btn">
+          <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      </button>
+      <h1 class="header-title">Settings</h1>
+    </div>
+    <button class="icon-btn logout-btn" onclick="openModal('logout-modal', true)">
+      <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+    </button>
+  </header>
+
+  <main>
+    <!-- Logged In User Section -->
+    <div class="section-title">Your Profile</div>
+    <div id="current-user-container">
+        <!-- Skeleton Loader -->
+        <div class="skeleton-card">
+            <div class="skeleton-avatar skeleton"></div>
+            <div style="flex:1;">
+                <div class="skeleton-text-lg skeleton"></div>
+                <div class="skeleton-text-sm skeleton"></div>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- All Users Management Section -->
+    <div class="section-title">
+        <span>Manage Workspace Users</span>
+        <span id="user-count-badge" style="background: var(--brand-accent-light); color: var(--brand-accent); padding: 2px 8px; border-radius: 8px; font-size: 11px;">Loading</span>
+    </div>
+    <div id="users-list-container">
+        <!-- Skeletons -->
+        <div class="skeleton-card"><div class="skeleton-avatar skeleton"></div><div style="flex:1;"><div class="skeleton-text-lg skeleton"></div><div class="skeleton-text-sm skeleton"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-avatar skeleton"></div><div style="flex:1;"><div class="skeleton-text-lg skeleton"></div><div class="skeleton-text-sm skeleton"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-avatar skeleton"></div><div style="flex:1;"><div class="skeleton-text-lg skeleton"></div><div class="skeleton-text-sm skeleton"></div></div></div>
+    </div>
+    
+    <button id="load-more-btn" class="load-more-btn" style="display: none;" onclick="loadUsers(true)">Load More Users</button>
+  </main>
+
+  <!-- BACKGROUND OVERLAY FOR SHEETS -->
+  <div id="global-sheet-overlay" class="sheet-overlay" onclick="window.history.back()"></div>
+
+  <!-- BOTTOM SHEET: EDIT CURRENT PROFILE -->
+  <aside id="edit-profile-sheet" class="bottom-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header-profile">
+        <div class="sheet-avatar" id="edit-self-avatar">?</div>
+        <h3 style="margin: 0; font-size: 20px; font-weight: 800; color: var(--text-main);">Edit Profile</h3>
+    </div>
+
+    <div class="input-group">
+      <label>Full Name</label>
+      <input type="text" id="edit-self-name" placeholder="Your Name" autocomplete="off">
+    </div>
+    
+    <div class="input-group">
+      <label>Mobile Number</label>
+      <input type="tel" id="edit-self-phone" placeholder="+91 XXXXXXXXXX" autocomplete="off">
+    </div>
+
+    <div class="toggle-row">
+        <div class="toggle-labels">
+            <h4>Workspace Admin</h4>
+            <p>Grant full control over the app</p>
+        </div>
+        <label class="switch">
+            <input type="checkbox" id="edit-self-admin">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="btn-row">
+        <button class="btn btn-cancel" onclick="window.history.back()">Cancel</button>
+        <button class="btn btn-primary" id="save-self-btn" onclick="saveSelfProfile()">Save Changes</button>
+    </div>
+  </aside>
+
+  <!-- BOTTOM SHEET: MANAGE OTHER USER -->
+  <aside id="manage-user-sheet" class="bottom-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header-profile">
+        <div class="sheet-avatar" id="manage-avatar" style="background: var(--brand-accent-light); color: var(--brand-accent); box-shadow: none;">?</div>
+        <h3 style="margin: 0; font-size: 20px; font-weight: 800; color: var(--text-main);">Manage User</h3>
+        <div style="font-size: 12px; font-family: monospace; color: var(--text-muted); font-weight: 800; margin-top: 6px;" id="manage-uid-display">@UID</div>
+    </div>
+
+    <div class="input-group">
+      <label>Full Name</label>
+      <input type="text" id="manage-name" placeholder="User Name" autocomplete="off">
+    </div>
+    
+    <div class="input-group">
+      <label>Mobile Number</label>
+      <input type="tel" id="manage-phone" placeholder="+91 XXXXXXXXXX" autocomplete="off">
+    </div>
+
+    <div class="toggle-row">
+        <div class="toggle-labels">
+            <h4>Workspace Admin</h4>
+            <p>Grant full control over the app</p>
+        </div>
+        <label class="switch">
+            <input type="checkbox" id="manage-admin">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="btn-row">
+        <button class="btn btn-cancel" onclick="window.history.back()">Cancel</button>
+        <button class="btn btn-primary" id="save-manage-btn" onclick="saveManagedProfile()">Save Updates</button>
+    </div>
+    
+    <button class="btn-danger-outline" onclick="openModal('delete-user-modal', true)">Remove User from Workspace</button>
+  </aside>
+
+  <!-- LOGOUT CONFIRMATION MODAL -->
+  <aside id="logout-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div class="msg-icon">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--danger-color)"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+      </div>
+      <h3 class="mini-modal-title">Sign Out</h3>
+      <p class="mini-modal-text">Are you sure you want to log out of your session?</p>
+      <button class="mini-btn-danger" id="confirm-logout-btn">Yes, Sign Out</button>
+      <button class="mini-btn-cancel" onclick="window.history.back()">Cancel</button>
+    </div>
+  </aside>
+
+  <!-- DELETE USER CONFIRMATION MODAL -->
+  <aside id="delete-user-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div class="msg-icon">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--danger-color)"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+      </div>
+      <h3 class="mini-modal-title">Delete User</h3>
+      <p class="mini-modal-text">This will permanently delete their access profile from the database. This action cannot be undone.</p>
+      <button class="mini-btn-danger" id="confirm-delete-btn">Permanently Delete</button>
+      <button class="mini-btn-cancel" onclick="window.history.back()">Cancel</button>
+    </div>
+  </aside>
+
+  <!-- SYSTEM ALERT MODAL -->
+  <aside id="message-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div id="msg-icon" class="msg-icon"></div>
+      <h3 class="mini-modal-title" id="msg-title">Alert</h3>
+      <p class="mini-modal-text" id="msg-body">Message goes here.</p>
+      <button class="mini-btn-primary" onclick="window.history.back()">Understood</button>
+    </div>
+  </aside>
+
+  <script type="module">
+    import { auth, db } from './config.js';
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+    import { collection, query, limit, getDocs, getDoc, doc, updateDoc, deleteDoc, startAfter, orderBy } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+    let loggedInUid = null;
+    let loggedInUserData = null;
+    let currentlyManagingUserId = null;
+    let lastVisibleUser = null;
+
+    // --- Premium Haptics Engine ---
+    document.addEventListener('click', (e) => {
+        const interactiveEle = e.target.closest('button, .settings-card, .slider, .icon-btn');
+        if (interactiveEle && "vibrate" in navigator) {
+            navigator.vibrate(20); // Light tap for standard UI
+        }
+    });
+
+    // --- Zero-Trap Hash Navigation (Modals & Bottom Sheets) ---
+    let openElementsCount = 0; 
+
+    window.openModal = function(id, isCenterModal = false) {
+      document.body.style.overflow = 'hidden'; // Lock background scroll
+      
+      const el = document.getElementById(id);
+      el.classList.add('active');
+      
+      // If opening a bottom sheet, activate the global dim overlay
+      if(!isCenterModal && el.classList.contains('bottom-sheet')) {
+          document.getElementById('global-sheet-overlay').classList.add('active');
+      }
+
+      // Specific Haptics for destructive modals
+      if(id === 'delete-user-modal' || id === 'logout-modal') {
+          if("vibrate" in navigator) navigator.vibrate([30, 50, 30]);
+      }
+
+      if (window.location.hash !== `#${id}`) {
+          history.pushState({ id: id }, '', `#${id}`);
+          openElementsCount++;
+      }
+    };
+    
+    window.closeAllUI = function() { 
+      document.body.style.overflow = ''; 
+      document.querySelectorAll('.bottom-sheet').forEach(m => m.classList.remove('active'));
+      document.querySelectorAll('.center-modal').forEach(m => m.classList.remove('active'));
+      document.getElementById('global-sheet-overlay').classList.remove('active');
+    };
+    
+    window.addEventListener('popstate', (e) => {
+       closeAllUI();
+       if(openElementsCount > 0) openElementsCount--;
+       
+       if(window.location.hash) {
+           const targetUI = document.querySelector(window.location.hash);
+           if(targetUI) {
+               targetUI.classList.add('active');
+               document.body.style.overflow = 'hidden';
+               if(targetUI.classList.contains('bottom-sheet')) {
+                   document.getElementById('global-sheet-overlay').classList.add('active');
+               }
+           }
+       }
+    });
+
+    window.showMessage = function(title, body, type = 'error') {
+      document.getElementById('msg-title').innerText = title;
+      document.getElementById('msg-body').innerHTML = body; 
+      const iconContainer = document.getElementById('msg-icon');
+      
+      if (type === 'success') {
+        iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--success-color)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+      } else {
+        iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--warning-color)"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
+      }
+      openModal('message-modal', true);
+    };
+
+    // --- Authentication & Initialization ---
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.replace('login.html');
+      } else {
+        loggedInUid = user.uid;
+        await loadCurrentUserProfile();
+        loadUsers(false); // Initial load of users list
+      }
+    });
+
+    // --- Render Cards Logic ---
+    function createUserCardHTML(data, isSelf = false) {
+        const name = data.name || "Unnamed User";
+        const initial = name.charAt(0).toUpperCase();
+        const phone = data.mobile || data.phone || "No phone added"; // Handle both potential db keys
+        const isAdmin = data.admin === true;
+        
+        const avatarClass = isSelf ? "sc-avatar" : "sc-avatar other";
+        const badgeHTML = isAdmin ? `<span class="admin-badge">Admin</span>` : "";
+        
+        return `
+            <div class="${avatarClass}">${initial}</div>
+            <div class="sc-info">
+                <h3>${name} ${badgeHTML}</h3>
+                <div class="sc-meta">${phone}</div>
+            </div>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--border-color)"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+        `;
+    }
+
+    // --- Load Current User Data ---
+    async function loadCurrentUserProfile() {
+        try {
+            const docRef = doc(db, "users", loggedInUid);
+            const snap = await getDoc(docRef);
+            const container = document.getElementById('current-user-container');
+            
+            if(snap.exists()) {
+                loggedInUserData = snap.data();
+                
+                const card = document.createElement('div');
+                card.className = 'settings-card';
+                card.innerHTML = createUserCardHTML(loggedInUserData, true);
+                
+                card.onclick = () => {
+                    document.getElementById('edit-self-avatar').innerText = (loggedInUserData.name || '?').charAt(0).toUpperCase();
+                    document.getElementById('edit-self-name').value = loggedInUserData.name || "";
+                    document.getElementById('edit-self-phone').value = loggedInUserData.mobile || loggedInUserData.phone || "";
+                    document.getElementById('edit-self-admin').checked = loggedInUserData.admin === true;
+                    openModal('edit-profile-sheet');
+                };
+                
+                container.innerHTML = '';
+                container.appendChild(card);
+            } else {
+                container.innerHTML = '<div style="color:var(--danger-color); font-weight:800;">Profile data missing</div>';
+            }
+        } catch(e) {
+            console.error(e);
+            document.getElementById('current-user-container').innerHTML = '<div style="color:var(--danger-color); font-weight:800;">Error loading profile</div>';
+        }
+    }
+
+    // --- Load Paginated Users List ---
+    window.loadUsers = async function(isLoadMore = false) {
+        const container = document.getElementById('users-list-container');
+        const loadBtn = document.getElementById('load-more-btn');
+        
+        if(!isLoadMore) {
+            lastVisibleUser = null;
+        }
+
+        try {
+            // Using standard limit. Fallback to basic fetch if index is missing.
+            let q = query(collection(db, "users"), limit(10));
+            if(isLoadMore && lastVisibleUser) {
+                q = query(collection(db, "users"), startAfter(lastVisibleUser), limit(10));
+            }
+
+            let snap = await getDocs(q);
+            
+            if(!isLoadMore) container.innerHTML = '';
+
+            if(snap.empty) {
+                if(!isLoadMore) container.innerHTML = '<div style="color:var(--text-muted); font-weight:600; text-align:center; padding: 20px;">No other users found.</div>';
+                loadBtn.style.display = 'none';
+                return;
+            }
+
+            lastVisibleUser = snap.docs[snap.docs.length - 1];
+
+            snap.forEach(docSnap => {
+                const data = docSnap.data();
+                const uId = docSnap.id;
+                
+                // Optional: Don't show the logged in user twice
+                if(uId === loggedInUid) return;
+
+                const card = document.createElement('div');
+                card.className = 'settings-card';
+                card.innerHTML = createUserCardHTML(data, false);
+                
+                card.onclick = () => {
+                    currentlyManagingUserId = uId;
+                    document.getElementById('manage-avatar').innerText = (data.name || '?').charAt(0).toUpperCase();
+                    document.getElementById('manage-uid-display').innerText = `@${uId}`;
+                    document.getElementById('manage-name').value = data.name || "";
+                    document.getElementById('manage-phone').value = data.mobile || data.phone || "";
+                    document.getElementById('manage-admin').checked = data.admin === true;
+                    openModal('manage-user-sheet');
+                };
+
+                container.appendChild(card);
+            });
+
+            // Count Update (approx for badge)
+            if(!isLoadMore) document.getElementById('user-count-badge').innerText = `Workspace Feed`;
+
+            loadBtn.style.display = snap.docs.length === 10 ? 'block' : 'none';
+
+        } catch(e) {
+            console.error("Fetch error", e);
+            if(!isLoadMore) container.innerHTML = '<div style="color:var(--danger-color); font-weight:800; text-align:center;">Failed to load users.</div>';
+        }
+    };
+
+    // --- Save Current Profile Updates ---
+    window.saveSelfProfile = async function() {
+        const btn = document.getElementById('save-self-btn');
+        const newName = document.getElementById('edit-self-name').value.trim();
+        const newPhone = document.getElementById('edit-self-phone').value.trim();
+        const isAdmin = document.getElementById('edit-self-admin').checked;
+
+        if(!newName) { showMessage("Invalid Input", "Name cannot be empty."); return; }
+
+        btn.innerText = "Saving..."; btn.disabled = true;
+        try {
+            await updateDoc(doc(db, "users", loggedInUid), {
+                name: newName,
+                mobile: newPhone,
+                admin: isAdmin
+            });
+            
+            if("vibrate" in navigator) navigator.vibrate(40);
+            
+            window.history.back(); // Close sheet smoothly
+            await loadCurrentUserProfile(); // Refresh UI
+            
+        } catch(e) {
+            console.error(e);
+            showMessage("Update Failed", "Could not save your profile changes.");
+        } finally {
+            btn.innerText = "Save Changes"; btn.disabled = false;
+        }
+    };
+
+    // --- Save Managed User Profile Updates ---
+    window.saveManagedProfile = async function() {
+        if(!currentlyManagingUserId) return;
+
+        const btn = document.getElementById('save-manage-btn');
+        const newName = document.getElementById('manage-name').value.trim();
+        const newPhone = document.getElementById('manage-phone').value.trim();
+        const isAdmin = document.getElementById('manage-admin').checked;
+
+        if(!newName) { showMessage("Invalid Input", "Name cannot be empty."); return; }
+
+        btn.innerText = "Updating..."; btn.disabled = true;
+        try {
+            await updateDoc(doc(db, "users", currentlyManagingUserId), {
+                name: newName,
+                mobile: newPhone,
+                admin: isAdmin
+            });
+            
+            if("vibrate" in navigator) navigator.vibrate(40);
+            
+            window.history.back(); // Close sheet smoothly
+            loadUsers(false); // Hard refresh list to show new name/admin badge
+            
+        } catch(e) {
+            console.error(e);
+            showMessage("Update Failed", "Could not save user changes.");
+        } finally {
+            btn.innerText = "Save Updates"; btn.disabled = false;
+        }
+    };
+
+    // --- Delete User Logic ---
+    document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+        if(!currentlyManagingUserId) return;
+        const btn = document.getElementById('confirm-delete-btn');
+        
+        btn.innerText = "Deleting..."; btn.disabled = true;
+        try {
+            await deleteDoc(doc(db, "users", currentlyManagingUserId));
+            
+            if("vibrate" in navigator) navigator.vibrate([40, 50, 40]);
+            
+            // Go back twice to close both the Warning Modal AND the Bottom Sheet
+            if(openElementsCount > 0) {
+                window.history.go(-openElementsCount);
+                openElementsCount = 0;
+            } else {
+                closeAllUI();
+            }
+            
+            currentlyManagingUserId = null;
+            loadUsers(false); // Refresh list
+            setTimeout(() => showMessage("User Deleted", "The profile has been removed from the database.", "success"), 400);
+
+        } catch(e) {
+            console.error(e);
+            showMessage("Delete Failed", "Could not remove user from database.");
+        } finally {
+            btn.innerText = "Permanently Delete"; btn.disabled = false;
+        }
+    });
+
+    // --- Logout Logic ---
+    document.getElementById('confirm-logout-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('confirm-logout-btn');
+        btn.innerText = "Signing Out..."; btn.disabled = true;
+        try {
+            await signOut(auth);
+            // On successful sign out, the onAuthStateChanged listener at the top will automatically catch the null user and redirect to login.html
+        } catch(e) {
+            console.error(e);
+            showMessage("Sign Out Failed", "An error occurred while logging out.");
+            btn.innerText = "Yes, Sign Out"; btn.disabled = false;
+        }
+    });
+
+  </script>
+</body>
+</html>
