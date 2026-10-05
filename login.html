@@ -479,7 +479,7 @@
     // Redirect if already logged in (Check Firestore to ensure setup is complete)
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userRef = doc(db, 'users', user.uid);
+        const userRef = doc(db, 'admins', user.uid);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
           window.location.replace('home.html');
@@ -509,8 +509,8 @@
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
         
-        // Check if user exists in Firestore
-        const userRef = doc(db, 'users', user.uid);
+        // Check if user exists in Firestore admins collection
+        const userRef = doc(db, 'admins', user.uid);
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
@@ -548,7 +548,7 @@
       saveProfileBtn.disabled = true;
 
       try {
-        await setDoc(doc(db, 'users', currentUser.uid), {
+        await setDoc(doc(db, 'admins', currentUser.uid), {
           uid: currentUser.uid,
           name: name,
           mobile: '+91' + mobile,
