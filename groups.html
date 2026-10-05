@@ -115,6 +115,31 @@
     .search-input:focus { border-color: var(--brand-accent); box-shadow: 0 0 0 4px var(--brand-accent-light); }
     .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
 
+    /* Advanced Skeletons */
+    @keyframes shimmer {
+      0% { background-position: -500px 0; }
+      100% { background-position: 500px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border-color) 50%, var(--surface-hover) 75%);
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite linear;
+      border-radius: 4px;
+    }
+    .skeleton-user-card {
+      background: var(--surface-color); border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 16px;
+      box-shadow: var(--card-shadow);
+    }
+    .skeleton-u-top { display: flex; gap: 14px; width: 100%; align-items: center; }
+    .skeleton-icon { width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0; }
+    .skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .skeleton-text-lg { width: 60%; height: 18px; border-radius: 4px; }
+    .skeleton-text-md { width: 40%; height: 14px; border-radius: 4px; }
+    .skeleton-text-sm { width: 30%; height: 12px; border-radius: 4px; }
+    .skeleton-u-actions { display: flex; justify-content: flex-end; gap: 12px; border-top: 1px dashed var(--border-color); padding-top: 12px; }
+    .skeleton-btn { width: 60px; height: 24px; border-radius: 8px; }
+
     /* Group Card */
     .group-card {
       background-color: var(--surface-color); border: 1px solid var(--border-color);
@@ -148,19 +173,21 @@
     #group-detail-modal { z-index: 105; }
     #participants-modal { z-index: 110; }
     #pending-modal { z-index: 110; } 
+    #user-detail-modal { z-index: 115; } /* New Ledger Modal */
     
     .modal-header { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border-color); background-color: var(--surface-color); }
     .back-btn { background: var(--surface-hover); border: 1px solid var(--border-color); border-radius: 50%; color: var(--text-main); padding: 8px; margin-left: -4px; cursor: pointer; display: flex; align-items: center; justify-content: center;}
     .back-btn svg { width: 20px; height: 20px; fill: currentColor; }
     .modal-title { font-size: 18px; font-weight: 800; margin-left: 14px; letter-spacing: -0.5px;}
     .modal-subtitle { font-size: 11px; color: var(--brand-accent); font-weight: 700; margin-left: 14px; font-family: monospace;}
-    .modal-body { padding: 24px 20px; flex: 1; overflow-y: auto; }
+    .modal-body { padding: 24px 20px; flex: 1; overflow-y: auto; scroll-behavior: smooth; }
 
     /* Advanced Engine Detail Card (Refined for Sleek Look) */
     .detail-card { background: var(--surface-color); padding: 24px; border-radius: 20px; margin-bottom: 24px; border: 1px solid var(--border-color); box-shadow: var(--card-shadow); text-align: center; }
     
     .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; background: var(--success-light); color: var(--success-color);}
     .status-badge.warning { background: var(--warning-light); color: var(--warning-color); }
+    .status-badge.danger { background: var(--danger-light); color: var(--danger-color); }
 
     .engine-box { background: var(--bg-color); padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); }
     .e-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 8px; letter-spacing: 0.5px;}
@@ -183,9 +210,11 @@
     .m-btn:active { transform: scale(0.97); }
     .btn-primary { background: linear-gradient(135deg, var(--danger-color), #a00000); color: #ffffff; box-shadow: 0 8px 20px rgba(220, 53, 69, 0.25); }
     .btn-secondary { background: var(--surface-hover); color: var(--text-main); border: 2px solid var(--border-color); }
+    .btn-whatsapp { background: #25D366; color: #ffffff; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3); }
 
     /* Participant User Cards */
-    .user-card { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--card-shadow); }
+    .user-card { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--card-shadow); cursor: pointer; transition: 0.2s;}
+    .user-card:active { transform: scale(0.98); background-color: var(--surface-hover); border-color: var(--brand-accent); }
     .u-left { display: flex; align-items: center; gap: 14px; width: 100%;}
     .u-avatar { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: 800; flex-shrink: 0;}
     .u-info { flex: 1; }
@@ -200,6 +229,57 @@
     .call-btn { background: var(--success-color); color: white; border: none; width: 44px; height: 44px; border-radius: 12px; display: flex; justify-content: center; align-items: center; text-decoration: none; box-shadow: 0 4px 10px rgba(15, 157, 88, 0.3); transition: 0.2s;}
     .call-btn:active { transform: scale(0.9); }
     .call-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+    /* Static Group Badge (For Timeline) */
+    .group-header-card { background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; padding: 16px 20px; border-radius: 16px; margin-bottom: 24px; box-shadow: 0 8px 20px rgba(6, 95, 212, 0.25); display: flex; justify-content: space-between; align-items: center; text-align: left;}
+    @media (prefers-color-scheme: dark) { .group-header-card { background: linear-gradient(135deg, #3ea6ff, #065fd4); } }
+    .gh-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; opacity: 0.8; margin-bottom: 4px; }
+    .gh-name { font-size: 18px; font-weight: 800; text-transform: uppercase; margin: 0;}
+    .gh-id { font-family: monospace; font-size: 14px; font-weight: 800; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 8px; }
+
+    /* Timeline Dashboard Specifics */
+    .status-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px dashed var(--border-color); padding-bottom: 16px;}
+    .financial-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; text-align: left;}
+    .fin-box { display: flex; flex-direction: column; }
+    .fin-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px;}
+    .fin-val { font-size: 26px; font-weight: 800; color: var(--text-main); letter-spacing: -1px;}
+    .fin-val.success { color: var(--success-color); }
+    .fin-val.danger { color: var(--danger-color); }
+    
+    .progress-container { margin-top: 10px; text-align: left;}
+    .progress-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
+    .progress-track { width: 100%; height: 8px; background-color: var(--border-color); border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: var(--success-color); border-radius: 4px; transition: width 0.5s ease; }
+    .arrears-banner { background: var(--danger-light); color: var(--danger-color); padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 800; text-align: center; margin-bottom: 20px; display: none; border: 1px solid rgba(220, 53, 69, 0.2); letter-spacing: 0.5px; text-transform: uppercase;}
+
+    /* Deep Ledger Timeline */
+    .timeline-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 40px; text-align: left;}
+    .t-row { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+    
+    .t-row.paid { border-left: 4px solid var(--success-color); }
+    .t-row.actionable { border: 2px solid var(--brand-accent); background: var(--brand-accent-light); transform: scale(1.02); box-shadow: 0 8px 20px rgba(6, 95, 212, 0.15); margin: 8px 0; z-index: 2; position: relative;}
+    .t-row.overdue { border: 1px solid var(--warning-color); background: var(--warning-light); }
+    .t-row.pending { opacity: 0.6; background: transparent; border-style: dashed; }
+    
+    .t-left { display: flex; flex-direction: column; gap: 4px; }
+    .t-month { font-size: 15px; font-weight: 800; color: var(--text-main); text-transform: uppercase; }
+    .t-status { font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.5px;}
+    .t-status.s-paid { color: var(--success-color); }
+    .t-status.s-action { color: var(--brand-accent); }
+    .t-status.s-warn { color: var(--warning-color); }
+    .t-status.s-pend { color: var(--text-muted); }
+    
+    .t-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+    .t-amt { font-size: 18px; font-weight: 800; color: var(--text-main); }
+    .t-amt.a-paid { color: var(--success-color); }
+    .t-amt.a-action { color: var(--brand-accent); font-size: 20px; }
+    .t-amt.a-warn { color: var(--warning-color); }
+    
+    .btn-action-pay { background: var(--brand-accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 10px rgba(6, 95, 212, 0.3); transition: 0.2s;}
+    .btn-action-pay:active { transform: scale(0.95); }
+    .btn-undo { background: var(--surface-hover); color: var(--danger-color); border: 1px solid var(--danger-light); padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.2s; display: flex; align-items: center; gap: 4px;}
+    .btn-undo:active { background: var(--danger-light); }
+    .section-divider { margin: 24px 0 16px 0; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; font-size: 14px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; }
 
     /* Empty States */
     .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
@@ -220,6 +300,27 @@
     .mini-modal-title { font-size: 20px; font-weight: 800; margin: 0 0 12px 0; color: var(--text-main); }
     .mini-modal-text { font-size: 14px; color: var(--text-muted); margin: 0 0 28px 0; line-height: 1.5; font-weight: 500; word-break: break-word;}
     .mini-btn { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; width: 100%; background-color: var(--brand-accent); color: #fff;}
+    .mini-btn-cancel { background-color: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); margin-top: 10px; }
+    .mini-btn-danger { background-color: var(--danger-color); color: #fff; }
+
+    /* GPay Style Overlay */
+    .gpay-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-color: var(--bg-color); z-index: 300; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out;
+    }
+    .gpay-overlay.active { opacity: 1; pointer-events: all; }
+    .gpay-circle { width: 120px; height: 120px; border-radius: 50%; background-color: #e5f4eb; display: flex; justify-content: center; align-items: center; margin-bottom: 24px; transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    @media (prefers-color-scheme: dark) { .gpay-circle { background-color: rgba(15, 157, 88, 0.15); } }
+    .gpay-overlay.active .gpay-circle { transform: scale(1); }
+    .gpay-check { width: 60px; height: 60px; fill: none; stroke: var(--success-color); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; }
+    .gpay-overlay.active .gpay-check { animation: drawCheck 0.6s ease forwards 0.3s; }
+    @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+    .gpay-title { font-size: 24px; font-weight: 800; color: var(--text-main); margin: 0 0 8px 0; opacity: 0; transform: translateY(10px); transition: 0.4s ease 0.5s; letter-spacing: -0.5px;}
+    .gpay-amount { font-size: 48px; font-weight: 800; color: var(--text-main); margin: 0 0 32px 0; opacity: 0; transform: translateY(10px); transition: 0.4s ease 0.6s; letter-spacing: -1px;}
+    .gpay-overlay.active .gpay-title, .gpay-overlay.active .gpay-amount, .gpay-overlay.active .gpay-footer { opacity: 1; transform: translateY(0); }
+    .gpay-footer { position: absolute; bottom: 32px; font-size: 12px; color: var(--brand-accent); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0; transition: 0.4s ease 0.8s;}
 
     /* Responsive Grid fixes */
     @media (max-width: 480px) {
@@ -253,7 +354,35 @@
       </div>
       
       <div id="main-groups-list">
-        <div class="loader" id="main-loader"></div>
+        <!-- Professional Embedded Skeletons replaced the old spinner -->
+        <div class="skeleton-user-card">
+            <div class="skeleton-u-top">
+                <div class="skeleton skeleton-icon"></div>
+                <div class="skeleton-lines">
+                    <div class="skeleton skeleton-text-lg"></div>
+                    <div class="skeleton skeleton-text-md"></div>
+                    <div class="skeleton skeleton-text-sm"></div>
+                </div>
+            </div>
+            <div class="skeleton-u-actions">
+                <div class="skeleton skeleton-btn"></div>
+                <div class="skeleton skeleton-btn"></div>
+            </div>
+        </div>
+        <div class="skeleton-user-card">
+            <div class="skeleton-u-top">
+                <div class="skeleton skeleton-icon"></div>
+                <div class="skeleton-lines">
+                    <div class="skeleton skeleton-text-lg"></div>
+                    <div class="skeleton skeleton-text-md"></div>
+                    <div class="skeleton skeleton-text-sm"></div>
+                </div>
+            </div>
+            <div class="skeleton-u-actions">
+                <div class="skeleton skeleton-btn"></div>
+                <div class="skeleton skeleton-btn"></div>
+            </div>
+        </div>
       </div>
       <button id="main-load-more-btn" class="load-more-btn" style="display: none;" onclick="loadMoreGroups()">Load More Groups</button>
     </div>
@@ -329,6 +458,103 @@
         </div>
   </aside>
 
+  <!-- DEEP LEDGER MODAL (Injected from Reports Page) -->
+  <aside id="user-detail-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div>
+        <div class="modal-title" id="md-u-name">Loading...</div>
+        <div class="modal-subtitle" id="md-u-id">@LOADING</div>
+      </div>
+    </div>
+    <div class="modal-body" id="user-modal-scroll-area">
+      
+      <div id="static-group-badge-container"></div>
+
+      <div id="ledger-view" style="display: none;">
+        
+        <div class="detail-card">
+          <div class="status-row">
+            <div style="font-size: 14px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Financial Overview</div>
+            <div class="status-badge" id="md-u-status">Calculating...</div>
+          </div>
+          
+          <div id="arrears-warning" class="arrears-banner"></div>
+
+          <div class="financial-summary">
+            <div class="fin-box">
+              <div class="fin-label">Total Paid</div>
+              <div class="fin-val success" id="md-u-paid">₹0</div>
+            </div>
+            <div class="fin-box" style="text-align: right;">
+              <div class="fin-label">Pending Dues</div>
+              <div class="fin-val danger" id="md-u-pending">₹0</div>
+            </div>
+          </div>
+          
+          <div class="progress-container">
+            <div class="progress-labels">
+              <span>Chit Progress</span>
+              <span id="md-u-progress-text">0 / 0 Months</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="md-u-progress-bar" style="width: 0%;"></div>
+            </div>
+          </div>
+          
+          <div class="btn-grid" id="whatsapp-container" style="display: none;"></div>
+        </div>
+
+        <div class="section-divider">Complete Timeline Ledger</div>
+        
+        <div class="timeline-container" id="txn-history-list"></div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- Confirm Payment Modal -->
+  <aside id="confirm-pay-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div class="msg-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--brand-accent)"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+      </div>
+      <h3 class="mini-modal-title">Confirm Payment</h3>
+      <p class="mini-modal-text" id="confirm-pay-text">Approve transaction?</p>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+          <button class="mini-btn" id="execute-pay-btn">Approve Transaction</button>
+          <button class="mini-btn mini-btn-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Undo Payment Modal -->
+  <aside id="undo-pay-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div class="msg-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--danger-color)"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+      </div>
+      <h3 class="mini-modal-title">Undo Payment</h3>
+      <p class="mini-modal-text" id="undo-pay-text">Are you sure you want to reverse this payment? This will delete the ledger entry permanently.</p>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+          <button class="mini-btn mini-btn-danger" id="execute-undo-btn">Reverse Transaction</button>
+          <button class="mini-btn mini-btn-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- GPay Style Success Overlay -->
+  <div id="gpay-overlay" class="gpay-overlay">
+    <div class="gpay-circle">
+      <svg class="gpay-check" viewBox="0 0 24 24">
+        <path d="M4 12 l5 5 l11 -11" />
+      </svg>
+    </div>
+    <div class="gpay-title">Payment Successful</div>
+    <div class="gpay-amount" id="gpay-amount-text">₹0</div>
+    <div class="gpay-footer">Verified transaction</div>
+  </div>
+
   <aside id="message-modal" class="center-modal">
     <div class="mini-modal-content">
       <div id="msg-icon" class="msg-icon">
@@ -344,12 +570,23 @@
   <script type="module">
     import { auth, db } from './config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
-    import { collection, query, orderBy, limit, getDocs, doc, getDoc, where, startAfter, documentId } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+    import { collection, query, orderBy, limit, getDocs, doc, getDoc, where, startAfter, documentId, writeBatch, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
     onAuthStateChanged(auth, (user) => { if (!user) window.location.replace('login.html'); });
 
+    // --- SYSTEM HAPTIC ENGINE ---
+    window.haptic = function(type) {
+        if (!("vibrate" in navigator)) return;
+        try {
+            if (type === 'light') navigator.vibrate(50);
+            else if (type === 'success') navigator.vibrate([50, 50, 50]);
+            else if (type === 'heavy') navigator.vibrate([100, 50, 100]);
+        } catch(e) { }
+    };
+
     // --- FLAWLESS MODAL NAVIGATION (Hash Based) ---
     window.openModal = function(modalId) {
+      haptic('light');
       document.getElementById(modalId).classList.add('active');
       if (window.location.hash !== `#${modalId}`) {
           history.pushState({ id: modalId }, '', `#${modalId}`);
@@ -357,6 +594,7 @@
     };
     
     window.closeModal = function() {
+      haptic('light');
       if (window.location.hash) {
           history.back(); 
       } else {
@@ -366,6 +604,7 @@
     
     function closeAllModals() { 
       document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+      document.querySelectorAll('.center-modal').forEach(m => m.classList.remove('active'));
     }
     
     window.addEventListener('popstate', (e) => {
@@ -384,8 +623,10 @@
       
       if (type === 'success') {
         iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--success-color)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+        haptic('success');
       } else {
         iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--warning-color)"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
+        haptic('heavy');
       }
       
       document.getElementById('message-modal').classList.add('active');
@@ -395,7 +636,7 @@
     };
 
     // --- GLOBAL CACHE & SEARCH ENGINE ---
-    let allGroupsCache = []; // Kept to instantly load modal data without re-reading
+    let allGroupsCache = []; 
     let lastVisibleGroup = null;
     let isSearching = false;
     let currentSearchTerm = "";
@@ -408,20 +649,37 @@
         const loadMoreBtn = document.getElementById('main-load-more-btn');
         
         if (!isLoadMore) {
-            container.innerHTML = '<div class="loader" id="main-loader"></div>';
+            let skelHtml = '';
+            for(let i=0; i<3; i++) {
+                skelHtml += `
+                <div class="skeleton-user-card">
+                    <div class="skeleton-u-top">
+                        <div class="skeleton skeleton-icon"></div>
+                        <div class="skeleton-lines">
+                            <div class="skeleton skeleton-text-lg"></div>
+                            <div class="skeleton skeleton-text-md"></div>
+                            <div class="skeleton skeleton-text-sm"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-u-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>
+                </div>`;
+            }
+            container.innerHTML = skelHtml;
             lastVisibleGroup = null;
+            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
         } else {
             loadMoreBtn.innerText = "Loading...";
         }
 
-        const loader = document.getElementById('main-loader');
-        if (loader) loader.style.display = 'block';
+        await new Promise(r => setTimeout(r, 350));
 
         try {
             let querySnapshot;
             const term = currentSearchTerm;
             const termUpper = term.toUpperCase();
-            // Handle Title Case for group names
             const termTitle = term.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 
             if (term === "") {
@@ -444,26 +702,22 @@
                     }
                     querySnapshot = await getDocs(q);
                 } else {
-                    // Try ID first
                     let qId = query(collection(db, "groups"), where(documentId(), ">=", termUpper), where(documentId(), "<=", termUpper + "\uf8ff"), orderBy(documentId()), limit(10));
                     querySnapshot = await getDocs(qId);
                     lastSearchType = "id";
 
-                    // Try Name (Title Case)
                     if (querySnapshot.empty) {
                         let qNameTitle = query(collection(db, "groups"), where("groupName", ">=", termTitle), where("groupName", "<=", termTitle + "\uf8ff"), orderBy("groupName"), limit(10));
                         querySnapshot = await getDocs(qNameTitle);
                         lastSearchType = "name_title";
                     }
 
-                    // Try Name (Upper Case)
                     if (querySnapshot.empty) {
                         let qNameUpper = query(collection(db, "groups"), where("groupName", ">=", termUpper), where("groupName", "<=", termUpper + "\uf8ff"), orderBy("groupName"), limit(10));
                         querySnapshot = await getDocs(qNameUpper);
                         lastSearchType = "name_upper";
                     }
 
-                    // Try Name (Exact/Lower)
                     if (querySnapshot.empty) {
                         let qNameExact = query(collection(db, "groups"), where("groupName", ">=", term), where("groupName", "<=", term + "\uf8ff"), orderBy("groupName"), limit(10));
                         querySnapshot = await getDocs(qNameExact);
@@ -498,8 +752,6 @@
                 }
 
                 const safePot = group.totalPot ? Number(group.totalPot).toLocaleString('en-IN') : '0';
-                
-                // --- NEW UI UPGRADE: Better representation of group stats ---
                 const calcMonth = calculateCurrentSystemMonth(group.startDate);
                 const cappedMonth = group.totalMonths ? Math.min(calcMonth, group.totalMonths) : calcMonth;
                 let displayStartDate = 'N/A';
@@ -556,14 +808,12 @@
 
         } catch (err) {
             console.error("Fetch Error:", err);
-            if (loader) loader.style.display = 'none';
-            
             if(err.message && err.message.includes("https://console.firebase.google.com")) {
                 const urlRegex = /(https:\/\/console\.firebase\.google\.com[^\s]+)/g;
                 const match = err.message.match(urlRegex);
                 if(match && match) {
                     if (!isLoadMore) {
-                        container.innerHTML = `
+                        document.getElementById('main-groups-list').innerHTML = `
                             <div style="text-align:center; padding: 30px 20px;">
                                 <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--warning-color)" style="margin-bottom:16px;"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
                                 <h3 style="margin:0 0 8px 0; font-size:18px; font-weight:800; color:var(--text-main);">Database Optimization Required</h3>
@@ -574,7 +824,7 @@
                     }
                 }
             } else if (!isLoadMore) {
-                container.innerHTML = `<div style="color:var(--danger-color); text-align:center; padding: 20px; font-weight:700;">Error Loading Groups</div>`;
+                document.getElementById('main-groups-list').innerHTML = `<div style="color:var(--danger-color); text-align:center; padding: 20px; font-weight:700;">Error Loading Groups</div>`;
             }
         }
     };
@@ -596,7 +846,6 @@
 
     // --- CORE ENGINE LOGIC (Calculations) ---
 
-    // 1. Calculate chronological timeline of the group (For reference only now)
     function calculateCurrentSystemMonth(startDateStr) {
         if(!startDateStr) return 1; 
         const start = new Date(startDateStr);
@@ -607,7 +856,6 @@
         return months <= 0 ? 1 : months + 1; 
     }
 
-    // 2. NEW LOGIC: Calculate personal timeline dynamically per participant based on their unique Join Date
     function calculateParticipantExpectedMonth(user, groupData) {
         if (!user || !groupData) return 1;
         const start = user?.joinedAt ? (typeof user.joinedAt.toDate === 'function' ? user.joinedAt.toDate() : new Date(user.joinedAt)) : new Date(groupData?.startDate || new Date());
@@ -618,22 +866,16 @@
         elapsed += now.getMonth();
         if (elapsed < 0) elapsed = 0;
         
-        // Base expectation (Owe 1 month currently)
         let expected = elapsed + 1; 
-        
-        // Safety cap so they don't get overcharged if group ends
         const totalGroupMonths = groupData.totalMonths || 0;
         if (totalGroupMonths > 0 && expected > totalGroupMonths) {
             expected = totalGroupMonths;
         }
-        
         return expected;
     }
 
-    // 3. Calculate the exact Due Amount for ANY given target month using Increments
     function calculateDueForMonth(targetMonth, startAmount, schedule) {
         if (targetMonth <= 1) return startAmount;
-        
         let currentAmount = startAmount;
         for (let m = 2; m <= targetMonth; m++) {
             let increment = 0;
@@ -657,21 +899,19 @@
       if(!group) return showMessage("Error", "Active group data not found.", "error");
 
       try {
+        haptic('light');
         activeGroupData = group;
         activeLoadedGroupUsers = []; 
         
-        // Set Header
         document.getElementById('md-g-name').innerText = group.groupName || 'Unnamed Group';
         document.getElementById('md-g-id').innerText = `@${group.id}`;
         
         openModal('group-detail-modal');
 
-        // INSTANT 0-READ UI UPDATE
         const safePot = group.totalPot ? Number(group.totalPot).toLocaleString('en-IN') : '0';
         document.getElementById('md-g-pot').innerText = `₹${safePot}`;
         document.getElementById('md-g-count').innerText = `${group.participantCount || 0}`;
 
-        // Update overall Group status logic
         const calcMonth = calculateCurrentSystemMonth(group.startDate);
         if(calcMonth > (group.totalMonths || 0)) {
             const badge = document.getElementById('md-g-status');
@@ -689,7 +929,6 @@
       }
     };
 
-    // --- NEW FEATURE: Share Group Summary ---
     window.shareGroupSummary = function() {
         if(!activeGroupData) return showMessage("Error", "Active group data not found.", "error");
         
@@ -713,8 +952,6 @@
         }
     };
 
-    // --- FETCH FULL PARTICIPANT PROFILES ---
-    // Reads ONLY occur when the buttons are specifically clicked!
     async function fetchGroupUsers() {
         if(!activeGroupData) throw new Error("Active group data not found.");
         if(activeLoadedGroupUsers.length > 0) return activeLoadedGroupUsers; 
@@ -731,16 +968,20 @@
         return users;
     }
 
-    // --- HELPER FOR ICONS ---
     const phoneIconSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>`;
     const locIconSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
 
     window.openParticipantsModal = async function() {
         if(!activeGroupData) return showMessage("Error", "Active group data not found.", "error");
-
         openModal('participants-modal');
+        await renderParticipantsList();
+    };
+
+    window.renderParticipantsList = async function() {
         const container = document.getElementById('participants-list-container');
-        container.innerHTML = '<div class="loader"></div><div style="text-align:center; font-size:12px; color:var(--text-muted); font-weight:700;">Fetching Directory...</div>';
+        if (!activeLoadedGroupUsers || activeLoadedGroupUsers.length === 0) {
+            container.innerHTML = '<div class="loader"></div><div style="text-align:center; font-size:12px; color:var(--text-muted); font-weight:700;">Fetching Directory...</div>';
+        }
         
         try {
             const users = await fetchGroupUsers();
@@ -766,11 +1007,12 @@
                 const expectedUserMonth = calculateParticipantExpectedMonth(u, activeGroupData);
                 
                 const initial = u.name ? u.name.charAt(0).toUpperCase() : '?';
-                const phoneText = u.phone ? `${phoneIconSVG} ${u.phone}` : 'No Phone';
-                const locText = u.location ? `${locIconSVG} ${u.location}` : 'No Location';
+                const phoneText = u.phone ? `${phoneIconSVG}${u.phone}` : 'No Phone';
+                const locText = u.location ? `${locIconSVG}${u.location}` : 'No Location';
                 
                 const card = document.createElement('div');
                 card.className = 'user-card';
+                card.onclick = () => openUserDetail(u.id);
                 card.innerHTML = `
                     <div class="u-left">
                         <div class="u-avatar">${initial}</div>
@@ -781,7 +1023,7 @@
                         </div>
                     </div>
                     <div style="text-align: right;">
-                        <div style="font-size: 16px; font-weight: 800; color: var(--text-main);">${snapData.monthsPaid} / ${expectedUserMonth}</div>
+                        <div style="font-size: 16px; font-weight: 800; color: var(--text-main);">${snapData.monthsPaid} /${expectedUserMonth}</div>
                         <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Mo. Paid</div>
                     </div>
                 `;
@@ -796,10 +1038,15 @@
 
     window.openPendingModal = async function() {
         if(!activeGroupData) return showMessage("Error", "Active group data not found.", "error");
-
         openModal('pending-modal');
+        await renderPendingList();
+    };
+
+    window.renderPendingList = async function() {
         const container = document.getElementById('pending-list-container');
-        container.innerHTML = '<div class="loader" style="border-top-color: var(--danger-color);"></div><div style="text-align:center; font-size:12px; color:var(--text-muted); font-weight:700;">Analyzing Defaulters...</div>';
+        if (!activeLoadedGroupUsers || activeLoadedGroupUsers.length === 0) {
+            container.innerHTML = '<div class="loader" style="border-top-color: var(--danger-color);"></div><div style="text-align:center; font-size:12px; color:var(--text-muted); font-weight:700;">Analyzing Defaulters...</div>';
+        }
         
         try {
             const users = await fetchGroupUsers();
@@ -816,7 +1063,6 @@
 
             users.forEach(u => {
                 const snapData = snapshotMap.get(u.id) || { monthsPaid: 0 };
-                
                 const expectedUserMonth = calculateParticipantExpectedMonth(u, activeGroupData);
                 
                 if(snapData.monthsPaid < expectedUserMonth) {
@@ -835,7 +1081,7 @@
                     const missedCount = expectedUserMonth - snapData.monthsPaid;
                     
                     const callButtonHTML = u.phone 
-                        ? `<a href="tel:${u.phone}" class="call-btn"><svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg></a>`
+                        ? `<a href="tel:${u.phone}" class="call-btn" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg></a>`
                         : ``;
 
                     let waButtonHTML = ``;
@@ -846,16 +1092,16 @@
                         });
 
                         const msg = `*Meena Chitfunds*\nGroup: ${activeGroupData.groupName.toUpperCase()} (@${activeGroupData.id})\nTimeline: Month ${expectedUserMonth} of ${activeGroupData.totalMonths || 0}\n\nDear ${(u.name || 'Participant').toUpperCase()},\nYou have pending payments for the following months:\n\n${breakdownText}\n*Total Pending: ₹${totalOwed}*\n\nKindly clear your dues at the earliest.`;
-                        
                         const safePhone = u.phone.replace(/\D/g,'');
                         const waLink = `https://wa.me/${safePhone}?text=${encodeURIComponent(msg)}`;
                         
-                        waButtonHTML = `<a href="${waLink}" target="_blank" class="call-btn" style="background:#25D366; margin-right:8px;"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.422C7.145 7.63 6 8.7 6 10.923c0 2.222 1.98 4.372 2.254 4.743.274.371 3.235 4.939 7.838 6.936 1.103.479 1.963.765 2.633.978 1.107.351 2.115.301 2.912.182.894-.134 2.748-1.122 3.134-2.207.386-1.085.386-2.015.271-2.208-.115-.192-.413-.301-.71-.45zM12.002 22.002h-.006c-1.666 0-3.294-.447-4.726-1.293l-.339-.2-3.513.921.936-3.424-.22-.349a9.92 9.92 0 01-1.517-5.328c0-5.513 4.49-9.998 10.013-9.998 2.671 0 5.182 1.042 7.07 2.932 1.889 1.888 2.93 4.398 2.931 7.069 0 5.514-4.49 10.003-10.01 10.003z"/></svg></a>`;
+                        waButtonHTML = `<a href="${waLink}" target="_blank" onclick="event.stopPropagation()" class="call-btn" style="background:#25D366; margin-right:8px;"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.422C7.145 7.63 6 8.7 6 10.923c0 2.222 1.98 4.372 2.254 4.743.274.371 3.235 4.939 7.838 6.936 1.103.479 1.963.765 2.633.978 1.107.351 2.115.301 2.912.182.894-.134 2.748-1.122 3.134-2.207.386-1.085.386-2.015.271-2.208-.115-.192-.413-.301-.71-.45zM12.002 22.002h-.006c-1.666 0-3.294-.447-4.726-1.293l-.339-.2-3.513.921.936-3.424-.22-.349a9.92 9.92 0 01-1.517-5.328c0-5.513 4.49-9.998 10.013-9.998 2.671 0 5.182 1.042 7.07 2.932 1.889 1.888 2.93 4.398 2.931 7.069 0 5.514-4.49 10.003-10.01 10.003z"/></svg></a>`;
                     }
 
                     const card = document.createElement('div');
                     card.className = 'user-card defaulter-card';
                     card.style.display = 'block'; 
+                    card.onclick = () => openUserDetail(u.id);
                     card.innerHTML = `
                         <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
                             <div class="u-left" style="width: auto; flex:1;">
@@ -895,7 +1141,395 @@
         }
     };
 
-    // Execute Initial Data Load
+
+    // --- DEEP LEDGER MODAL INTEGRATION ---
+    let activeViewedUser = null;
+
+    window.openUserDetail = function(userId) {
+        haptic('light');
+        const user = activeLoadedGroupUsers.find(u => u.id === userId);
+        if (!user) return;
+        
+        // AGGRESSIVE STATE WIPE
+        document.getElementById('md-u-name').innerText = "Loading...";
+        document.getElementById('md-u-id').innerText = "@LOADING";
+        document.getElementById('txn-history-list').innerHTML = '';
+        document.getElementById('md-u-paid').innerText = "₹0";
+        document.getElementById('md-u-pending').innerText = "₹0";
+        document.getElementById('md-u-progress-text').innerText = "0 / 0 Months";
+        document.getElementById('md-u-progress-bar').style.width = "0%";
+        document.getElementById('arrears-warning').style.display = 'none';
+        document.getElementById('whatsapp-container').style.display = 'none';
+        document.getElementById('md-u-status').innerText = "Calculating...";
+        document.getElementById('md-u-status').className = "status-badge";
+        document.getElementById('static-group-badge-container').innerHTML = '';
+
+        activeViewedUser = user;
+        
+        document.getElementById('md-u-name').innerText = user.name || "Unnamed";
+        document.getElementById('md-u-id').innerText = `@${user.id}`;
+        
+        // Set Static Group Badge Header
+        document.getElementById('static-group-badge-container').innerHTML = `
+            <div class="group-header-card">
+                <div>
+                    <div class="gh-label">Active Group</div>
+                    <h2 class="gh-name">${activeGroupData.groupName}</h2>
+                </div>
+                <div class="gh-id">@${activeGroupData.id}</div>
+            </div>
+        `;
+        
+        analyzeUserLedger(activeGroupData.id);
+        openModal('user-detail-modal');
+    };
+
+    async function analyzeUserLedger(groupId) {
+        if (!activeViewedUser || !activeGroupData) return;
+        const view = document.getElementById('ledger-view');
+        view.style.display = 'block';
+        document.getElementById('md-u-status').innerText = "Syncing Engine...";
+        
+        try {
+            let txns = [];
+            try {
+                const qTxn = query(collection(db, "transactions"), 
+                    where("subscriberId", "==", activeViewedUser.id),
+                    where("groupId", "==", groupId),
+                    orderBy("date", "desc")
+                );
+                const txnSnap = await getDocs(qTxn);
+                txnSnap.forEach(tDoc => {
+                    let d = tDoc.data();
+                    d.id = tDoc.id; 
+                    txns.push(d);
+                });
+            } catch (idxErr) {
+                console.warn("Index missing. Using client-side fallback...");
+                const fallbackQTxn = query(collection(db, "transactions"), 
+                    where("subscriberId", "==", activeViewedUser.id),
+                    where("groupId", "==", groupId)
+                );
+                const fallbackSnap = await getDocs(fallbackQTxn);
+                fallbackSnap.forEach(tDoc => {
+                    let d = tDoc.data();
+                    d.id = tDoc.id;
+                    txns.push(d);
+                });
+                txns.sort((a, b) => {
+                    const timeA = a.date ? (typeof a.date.toMillis === 'function' ? a.date.toMillis() : 0) : 0;
+                    const timeB = b.date ? (typeof b.date.toMillis === 'function' ? b.date.toMillis() : 0) : 0;
+                    return timeB - timeA;
+                });
+            }
+            
+            let advanceAmt = activeViewedUser?.advanceAmount ? Number(activeViewedUser.advanceAmount) : 0;
+            let totalPaid = advanceAmt; 
+            let maxMonthPaid = 0;
+            
+            txns.forEach(tData => {
+                if (tData.type === "Advance Payment") return; 
+                totalPaid += tData.amount;
+                if(tData.monthAttributed > maxMonthPaid) maxMonthPaid = tData.monthAttributed;
+            });
+
+            const expectedMonth = calculateParticipantExpectedMonth(activeViewedUser, activeGroupData);
+            const startAmt = activeGroupData.startAmount || 0;
+            const schedule = activeGroupData.installmentSchedule || [];
+            const totalGroupMonths = activeGroupData.totalMonths || 0;
+            
+            let pendingTotal = 0;
+            let pendingMonthsList = [];
+            let evalMonth = expectedMonth;
+            if (totalGroupMonths > 0 && evalMonth > totalGroupMonths) evalMonth = totalGroupMonths;
+            
+            if (maxMonthPaid < evalMonth) {
+                for (let m = maxMonthPaid + 1; m <= evalMonth; m++) {
+                    const dueForM = calculateDueForMonth(m, startAmt, schedule);
+                    pendingTotal += dueForM;
+                    pendingMonthsList.push({ month: m, amount: dueForM });
+                }
+            }
+
+            const timelineList = document.getElementById('txn-history-list');
+            let timelineHtml = '';
+            
+            for(let m = 1; m <= totalGroupMonths; m++) {
+                let dueForM = calculateDueForMonth(m, startAmt, schedule);
+                let txnForThisMonth = txns.find(t => t.monthAttributed === m && t.type !== "Advance Payment");
+                
+                if (m <= maxMonthPaid) {
+                    if (txnForThisMonth) {
+                        let dateStr = "Paid";
+                        if(txnForThisMonth.date && typeof txnForThisMonth.date.toDate === 'function') {
+                            dateStr = txnForThisMonth.date.toDate().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                        }
+                        let undoHtml = '';
+                        if (m === maxMonthPaid) {
+                            undoHtml = `<button class="btn-undo" onclick="initiateUndoPay('${txnForThisMonth.id}', ${m}, ${txnForThisMonth.amount})"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg> Undo</button>`;
+                        }
+                        timelineHtml += `
+                        <div class="t-row paid">
+                            <div class="t-left">
+                                <div class="t-month">Month ${m}</div>
+                                <div class="t-status s-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> ${dateStr}</div>
+                            </div>
+                            <div class="t-right">
+                                <div class="t-amt a-paid">₹${Number(txnForThisMonth.amount).toLocaleString('en-IN')}</div>
+                                ${undoHtml}
+                            </div>
+                        </div>`;
+                    } else {
+                        timelineHtml += `
+                        <div class="t-row paid">
+                            <div class="t-left">
+                                <div class="t-month">Month ${m}</div>
+                                <div class="t-status s-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Paid</div>
+                            </div>
+                            <div class="t-right">
+                                <div class="t-amt a-paid">₹${Number(dueForM).toLocaleString('en-IN')}</div>
+                            </div>
+                        </div>`;
+                    }
+                } else if (m === maxMonthPaid + 1) {
+                    if (m <= evalMonth) {
+                        timelineHtml += `
+                        <div class="t-row actionable" id="active-pay-row" style="border-color: var(--warning-color); background: var(--warning-light);">
+                            <div class="t-left">
+                                <div class="t-month">Month ${m}</div>
+                                <div class="t-status s-warn"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C22 2 22 12 22 12s0 10-10 10S2 22 2 12 2 2 12 2zm-1 15h2v2h-2v-2zm0-10h2v8h-2V7z"/></svg> Pending</div>
+                            </div>
+                            <div class="t-right">
+                                <div class="t-amt a-action" style="color: var(--warning-color);">₹${Number(dueForM).toLocaleString('en-IN')}</div>
+                                <button class="btn-action-pay" onclick="initiateDirectPay(${m}, ${dueForM})">Pay Now</button>
+                            </div>
+                        </div>`;
+                    } else {
+                        timelineHtml += `
+                        <div class="t-row actionable" id="active-pay-row">
+                            <div class="t-left">
+                                <div class="t-month">Month ${m}</div>
+                                <div class="t-status s-action"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> Due Now</div>
+                            </div>
+                            <div class="t-right">
+                                <div class="t-amt a-action">₹${Number(dueForM).toLocaleString('en-IN')}</div>
+                                <button class="btn-action-pay" onclick="initiateDirectPay(${m}, ${dueForM})">Pay Now</button>
+                            </div>
+                        </div>`;
+                    }
+                } else if (m > maxMonthPaid + 1 && m <= evalMonth) {
+                    timelineHtml += `
+                    <div class="t-row overdue">
+                        <div class="t-left">
+                            <div class="t-month">Month ${m}</div>
+                            <div class="t-status s-warn"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C22 2 22 12 22 12s0 10-10 10S2 22 2 12 2 2 12 2zm-1 15h2v2h-2v-2zm0-10h2v8h-2V7z"/></svg> Pending</div>
+                        </div>
+                        <div class="t-right">
+                            <div class="t-amt a-warn">₹${Number(dueForM).toLocaleString('en-IN')}</div>
+                        </div>
+                    </div>`;
+                } else {
+                    timelineHtml += `
+                    <div class="t-row pending">
+                        <div class="t-left">
+                            <div class="t-month">Month ${m}</div>
+                            <div class="t-status s-pend">Upcoming</div>
+                        </div>
+                        <div class="t-right">
+                            <div class="t-amt">₹${Number(dueForM).toLocaleString('en-IN')}</div>
+                        </div>
+                    </div>`;
+                }
+            }
+            
+            if (advanceAmt > 0) {
+                timelineHtml += `
+                <div class="t-row" style="background: var(--brand-accent-light); border: 1px dashed var(--brand-accent);">
+                    <div class="t-left">
+                        <div class="t-month" style="color: var(--brand-accent);">Advanced Amount</div>
+                        <div class="t-status s-action">Collected at join</div>
+                    </div>
+                    <div class="t-right">
+                        <div class="t-amt a-action">₹${Number(advanceAmt).toLocaleString('en-IN')}</div>
+                    </div>
+                </div>`;
+            }
+            
+            timelineList.innerHTML = timelineHtml;
+
+            const arrears = evalMonth - maxMonthPaid;
+            const arrearsWarning = document.getElementById('arrears-warning');
+            if (arrears > 0) {
+                arrearsWarning.style.display = 'block';
+                arrearsWarning.innerText = `⚠️ Participant is ${arrears} month(s) behind schedule.`;
+            } else {
+                arrearsWarning.style.display = 'none';
+            }
+
+            document.getElementById('md-u-paid').innerText = `₹${Number(totalPaid).toLocaleString('en-IN')}`;
+            let progressPercent = totalGroupMonths > 0 ? (maxMonthPaid / totalGroupMonths) * 100 : 0;
+            document.getElementById('md-u-progress-text').innerText = `${maxMonthPaid} / ${totalGroupMonths} Months`;
+            document.getElementById('md-u-progress-bar').style.width = `${progressPercent}%`;
+            
+            const pendingUI = document.getElementById('md-u-pending');
+            const statusUI = document.getElementById('md-u-status');
+            pendingUI.innerText = `₹${Number(pendingTotal).toLocaleString('en-IN')}`;
+            
+            if (pendingTotal > 0) {
+                pendingUI.className = "fin-val danger";
+                statusUI.innerText = "Payment Overdue";
+                statusUI.className = "status-badge danger";
+                
+                if (activeViewedUser.phone) {
+                    const waContainer = document.getElementById('whatsapp-container');
+                    let breakdownText = "";
+                    pendingMonthsList.forEach(pm => { breakdownText += `- Month ${pm.month}: ₹${pm.amount}\n`; });
+                    const msg = `*Meena Chitfunds*\nGroup: ${activeGroupData.groupName.toUpperCase()} (@${groupId})\nTimeline: Month ${evalMonth} of ${totalGroupMonths}\n\nDear ${activeViewedUser.name.toUpperCase()},\nYou have pending payments for the following months:\n\n${breakdownText}\n*Total Pending: ₹${pendingTotal}*\n\nKindly clear your dues at the earliest.`;
+                    const safePhone = activeViewedUser.phone.replace(/\D/g,'');
+                    const waLink = `https://wa.me/${safePhone}?text=${encodeURIComponent(msg)}`;
+                    
+                    waContainer.innerHTML = `
+                        <a href="${waLink}" target="_blank" class="m-btn btn-whatsapp" style="text-decoration: none;">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.422C7.145 7.63 6 8.7 6 10.923c0 2.222 1.98 4.372 2.254 4.743.274.371 3.235 4.939 7.838 6.936 1.103.479 1.963.765 2.633.978 1.107.351 2.115.301 2.912.182.894-.134 2.748-1.122 3.134-2.207.386-1.085.386-2.015.271-2.208-.115-.192-.413-.301-.71-.45zM12.002 22.002h-.006c-1.666 0-3.294-.447-4.726-1.293l-.339-.2-3.513.921.936-3.424-.22-.349a9.92 9.92 0 01-1.517-5.328c0-5.513 4.49-9.998 10.013-9.998 2.671 0 5.182 1.042 7.07 2.932 1.889 1.888 2.93 4.398 2.931 7.069 0 5.514-4.49 10.003-10.01 10.003z"/></svg>
+                            Send Reminder via WhatsApp
+                        </a>
+                    `;
+                    waContainer.style.display = 'grid';
+                }
+            } else {
+                pendingUI.className = "fin-val success";
+                statusUI.innerText = "All Clear";
+                statusUI.className = "status-badge";
+            }
+
+            setTimeout(() => {
+                const actionRow = document.getElementById('active-pay-row');
+                if(actionRow) actionRow.scrollIntoView({behavior: 'smooth', block: 'center'});
+            }, 300);
+
+        } catch (err) {
+            console.error(err);
+            showMessage("Engine Error", `Failed to sync ledger: ${err.message}`, "error");
+        }
+    }
+
+    let pendingPaymentState = null;
+    window.initiateDirectPay = function(month, amount) {
+        haptic('light');
+        pendingPaymentState = { month, amount };
+        document.getElementById('confirm-pay-text').innerHTML = `Approve transaction of <b>₹${amount.toLocaleString('en-IN')}</b> for <b>Month ${month}</b>?`;
+        openModal('confirm-pay-modal');
+    };
+
+    document.getElementById('execute-pay-btn').addEventListener('click', async () => {
+        if(!pendingPaymentState || !activeGroupData || !activeViewedUser) return;
+        const btn = document.getElementById('execute-pay-btn');
+        btn.innerText = "Processing..."; btn.disabled = true;
+
+        try {
+            const batch = writeBatch(db);
+            const groupId = activeGroupData.id;
+
+            const newTxRef = doc(collection(db, "transactions"));
+            batch.set(newTxRef, {
+                subscriberId: activeViewedUser.id,
+                subscriberName: activeViewedUser.name || "Unnamed",
+                groupId: groupId,
+                amount: pendingPaymentState.amount,
+                monthAttributed: pendingPaymentState.month,
+                type: "Monthly Installment",
+                date: serverTimestamp()
+            });
+
+            const groupRef = doc(db, "groups", groupId);
+            let snapshotArray = activeGroupData.memberSnapshot || [];
+            let userSnapIndex = snapshotArray.findIndex(m => m && m.id === activeViewedUser.id);
+            
+            if(userSnapIndex > -1) {
+                snapshotArray[userSnapIndex].monthsPaid = (snapshotArray[userSnapIndex].monthsPaid || 0) + 1;
+            } else {
+                snapshotArray.push({ id: activeViewedUser.id, name: activeViewedUser.name, monthsPaid: pendingPaymentState.month, balanceDue: 0, hasAdvance: false });
+            }
+
+            batch.update(groupRef, { memberSnapshot: snapshotArray, totalPotCollected: increment(pendingPaymentState.amount) });
+            await batch.commit();
+
+            haptic('success');
+            document.getElementById('gpay-amount-text').innerText = `₹${pendingPaymentState.amount.toLocaleString('en-IN')}`;
+            
+            // 0-READ BACKGROUND UI REFRESH
+            renderParticipantsList();
+            renderPendingList();
+            
+            closeModal(); 
+            const overlay = document.getElementById('gpay-overlay');
+            overlay.classList.add('active');
+
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                analyzeUserLedger(groupId); 
+            }, 2500);
+
+        } catch (err) {
+            console.error(err);
+            showMessage("Payment Failed", err.message, "error");
+        } finally {
+            btn.innerText = "Approve Transaction"; btn.disabled = false;
+            pendingPaymentState = null;
+        }
+    });
+
+    let pendingUndoState = null;
+    window.initiateUndoPay = function(txnId, month, amount) {
+        haptic('heavy');
+        pendingUndoState = { txnId, month, amount };
+        document.getElementById('undo-pay-text').innerHTML = `Are you sure you want to reverse the payment of <b>₹${amount.toLocaleString('en-IN')}</b> for <b>Month ${month}</b>? This will permanently delete the ledger entry.`;
+        openModal('undo-pay-modal');
+    };
+
+    document.getElementById('execute-undo-btn').addEventListener('click', async () => {
+        if(!pendingUndoState || !activeGroupData || !activeViewedUser) return;
+        const btn = document.getElementById('execute-undo-btn');
+        btn.innerText = "Reversing..."; btn.disabled = true;
+
+        try {
+            const batch = writeBatch(db);
+            const groupId = activeGroupData.id;
+
+            batch.delete(doc(db, "transactions", pendingUndoState.txnId));
+
+            const groupRef = doc(db, "groups", groupId);
+            let snapshotArray = activeGroupData.memberSnapshot || [];
+            let userSnapIndex = snapshotArray.findIndex(m => m && m.id === activeViewedUser.id);
+            
+            if(userSnapIndex > -1) {
+                let currentPaid = snapshotArray[userSnapIndex].monthsPaid || 0;
+                if(currentPaid > 0) {
+                    snapshotArray[userSnapIndex].monthsPaid = currentPaid - 1;
+                }
+            }
+
+            batch.update(groupRef, { memberSnapshot: snapshotArray, totalPotCollected: increment(-Math.abs(pendingUndoState.amount)) });
+            await batch.commit();
+            
+            // 0-READ BACKGROUND UI REFRESH
+            renderParticipantsList();
+            renderPendingList();
+
+            closeModal();
+            showMessage("Payment Reversed", `Month ${pendingUndoState.month} payment was successfully deleted.`, "success");
+            analyzeUserLedger(groupId);
+
+        } catch (err) {
+            console.error(err);
+            showMessage("Undo Failed", err.message, "error");
+        } finally {
+            btn.innerText = "Reverse Transaction"; btn.disabled = false;
+            pendingUndoState = null;
+        }
+    });
+
+    // Execute Initial Load
     window.onload = () => loadGroupsFromServer(false);
 
   </script>
