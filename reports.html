@@ -1027,7 +1027,7 @@
                     }
                 } else if (m === maxMonthPaid + 1) {
                     // ACTIONABLE STATE (Always Next)
-                    if (m < evalMonth) {
+                    if (m <= evalMonth) {
                         // OVERDUE ACTIONABLE STATE
                         timelineHtml += `
                         <div class="t-row actionable" id="active-pay-row" style="border-color: var(--warning-color); background: var(--warning-light);">
