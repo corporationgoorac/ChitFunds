@@ -640,6 +640,9 @@
             }
             container.innerHTML = skelHtml;
             lastVisibleUser = null;
+            
+            // --- FIX: PROACTIVELY HIDE LOAD MORE BUTTON ---
+            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
         }
 
         // FORCE HIDE THE OLD TEXT LOADER WITHOUT DELETING THE LINE
@@ -1079,6 +1082,10 @@
               </div>`;
           }
           txnList.innerHTML = skelHtml; 
+          
+          // --- FIX: PROACTIVELY HIDE LOAD MORE BUTTON ---
+          loadMoreBtn.style.display = 'none';
+
           q = query(collection(db, "transactions"), orderBy("date", "desc"), limit(10));
         }
 
