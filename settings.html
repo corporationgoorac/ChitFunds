@@ -98,22 +98,23 @@
     main { padding: 24px 20px 80px; }
     .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; margin-bottom: 16px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;}
 
-    /* Premium Settings Cards */
+    /* Premium Settings Cards - Highly Responsive for Text Wrapping */
     .settings-card {
       background-color: var(--surface-color); border: 1px solid var(--border-color);
-      border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
+      border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 14px;
       box-shadow: var(--card-shadow); transition: transform 0.2s; cursor: pointer;
     }
     .settings-card:active { transform: scale(0.98); background-color: var(--surface-hover); }
     
-    .sc-left { display: flex; align-items: center; gap: 14px; }
-    .sc-avatar { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: #fff; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 20px; box-shadow: 0 4px 10px rgba(6, 95, 212, 0.2);}
+    .sc-avatar { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: #fff; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 20px; box-shadow: 0 4px 10px rgba(6, 95, 212, 0.2); flex-shrink: 0;}
     .sc-avatar.other { background: var(--brand-accent-light); color: var(--brand-accent); box-shadow: none; }
     
-    .sc-info h3 { margin: 0 0 4px 0; font-size: 16px; font-weight: 800; letter-spacing: 0.5px; display: flex; align-items: center;}
-    .sc-meta { font-size: 13px; color: var(--text-muted); font-weight: 500;}
+    /* Text Wrapping Engine for Long Names/Numbers */
+    .sc-info { flex: 1; min-width: 0; }
+    .sc-info h3 { margin: 0 0 4px 0; font-size: 16px; font-weight: 800; letter-spacing: 0.5px; word-break: break-word; line-height: 1.3;}
+    .sc-meta { font-size: 13px; color: var(--text-muted); font-weight: 500; word-break: break-word;}
     
-    .admin-badge { background: var(--success-light); color: var(--success-color); font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; margin-left: 8px; letter-spacing: 0.5px; border: 1px solid rgba(15, 157, 88, 0.2);}
+    .admin-badge { background: var(--success-light); color: var(--success-color); font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; margin-left: 6px; letter-spacing: 0.5px; border: 1px solid rgba(15, 157, 88, 0.2); display: inline-block; vertical-align: middle; margin-bottom: 2px;}
 
     .load-more-btn { width: 100%; background: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 16px; border-radius: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; box-shadow: var(--card-shadow); }
     .load-more-btn:active { background: var(--surface-hover); transform: scale(0.98);}
@@ -160,7 +161,9 @@
     .sheet-handle { width: 40px; height: 5px; background: var(--border-color); border-radius: 3px; margin: 0 auto 20px; }
     
     .sheet-header-profile { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; }
-    .sheet-avatar { width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; display: flex; justify-content: center; align-items: center; font-size: 32px; font-weight: 800; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(6, 95, 212, 0.3); }
+    .sheet-avatar { width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; display: flex; justify-content: center; align-items: center; font-size: 32px; font-weight: 800; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(6, 95, 212, 0.3); flex-shrink: 0;}
+    .sheet-header-profile h3 { margin: 0; font-size: 20px; font-weight: 800; color: var(--text-main); text-align: center; word-break: break-word; padding: 0 16px; line-height: 1.3;}
+    #manage-uid-display { font-size: 12px; font-family: monospace; color: var(--text-muted); font-weight: 800; margin-top: 6px; word-break: break-all; text-align: center; padding: 0 16px;}
 
     /* Center Alert Modals */
     .center-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); z-index: 300; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);}
@@ -184,9 +187,9 @@
     @keyframes shimmer { 0% { background-position: -500px 0; } 100% { background-position: 500px 0; } }
     .skeleton { background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border-color) 50%, var(--surface-hover) 75%); background-size: 1000px 100%; animation: shimmer 2s infinite linear; border-radius: 4px; }
     
-    .skeleton-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 14px; box-shadow: var(--card-shadow); }
+    .skeleton-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 14px; box-shadow: var(--card-shadow); }
     .skeleton-avatar { width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0; }
-    .skeleton-text-lg { width: 140px; height: 16px; margin-bottom: 8px; border-radius: 4px; }
+    .skeleton-text-lg { width: 140px; height: 16px; margin-bottom: 8px; border-radius: 4px; margin-top: 4px;}
     .skeleton-text-sm { width: 90px; height: 12px; border-radius: 4px; }
   </style>
 </head>
@@ -211,7 +214,7 @@
         <!-- Skeleton Loader -->
         <div class="skeleton-card">
             <div class="skeleton-avatar skeleton"></div>
-            <div style="flex:1;">
+            <div style="flex:1; min-width:0;">
                 <div class="skeleton-text-lg skeleton"></div>
                 <div class="skeleton-text-sm skeleton"></div>
             </div>
@@ -222,17 +225,17 @@
 
     <!-- All Users Management Section -->
     <div class="section-title">
-        <span>Manage Workspace Users</span>
+        <span>Manage Workspace Admins</span>
         <span id="user-count-badge" style="background: var(--brand-accent-light); color: var(--brand-accent); padding: 2px 8px; border-radius: 8px; font-size: 11px;">Loading</span>
     </div>
     <div id="users-list-container">
         <!-- Skeletons -->
-        <div class="skeleton-card"><div class="skeleton-avatar skeleton"></div><div style="flex:1;"><div class="skeleton-text-lg skeleton"></div><div class="skeleton-text-sm skeleton"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton-avatar skeleton"></div><div style="flex:1;"><div class="skeleton-text-lg skeleton"></div><div class="skeleton-text-sm skeleton"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton-avatar skeleton"></div><div style="flex:1;"><div class="skeleton-text-lg skeleton"></div><div class="skeleton-text-sm skeleton"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-avatar skeleton"></div><div style="flex:1; min-width:0;"><div class="skeleton-text-lg skeleton"></div><div class="skeleton-text-sm skeleton"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-avatar skeleton"></div><div style="flex:1; min-width:0;"><div class="skeleton-text-lg skeleton"></div><div class="skeleton-text-sm skeleton"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-avatar skeleton"></div><div style="flex:1; min-width:0;"><div class="skeleton-text-lg skeleton"></div><div class="skeleton-text-sm skeleton"></div></div></div>
     </div>
     
-    <button id="load-more-btn" class="load-more-btn" style="display: none;" onclick="loadUsers(true)">Load More Users</button>
+    <button id="load-more-btn" class="load-more-btn" style="display: none;" onclick="loadUsers(true)">Load More Admins</button>
   </main>
 
   <!-- BACKGROUND OVERLAY FOR SHEETS -->
@@ -243,7 +246,7 @@
     <div class="sheet-handle"></div>
     <div class="sheet-header-profile">
         <div class="sheet-avatar" id="edit-self-avatar">?</div>
-        <h3 style="margin: 0; font-size: 20px; font-weight: 800; color: var(--text-main);">Edit Profile</h3>
+        <h3 id="edit-self-header-name">Edit Profile</h3>
     </div>
 
     <div class="input-group">
@@ -278,8 +281,8 @@
     <div class="sheet-handle"></div>
     <div class="sheet-header-profile">
         <div class="sheet-avatar" id="manage-avatar" style="background: var(--brand-accent-light); color: var(--brand-accent); box-shadow: none;">?</div>
-        <h3 style="margin: 0; font-size: 20px; font-weight: 800; color: var(--text-main);">Manage User</h3>
-        <div style="font-size: 12px; font-family: monospace; color: var(--text-muted); font-weight: 800; margin-top: 6px;" id="manage-uid-display">@UID</div>
+        <h3 id="manage-header-name">Manage User</h3>
+        <div id="manage-uid-display">@UID</div>
     </div>
 
     <div class="input-group">
@@ -308,7 +311,7 @@
         <button class="btn btn-primary" id="save-manage-btn" onclick="saveManagedProfile()">Save Updates</button>
     </div>
     
-    <button class="btn-danger-outline" onclick="openModal('delete-user-modal', true)">Remove User from Workspace</button>
+    <button class="btn-danger-outline" onclick="openModal('delete-user-modal', true)">Remove Admin from Workspace</button>
   </aside>
 
   <!-- LOGOUT CONFIRMATION MODAL -->
@@ -330,7 +333,7 @@
       <div class="msg-icon">
         <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--danger-color)"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
       </div>
-      <h3 class="mini-modal-title">Delete User</h3>
+      <h3 class="mini-modal-title">Delete Admin</h3>
       <p class="mini-modal-text">This will permanently delete their access profile from the database. This action cannot be undone.</p>
       <button class="mini-btn-danger" id="confirm-delete-btn">Permanently Delete</button>
       <button class="mini-btn-cancel" onclick="window.history.back()">Cancel</button>
@@ -441,7 +444,7 @@
     function createUserCardHTML(data, isSelf = false) {
         const name = data.name || "Unnamed User";
         const initial = name.charAt(0).toUpperCase();
-        const phone = data.mobile || data.phone || "No phone added"; // Handle both potential db keys
+        const phone = data.mobile || data.phone || data.email || "No details added"; 
         const isAdmin = data.admin === true;
         
         const avatarClass = isSelf ? "sc-avatar" : "sc-avatar other";
@@ -453,14 +456,15 @@
                 <h3>${name} ${badgeHTML}</h3>
                 <div class="sc-meta">${phone}</div>
             </div>
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--border-color)"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--border-color)" style="flex-shrink: 0;"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
         `;
     }
 
     // --- Load Current User Data ---
     async function loadCurrentUserProfile() {
         try {
-            const docRef = doc(db, "users", loggedInUid);
+            // UPDATED: Fetching strictly from 'admins' collection
+            const docRef = doc(db, "admins", loggedInUid);
             const snap = await getDoc(docRef);
             const container = document.getElementById('current-user-container');
             
@@ -473,6 +477,7 @@
                 
                 card.onclick = () => {
                     document.getElementById('edit-self-avatar').innerText = (loggedInUserData.name || '?').charAt(0).toUpperCase();
+                    document.getElementById('edit-self-header-name').innerText = loggedInUserData.name || "Edit Profile";
                     document.getElementById('edit-self-name').value = loggedInUserData.name || "";
                     document.getElementById('edit-self-phone').value = loggedInUserData.mobile || loggedInUserData.phone || "";
                     document.getElementById('edit-self-admin').checked = loggedInUserData.admin === true;
@@ -500,10 +505,10 @@
         }
 
         try {
-            // Using standard limit. Fallback to basic fetch if index is missing.
-            let q = query(collection(db, "users"), limit(10));
+            // UPDATED: Fetching strictly from 'admins' collection
+            let q = query(collection(db, "admins"), limit(10));
             if(isLoadMore && lastVisibleUser) {
-                q = query(collection(db, "users"), startAfter(lastVisibleUser), limit(10));
+                q = query(collection(db, "admins"), startAfter(lastVisibleUser), limit(10));
             }
 
             let snap = await getDocs(q);
@@ -511,7 +516,7 @@
             if(!isLoadMore) container.innerHTML = '';
 
             if(snap.empty) {
-                if(!isLoadMore) container.innerHTML = '<div style="color:var(--text-muted); font-weight:600; text-align:center; padding: 20px;">No other users found.</div>';
+                if(!isLoadMore) container.innerHTML = '<div style="color:var(--text-muted); font-weight:600; text-align:center; padding: 20px;">No other admins found.</div>';
                 loadBtn.style.display = 'none';
                 return;
             }
@@ -532,6 +537,7 @@
                 card.onclick = () => {
                     currentlyManagingUserId = uId;
                     document.getElementById('manage-avatar').innerText = (data.name || '?').charAt(0).toUpperCase();
+                    document.getElementById('manage-header-name').innerText = data.name || "Manage User";
                     document.getElementById('manage-uid-display').innerText = `@${uId}`;
                     document.getElementById('manage-name').value = data.name || "";
                     document.getElementById('manage-phone').value = data.mobile || data.phone || "";
@@ -543,7 +549,7 @@
             });
 
             // Count Update (approx for badge)
-            if(!isLoadMore) document.getElementById('user-count-badge').innerText = `Workspace Feed`;
+            if(!isLoadMore) document.getElementById('user-count-badge').innerText = `Admin Feed`;
 
             loadBtn.style.display = snap.docs.length === 10 ? 'block' : 'none';
 
@@ -564,7 +570,8 @@
 
         btn.innerText = "Saving..."; btn.disabled = true;
         try {
-            await updateDoc(doc(db, "users", loggedInUid), {
+            // UPDATED: Updating strictly in 'admins' collection
+            await updateDoc(doc(db, "admins", loggedInUid), {
                 name: newName,
                 mobile: newPhone,
                 admin: isAdmin
@@ -596,7 +603,8 @@
 
         btn.innerText = "Updating..."; btn.disabled = true;
         try {
-            await updateDoc(doc(db, "users", currentlyManagingUserId), {
+            // UPDATED: Updating strictly in 'admins' collection
+            await updateDoc(doc(db, "admins", currentlyManagingUserId), {
                 name: newName,
                 mobile: newPhone,
                 admin: isAdmin
@@ -622,7 +630,8 @@
         
         btn.innerText = "Deleting..."; btn.disabled = true;
         try {
-            await deleteDoc(doc(db, "users", currentlyManagingUserId));
+            // UPDATED: Deleting strictly from 'admins' collection
+            await deleteDoc(doc(db, "admins", currentlyManagingUserId));
             
             if("vibrate" in navigator) navigator.vibrate([40, 50, 40]);
             
@@ -636,11 +645,11 @@
             
             currentlyManagingUserId = null;
             loadUsers(false); // Refresh list
-            setTimeout(() => showMessage("User Deleted", "The profile has been removed from the database.", "success"), 400);
+            setTimeout(() => showMessage("Admin Deleted", "The admin profile has been removed from the database.", "success"), 400);
 
         } catch(e) {
             console.error(e);
-            showMessage("Delete Failed", "Could not remove user from database.");
+            showMessage("Delete Failed", "Could not remove admin from database.");
         } finally {
             btn.innerText = "Permanently Delete"; btn.disabled = false;
         }
