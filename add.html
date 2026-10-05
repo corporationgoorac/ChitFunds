@@ -227,36 +227,51 @@
       padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 12px; font-size: 13px;
     }
     
-    /* Highly Detailed Skeleton Loading Animations */
-    .skeleton {
-      background: var(--surface-color);
-      background-image: linear-gradient(90deg, var(--surface-color) 0px, var(--surface-hover) 40px, var(--surface-color) 80px);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite linear;
-      border-radius: 8px;
-    }
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-    .skeleton-text { height: 14px; margin-bottom: 8px; border-radius: 4px; }
-    .skeleton-title { height: 20px; width: 60%; margin-bottom: 12px; }
-    .skeleton-badge { height: 16px; width: 30%; }
-    .skeleton-stat-label { height: 10px; width: 60%; margin-bottom: 6px; }
-    .skeleton-stat-val { height: 18px; width: 80%; }
-    .skeleton-box { height: 60px; width: 100%; border-radius: 12px; }
-    .skeleton-btn { height: 32px; width: 90px; border-radius: 8px; }
-
     /* Loading Spinner */
     .loader { border: 3px solid var(--border-color); border-top: 3px solid var(--brand-accent); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+    /* Highly Professional Skeleton Loading */
+    .skeleton-card {
+      background-color: var(--bg-color); border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .skeleton {
+      background: var(--surface-color);
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+    .skeleton::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+      transform: translateX(-100%);
+      animation: shimmer 1.5s infinite;
+    }
+    @media (prefers-color-scheme: light) {
+      .skeleton::after { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent); }
+    }
+    @keyframes shimmer { 100% { transform: translateX(100%); } }
+    .sk-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .sk-title { height: 22px; width: 60%; border-radius: 6px; }
+    .sk-badge { height: 16px; width: 30%; border-radius: 6px; margin-top: 6px; }
+    .sk-pot-container { display: flex; flex-direction: column; align-items: flex-end; width: 35%; }
+    .sk-pot { height: 22px; width: 100%; border-radius: 6px; }
+    .sk-pot-label { height: 12px; width: 60%; border-radius: 4px; margin-top: 6px; }
+    .sk-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px; }
+    .sk-stat { height: 32px; border-radius: 6px; }
+    .sk-info-box { height: 56px; border-radius: 12px; margin-top: 14px; margin-bottom: 12px; }
+    .sk-actions { display: flex; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 12px; justify-content: space-between;}
+    .sk-btn { height: 30px; width: 80px; border-radius: 8px; }
   </style>
 </head>
 <body>
 
   <header>
     <div class="header-titles">
-      <button onclick="window.vibrate(10); window.history.back()" class="header-back-btn">
+      <button onclick="vibrate(10); window.history.back()" class="header-back-btn">
           <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
       </button>
       <h1>Meena Chitfunds</h1>
@@ -265,11 +280,11 @@
 
   <main>
     <div class="action-bar">
-      <button class="action-btn" onclick="window.vibrate(15); openParticipantModal()">
+      <button class="action-btn" onclick="vibrate(10); openParticipantModal()">
         <svg viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
         Add Participant
       </button>
-      <button class="action-btn" onclick="window.vibrate(15); openModal('group-modal')">
+      <button class="action-btn" onclick="vibrate(10); openModal('group-modal')">
         <svg viewBox="0 0 24 24"><path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
         Create Group
       </button>
@@ -288,7 +303,7 @@
 
   <aside id="participant-modal" class="modal">
     <div class="modal-header">
-      <button class="back-btn" onclick="window.vibrate(10); closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <button class="back-btn" onclick="vibrate(10); closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
       <div class="modal-title">New Participant</div>
     </div>
     <div class="modal-body">
@@ -365,7 +380,7 @@
 
   <aside id="group-modal" class="modal">
     <div class="modal-header">
-      <button class="back-btn" onclick="window.vibrate(10); closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <button class="back-btn" onclick="vibrate(10); closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
       <div class="modal-title">New Chit Group</div>
     </div>
     <div class="modal-body">
@@ -414,7 +429,7 @@
               <input type="number" placeholder="Amount" class="s-amt" required min="1">
             </div>
           </div>
-          <button type="button" class="add-tier-btn" onclick="window.vibrate(10); addScheduleRow()">+ Add Tier (e.g., Months 11-20)</button>
+          <button type="button" class="add-tier-btn" onclick="vibrate(10); addScheduleRow()">+ Add Tier (e.g., Months 11-20)</button>
         </div>
 
         <button type="submit" class="submit-btn" id="g-submit-btn" disabled>Create Group</button>
@@ -427,7 +442,7 @@
       <h3 class="mini-modal-title">Delete Group</h3>
       <p class="mini-modal-text">Are you sure you want to permanently delete this group? All participant links, ledger transactions, and auction payouts will be lost.</p>
       <div class="mini-modal-actions">
-        <button class="mini-btn mini-btn-cancel" onclick="window.vibrate(10); closeModal()">Cancel</button>
+        <button class="mini-btn mini-btn-cancel" onclick="vibrate(10); closeModal()">Cancel</button>
         <button class="mini-btn mini-btn-danger" id="confirm-delete-btn">Delete Group</button>
       </div>
     </div>
@@ -439,7 +454,7 @@
       <h3 class="mini-modal-title" id="msg-title">Success</h3>
       <p class="mini-modal-text" id="msg-body">Operation completed successfully.</p>
       <div class="mini-modal-actions">
-        <button class="mini-btn mini-btn-primary" onclick="window.vibrate(10); closeModal()">OK</button>
+        <button class="mini-btn mini-btn-primary" onclick="vibrate(10); closeModal()">OK</button>
       </div>
     </div>
   </aside>
@@ -448,6 +463,13 @@
     import { auth, db } from './config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
     import { collection, query, orderBy, limit, getDocs, startAfter, setDoc, doc, getDoc, deleteDoc, updateDoc, writeBatch, increment, serverTimestamp, arrayUnion, arrayRemove, where, documentId } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+    // --- Haptic Feedback Helper ---
+    window.vibrate = function(pattern = 15) {
+        if (navigator.vibrate) {
+            try { navigator.vibrate(pattern); } catch(e) {}
+        }
+    };
 
     onAuthStateChanged(auth, (user) => { if (!user) window.location.replace('login.html'); });
 
@@ -460,15 +482,9 @@
     let lastSearchType = "default";
     let searchDebounce;
 
-    // --- HAPTIC FEEDBACK HELPER ---
-    window.vibrate = function(pattern) {
-      if (typeof navigator !== 'undefined' && navigator.vibrate) {
-        navigator.vibrate(pattern);
-      }
-    };
-
     // --- FLAWLESS MODAL NAVIGATION ---
     window.openModal = function(modalId) {
+      vibrate(15);
       document.getElementById(modalId).classList.add('active');
       if(modalId === 'group-modal' && !document.getElementById('g-start-date').value) {
           // CRITICAL BUG FIX: Extract only the date string to prevent array assignment error
@@ -483,6 +499,7 @@
     };
     
     window.closeModal = function() {
+      vibrate(10);
       if (window.location.hash) {
           history.back(); 
       } else {
@@ -515,19 +532,20 @@
       
       if (type === 'success') {
         icon.innerText = '✅';
-        window.vibrate([15, 30, 15]);
+        vibrate([15, 50, 15, 50, 15]);
       } else if (type === 'error') {
         icon.innerText = '⚠️';
-        window.vibrate([30, 40, 30]);
+        vibrate([50, 50, 50]);
       } else {
         icon.innerText = 'ℹ️';
-        window.vibrate(20);
+        vibrate(20);
       }
       
       openModal('message-modal');
     };
 
     window.copyToClipboard = function(text) {
+      vibrate([15, 50, 15]);
       navigator.clipboard.writeText(text).then(() => {
         showMessage("Copied!", `ID <b>@${text}</b> has been copied to your clipboard.`, "success");
       }).catch(err => {
@@ -567,45 +585,38 @@
       const loadBtn = document.getElementById('load-more-btn');
       
       if (!isLoadMore) {
-        // High fidelity Skeleton Loading injection without relying on old ugly spinners
-        let skeletonHTML = '';
-        for(let i=0; i<3; i++) {
-          skeletonHTML += `
-            <div class="group-card">
-                <div class="group-header">
-                    <div style="width: 60%;">
-                        <div class="skeleton skeleton-title"></div>
-                        <div class="skeleton skeleton-badge"></div>
+        // container.innerHTML = '<div style="text-align:center; padding: 20px;"><div class="loader" style="margin:0 auto;"></div></div>';
+        
+        let skeletons = '';
+        for(let i=0; i<4; i++) {
+            skeletons += `
+            <div class="skeleton-card">
+                <div class="sk-header">
+                    <div style="width: 55%;">
+                        <div class="skeleton sk-title"></div>
+                        <div class="skeleton sk-badge"></div>
                     </div>
-                    <div style="width: 30%; text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
-                        <div class="skeleton skeleton-title" style="width: 80%; margin-bottom: 4px;"></div>
-                        <div class="skeleton skeleton-text" style="width: 50%;"></div>
-                    </div>
-                </div>
-                <div class="g-stats-row">
-                    <div class="g-stat">
-                        <div class="skeleton skeleton-stat-label"></div>
-                        <div class="skeleton skeleton-stat-val"></div>
-                    </div>
-                    <div class="g-stat">
-                        <div class="skeleton skeleton-stat-label"></div>
-                        <div class="skeleton skeleton-stat-val"></div>
-                    </div>
-                    <div class="g-stat">
-                        <div class="skeleton skeleton-stat-label"></div>
-                        <div class="skeleton skeleton-stat-val"></div>
+                    <div class="sk-pot-container">
+                        <div class="skeleton sk-pot"></div>
+                        <div class="skeleton sk-pot-label"></div>
                     </div>
                 </div>
-                <div class="skeleton skeleton-box" style="margin-top: 14px; margin-bottom: 12px;"></div>
-                <div class="group-actions">
-                    <div class="skeleton skeleton-btn"></div>
-                    <div class="skeleton skeleton-btn" style="margin-left: auto;"></div>
+                <div class="sk-stats">
+                    <div class="skeleton sk-stat"></div>
+                    <div class="skeleton sk-stat"></div>
+                    <div class="skeleton sk-stat"></div>
+                </div>
+                <div class="skeleton sk-info-box"></div>
+                <div class="sk-actions">
+                    <div class="skeleton sk-btn"></div>
+                    <div class="skeleton sk-btn" style="margin-left: auto;"></div>
                 </div>
             </div>`;
         }
-        container.innerHTML = skeletonHTML;
+        container.innerHTML = skeletons;
         lastVisibleDoc = null;
       } else {
+        vibrate(10);
         loadBtn.innerText = "Loading...";
       }
 
@@ -759,10 +770,10 @@
                     </div>
                 </div>
                 <div class="group-actions">
-                    <button class="icon-btn" onclick="window.vibrate(15); copyToClipboard('${groupId}')">
+                    <button class="icon-btn" onclick="copyToClipboard('${groupId}')">
                         <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Copy ID
                     </button>
-                    <button class="icon-btn delete" onclick="window.vibrate([20, 20, 20]); initiateDelete('${groupId}')">
+                    <button class="icon-btn delete" onclick="initiateDelete('${groupId}')">
                         <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> Delete
                     </button>
                 </div>`;
@@ -774,6 +785,7 @@
 
       } catch (error) { 
         console.error("Critical Fetch Error:", error); 
+        vibrate([50, 50, 50]);
         if(!isLoadMore) {
           container.innerHTML = `
             <div style="color:var(--danger-color); background:rgba(204,0,0,0.1); border-radius:12px; padding: 20px; font-size:13px; word-break: break-word;">
@@ -784,9 +796,10 @@
       }
     }
 
-    document.getElementById('load-more-btn').addEventListener('click', () => { window.vibrate(10); loadGroups(true); });
+    document.getElementById('load-more-btn').addEventListener('click', () => loadGroups(true));
 
     document.getElementById('group-search').addEventListener('input', (e) => {
+        vibrate(5);
         clearTimeout(searchDebounce);
         const val = e.target.value.trim(); 
         searchDebounce = setTimeout(() => {
@@ -838,10 +851,12 @@
           if (docSnap.exists()) {
             icon.innerHTML = '❌';
             icon.className = 'validation-icon invalid';
+            vibrate([50, 50]);
             btn.disabled = true;
           } else {
             icon.innerHTML = '✔';
             icon.className = 'validation-icon valid';
+            vibrate(10);
             btn.disabled = false;
           }
         } catch (e) {
@@ -987,7 +1002,6 @@
 
     // --- Create Group Form Submission (1-Read Architecture Ready) ---
     document.getElementById('group-form').addEventListener('submit', async (e) => {
-      window.vibrate(20);
       e.preventDefault();
       const btn = document.getElementById('g-submit-btn');
       const groupId = document.getElementById('g-id').value.trim().toUpperCase();
@@ -1031,133 +1045,224 @@
             <input type="number" placeholder="10" class="s-end" required min="1">
             <span>: ₹</span>
             <input type="number" placeholder="Amount" class="s-amt" required min="1">
-          </div>`;
-          
+          </div>`; // Reset schedule UI
+        
         closeModal();
-        showMessage("Group Created", `Group <b>@${groupId}</b> is now live. Let the savings begin!`);
-        loadGroups(false); // Reload top
+        loadGroups(); 
+        
+        // Trigger Custom Success Modal
+        setTimeout(() => showMessage("Group Created!", `Group <b>@${groupId}</b> has been successfully added to the database.`, "success"), 300);
+        
       } catch (error) {
-        showMessage("Creation Failed", error.message, "error");
+        console.error(error);
+        showMessage("Creation Failed", `Error creating your group: <br><br> ${error.message}`, "error");
       } finally {
-        btn.innerText = "Create Group"; btn.disabled = false;
+        btn.innerText = "Create Group";
       }
     });
 
-    // --- Create Participant Sub (1-Read Ledger Sync) ---
+    // --- Add Participant Form Submission (Batched Writes + Snapshot arrayUnion) ---
     document.getElementById('participant-form').addEventListener('submit', async (e) => {
-      window.vibrate(20);
       e.preventDefault();
       const btn = document.getElementById('p-submit-btn');
       const userId = document.getElementById('p-id').value.trim().toUpperCase();
-      const name = document.getElementById('p-name').value.trim();
-      const phone = document.getElementById('p-phone').value.trim();
-      const groupId = document.getElementById('p-group').value;
+      const userName = document.getElementById('p-name').value;
+      const selectedGroupId = document.getElementById('p-group').value;
       const joinDate = document.getElementById('p-join-date').value;
-      
-      const advanceAmount = Number(document.getElementById('p-advance-amount').value) || 0;
       const monthsPaid = Number(document.getElementById('p-months-paid').value) || 0;
-
+      const advanceAmt = Number(document.getElementById('p-advance-amount').value) || 0;
+      
       btn.innerText = "Saving..."; btn.disabled = true;
 
       try {
         const batch = writeBatch(db);
+
+        // 1. Create User Document
         const userRef = doc(db, "users", userId);
-        
-        const userData = {
-          name, phone,
-          role: "user",
-          createdAt: serverTimestamp(),
-          groups: [] // Simple array for quick checks
+        let userData = {
+          name: userName,
+          phone: document.getElementById('p-phone').value,
+          activeGroups: selectedGroupId ? [selectedGroupId] : [],
+          joinedAt: new Date(joinDate), // Record the exact join date
+          advanceAmount: advanceAmt // Store the fixed advance amount
         };
+        batch.set(userRef, userData);
 
-        if (groupId) {
-          userData.groups.push(groupId);
-          const groupRef = doc(db, "groups", groupId);
+        // 2. If Assigned to a Group, update group doc (count + 1-read snapshot)
+        if (selectedGroupId) {
+          const groupRef = doc(db, "groups", selectedGroupId);
           
-          // 1. Calculate Actual Joined Amount instantly for the ledger
-          let totalLedgerEntry = advanceAmount;
-          const gData = cachedGroupsForModal[groupId];
-          
-          if(gData && monthsPaid > 0) {
-             const startAmt = gData.startAmount || 0;
-             const schedule = gData.installmentSchedule || [];
-             for(let m = 1; m <= monthsPaid; m++) {
-                totalLedgerEntry += calculateDueForMonth(m, startAmt, schedule);
-             }
-          }
-
-          // 2. Add to Group's 1-Read Snapshot
-          batch.update(groupRef, {
+          // Push user info into the array for instant loading later
+          batch.update(groupRef, { 
             participantCount: increment(1),
             memberSnapshot: arrayUnion({
-              id: userId,
-              name: name,
-              phone: phone,
-              joinDate: joinDate,
-              status: 'active'
+               id: userId,
+               name: userName,
+               monthsPaid: monthsPaid,
+               balanceDue: 0,
+               advanceAmount: advanceAmt,
+               hasAdvance: advanceAmt > 0
             })
           });
           
-          // 3. Optional: Fire a direct ledger entry indicating the upfront settlement
-          if(totalLedgerEntry > 0) {
-              const ledgerRef = doc(collection(db, `groups/${groupId}/ledger`));
-              batch.set(ledgerRef, {
-                 userId: userId,
-                 type: 'settlement',
-                 amount: totalLedgerEntry,
-                 monthsCleared: monthsPaid,
-                 advancePart: advanceAmount,
-                 note: 'Initial Join Settlement',
-                 timestamp: serverTimestamp()
+          // 3. Create initial transaction for any setup installments they paid upfront
+          if (monthsPaid > 0) {
+            const groupData = cachedGroupsForModal[selectedGroupId];
+            let cumulativeTotal = 0;
+            if (groupData) {
+                const startAmt = groupData.startAmount || 0;
+                const schedule = groupData.installmentSchedule || [];
+                for(let m = 1; m <= monthsPaid; m++) {
+                    cumulativeTotal += calculateDueForMonth(m, startAmt, schedule);
+                }
+            }
+            
+            if (cumulativeTotal > 0) {
+              const txRef = doc(collection(db, "transactions")); 
+              batch.set(txRef, {
+                subscriberId: userId,
+                subscriberName: userName,
+                groupId: selectedGroupId,
+                amount: cumulativeTotal,
+                monthAttributed: monthsPaid,
+                type: "Initial Setup / Catch-up",
+                date: serverTimestamp()
+              });
+            }
+          }
+
+          // 4. Record the independent Advance Amount as a separate transaction
+          if (advanceAmt > 0) {
+              const advTxRef = doc(collection(db, "transactions")); 
+              batch.set(advTxRef, {
+                subscriberId: userId,
+                subscriberName: userName,
+                groupId: selectedGroupId,
+                amount: advanceAmt,
+                monthAttributed: 0, 
+                type: "Advance Payment",
+                date: serverTimestamp()
               });
           }
         }
 
-        batch.set(userRef, userData);
         await batch.commit();
-
-        e.target.reset();
-        document.getElementById('p-id-icon').innerHTML = ''; // Clear icon
-        document.getElementById('live-calc-section').style.display = 'none'; // Hide calc
-        closeModal();
-        showMessage("Participant Added", `<b>${name}</b> has been onboarded as <b>@${userId}</b>`);
         
+        e.target.reset();
+        document.getElementById('p-id-icon').innerHTML = ''; 
+        document.getElementById('live-calc-section').style.display = 'none';
+        
+        closeModal();
+        
+        // Trigger Custom Success Modal
+        setTimeout(() => showMessage("Participant Saved", `User <b>@${userId}</b> successfully registered and assigned.`, "success"), 300);
+
       } catch (error) {
-        showMessage("Error", error.message, "error");
+        console.error(error);
+        showMessage("Registration Failed", `Could not save participant data: <br><br> ${error.message}`, "error");
       } finally {
-        btn.innerText = "Save Participant"; btn.disabled = false;
+        btn.innerText = "Save Participant";
       }
     });
 
-    // --- Deletion Engine ---
+    // --- ADVANCED BATCHED DELETION (Handles 500+ documents without crashing) ---
+    async function deleteTransactionsInBatches(groupId) {
+        let deletedCount = 0;
+        const batchLimit = 450; // Staying under the 500 hard limit
+        
+        while (true) {
+            const q = query(collection(db, "transactions"), where("groupId", "==", groupId), limit(batchLimit));
+            const snap = await getDocs(q);
+            
+            if (snap.empty) break;
+            
+            const batch = writeBatch(db);
+            snap.forEach(tDoc => batch.delete(tDoc.ref));
+            await batch.commit();
+            deletedCount += snap.size;
+            console.log(`Intermediate Batch: Deleted ${snap.size} transactions...`);
+        }
+        return deletedCount;
+    }
+
+    async function deleteAuctionsInBatches(groupId) {
+        let deletedCount = 0;
+        const batchLimit = 450; // Staying under the 500 hard limit
+        
+        while (true) {
+            const q = query(collection(db, "auctions"), where("groupId", "==", groupId), limit(batchLimit));
+            const snap = await getDocs(q);
+            
+            if (snap.empty) break;
+            
+            const batch = writeBatch(db);
+            snap.forEach(aDoc => batch.delete(aDoc.ref));
+            await batch.commit();
+            deletedCount += snap.size;
+            console.log(`Intermediate Batch: Deleted ${snap.size} auctions...`);
+        }
+        return deletedCount;
+    }
+
+    // --- Custom Delete Modal Logic (Advanced Batched Deletion) ---
     window.initiateDelete = function(id) {
+      vibrate([15, 50, 15]);
       targetIdToDelete = id;
       openModal('delete-modal');
     };
 
     document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
-      window.vibrate([30, 50, 30]);
       if (!targetIdToDelete) return;
       const btn = document.getElementById('confirm-delete-btn');
-      const originalText = btn.innerText;
-      btn.innerText = "Deleting..."; btn.disabled = true;
+      btn.innerText = "Deleting All Records..."; btn.disabled = true;
 
       try {
-        await deleteDoc(doc(db, "groups", targetIdToDelete));
+        // Step 1: Recursively delete all transactions in batches (500 limit fix)
+        const totalTxnsDeleted = await deleteTransactionsInBatches(targetIdToDelete);
+        
+        // Step 1.5: Recursively delete all auction payouts in batches
+        const totalAuctionsDeleted = await deleteAuctionsInBatches(targetIdToDelete);
+        
+        // Step 2: Find all participants in this group and clean them up
+        const usersQ = query(collection(db, "users"), where("activeGroups", "array-contains", targetIdToDelete));
+        const usersSnap = await getDocs(usersQ);
+        
+        const finalBatch = writeBatch(db);
+        
+        usersSnap.forEach((uDoc) => {
+            const userData = uDoc.data();
+            // If this is the ONLY group they are in, completely delete the user to remove all data
+            if (userData.activeGroups && userData.activeGroups.length <= 1) {
+                finalBatch.delete(uDoc.ref);
+            } else {
+                // Otherwise, safely untie them from this group but keep them for their other groups
+                finalBatch.update(uDoc.ref, {
+                    activeGroups: arrayRemove(targetIdToDelete)
+                });
+            }
+        });
+        
+        // Step 3: Delete the Group Document itself
+        finalBatch.delete(doc(db, "groups", targetIdToDelete));
+        
+        // Commit the final cleanup atomically
+        await finalBatch.commit();
+
         closeModal();
-        showMessage("Deleted", `Group <b>@${targetIdToDelete}</b> has been removed forever.`);
-        loadGroups(false); // Refresh
-      } catch(e) {
-        showMessage("Deletion Failed", e.message, "error");
+        loadGroups();
+        
+        setTimeout(() => showMessage("Complete Wipe Successful", `Group, ${usersSnap.size} participant links, ${totalTxnsDeleted} ledger records, and ${totalAuctionsDeleted} payouts permanently removed.`, "success"), 300);
+      } catch(e) { 
+        console.error("Error wiping records:", e); 
+        showMessage("Wipe Failed", `Failed to complete deletion: <br><br> ${e.message}`, "error");
       } finally {
-        btn.innerText = originalText; btn.disabled = false;
+        btn.innerText = "Delete Group"; btn.disabled = false;
         targetIdToDelete = null;
       }
     });
 
-    // --- Initial Load ---
-    loadGroups(false);
-
+    // Initialize Page Data
+    loadGroups();
   </script>
 </body>
 </html>
