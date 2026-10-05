@@ -401,6 +401,21 @@
 
     onAuthStateChanged(auth, (user) => { if (!user) window.location.replace('login.html'); });
 
+    // --- ENHANCED HAPTIC FEEDBACK ENGINE ---
+    window.triggerHaptic = function(pattern = 15) {
+      if (navigator && navigator.vibrate) {
+        navigator.vibrate(pattern);
+      }
+    };
+
+    document.body.addEventListener('click', (e) => {
+      const interactiveTarget = e.target.closest('button, .data-card');
+      // Do not double-trigger vibration on the confirm-lend-btn since it already fires its own unique strong sequence
+      if (interactiveTarget && interactiveTarget.id !== 'confirm-lend-btn') {
+        window.triggerHaptic(10);
+      }
+    });
+
     // --- FLAWLESS MODAL NAVIGATION ---
     let modalStackCount = 0;
     
@@ -448,6 +463,7 @@
 
     // --- CUSTOM UI ALERTS ---
     window.showMessage = function(title, body, type = 'success') {
+      window.triggerHaptic(type === 'success' ? [20, 30, 20] : [40, 60, 40, 60]);
       document.getElementById('msg-title').innerText = title;
       document.getElementById('msg-body').innerHTML = body; 
       const iconContainer = document.getElementById('msg-icon');
