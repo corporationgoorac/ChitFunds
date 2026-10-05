@@ -115,17 +115,42 @@
     .search-input:focus { border-color: var(--brand-accent); box-shadow: 0 0 0 4px var(--brand-accent-light); }
     .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
 
-    /* Participant User Cards */
-    .user-card { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--card-shadow); cursor: pointer; transition: 0.2s;}
-    .user-card:active { transform: scale(0.98); background-color: var(--surface-hover); border-color: var(--brand-accent); }
-    .u-left { display: flex; align-items: center; gap: 14px; width: 100%;}
-    .u-avatar { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: 800; flex-shrink: 0;}
-    .u-info { flex: 1; }
-    .u-info h3 { margin: 0 0 4px 0; font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px;}
-    .u-meta { font-size: 12px; color: var(--brand-accent); font-weight: 800; font-family: monospace; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px; background: var(--brand-accent-light); padding: 2px 6px; border-radius: 6px; display: inline-block; margin-bottom: 4px;}
-    .u-loc { font-size: 11px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 4px;}
+    /* Advanced Skeletons */
+    @keyframes shimmer {
+      0% { background-position: -500px 0; }
+      100% { background-position: 500px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border-color) 50%, var(--surface-hover) 75%);
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite linear;
+      border-radius: 4px;
+    }
+    .skeleton-user-card {
+      background: var(--surface-color); border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 16px;
+      box-shadow: var(--card-shadow);
+    }
+    .skeleton-u-top { display: flex; gap: 14px; width: 100%; align-items: center; }
+    .skeleton-icon { width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0; }
+    .skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .skeleton-text-lg { width: 60%; height: 18px; border-radius: 4px; }
+    .skeleton-text-md { width: 40%; height: 14px; border-radius: 4px; }
+    .skeleton-text-sm { width: 30%; height: 12px; border-radius: 4px; }
+    .skeleton-u-actions { display: flex; justify-content: flex-end; gap: 12px; border-top: 1px dashed var(--border-color); padding-top: 12px; }
+    .skeleton-btn { width: 60px; height: 24px; border-radius: 8px; }
 
-    /* Added Styles for Card Actions (Edit, Delete, Select) */
+    /* Participant User Cards (Redesigned for Full Width & Wrapping) */
+    .user-card { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; box-shadow: var(--card-shadow); cursor: pointer; transition: 0.2s;}
+    .user-card:active { transform: scale(0.98); background-color: var(--surface-hover); border-color: var(--brand-accent); }
+    .u-left { display: flex; align-items: flex-start; gap: 14px; width: 100%;}
+    .u-avatar { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: 800; flex-shrink: 0;}
+    .u-info { flex: 1; min-width: 0; } /* min-width 0 forces flex child to allow text wrapping */
+    .u-info h3 { margin: 0 0 4px 0; font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; white-space: normal; word-break: break-word; line-height: 1.3;}
+    .u-meta { font-size: 12px; color: var(--brand-accent); font-weight: 800; font-family: monospace; letter-spacing: 0.5px; background: var(--brand-accent-light); padding: 2px 6px; border-radius: 6px; display: inline-block; margin-bottom: 6px;}
+    .u-loc { font-size: 11px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 4px; white-space: normal; word-break: break-word;}
+
+    /* Card Actions */
     .user-card-actions { display: flex; gap: 12px; border-top: 1px dashed var(--border-color); padding-top: 12px; margin-top: 16px; width: 100%; justify-content: flex-end; }
     .u-action-btn { background: none; border: none; font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 8px 14px; border-radius: 10px; color: var(--text-muted); transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px;}
     .u-action-btn:active { transform: scale(0.95); }
@@ -150,24 +175,36 @@
     .back-btn svg { width: 20px; height: 20px; fill: currentColor; }
     .modal-title { font-size: 18px; font-weight: 800; margin-left: 14px; letter-spacing: -0.5px;}
     .modal-subtitle { font-size: 11px; color: var(--brand-accent); font-weight: 700; margin-left: 14px; font-family: monospace;}
-    .modal-body { padding: 24px 20px; flex: 1; overflow-y: auto; }
+    .modal-body { padding: 24px 20px; flex: 1; overflow-y: auto; scroll-behavior: smooth; }
 
-    /* Advanced Engine Detail Card */
+    /* Static Group Badge */
+    .group-header-card { background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; padding: 16px 20px; border-radius: 16px; margin-bottom: 24px; box-shadow: 0 8px 20px rgba(6, 95, 212, 0.25); display: flex; justify-content: space-between; align-items: center;}
+    @media (prefers-color-scheme: dark) { .group-header-card { background: linear-gradient(135deg, #3ea6ff, #065fd4); } }
+    .gh-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; opacity: 0.8; margin-bottom: 4px; }
+    .gh-name { font-size: 18px; font-weight: 800; text-transform: uppercase; margin: 0;}
+    .gh-id { font-family: monospace; font-size: 14px; font-weight: 800; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 8px; }
+
+    /* Neo-Banking Dashboard */
     .detail-card { background: var(--surface-color); padding: 24px; border-radius: 20px; margin-bottom: 24px; border: 1px solid var(--border-color); box-shadow: var(--card-shadow); }
-    
-    .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; background: var(--success-light); color: var(--success-color);}
+    .status-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px dashed var(--border-color); padding-bottom: 16px;}
+    .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; background: var(--success-light); color: var(--success-color);}
     .status-badge.warning { background: var(--warning-light); color: var(--warning-color); }
     .status-badge.danger { background: var(--danger-light); color: var(--danger-color); }
+    
+    .financial-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .fin-box { display: flex; flex-direction: column; }
+    .fin-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px;}
+    .fin-val { font-size: 26px; font-weight: 800; color: var(--text-main); letter-spacing: -1px;}
+    .fin-val.success { color: var(--success-color); }
+    .fin-val.danger { color: var(--danger-color); }
+    
+    .progress-container { margin-top: 10px; }
+    .progress-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
+    .progress-track { width: 100%; height: 8px; background-color: var(--border-color); border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: var(--success-color); border-radius: 4px; transition: width 0.5s ease; }
 
     /* NEW ARREARS BANNER */
     .arrears-banner { background: var(--danger-light); color: var(--danger-color); padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 800; text-align: center; margin-bottom: 20px; display: none; border: 1px solid rgba(220, 53, 69, 0.2); letter-spacing: 0.5px; text-transform: uppercase;}
-
-    .engine-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-    .engine-box { background: var(--bg-color); padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); }
-    .e-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 8px; letter-spacing: 0.5px;}
-    .e-val { font-size: 20px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;}
-    .e-val.danger { color: var(--danger-color); }
-    .e-val.success { color: var(--success-color); }
 
     /* Forms & Inputs */
     .input-group { margin-bottom: 24px; position: relative; }
@@ -184,11 +221,30 @@
     .invalid { color: var(--danger-color); }
     .loading-text { font-size: 11px; color: var(--brand-accent); position: absolute; right: 14px; top: 0; display: none; font-weight: 800; text-transform: uppercase;}
 
-    /* Transaction Ledger List */
-    .history-card { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;}
-    .h-month { font-size: 14px; font-weight: 800; color: var(--text-main); }
-    .h-date { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 4px; }
-    .h-amount { font-size: 16px; font-weight: 800; color: var(--success-color); }
+    /* 100% Client-Side Complete Timeline Ledger */
+    .timeline-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 40px;}
+    .t-row { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+    
+    .t-row.paid { border-left: 4px solid var(--success-color); }
+    .t-row.actionable { border: 2px solid var(--brand-accent); background: var(--brand-accent-light); transform: scale(1.02); box-shadow: 0 8px 20px rgba(6, 95, 212, 0.15); margin: 8px 0; z-index: 2; position: relative;}
+    .t-row.pending { opacity: 0.6; background: transparent; border-style: dashed; }
+    
+    .t-left { display: flex; flex-direction: column; gap: 4px; }
+    .t-month { font-size: 15px; font-weight: 800; color: var(--text-main); text-transform: uppercase; }
+    .t-status { font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.5px;}
+    .t-status.s-paid { color: var(--success-color); }
+    .t-status.s-action { color: var(--brand-accent); }
+    .t-status.s-pend { color: var(--text-muted); }
+    
+    .t-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+    .t-amt { font-size: 18px; font-weight: 800; color: var(--text-main); }
+    .t-amt.a-paid { color: var(--success-color); }
+    .t-amt.a-action { color: var(--brand-accent); font-size: 20px; }
+    
+    .btn-action-pay { background: var(--brand-accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 10px rgba(6, 95, 212, 0.3); transition: 0.2s;}
+    .btn-action-pay:active { transform: scale(0.95); }
+    .btn-undo { background: var(--surface-hover); color: var(--danger-color); border: 1px solid var(--danger-light); padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.2s; display: flex; align-items: center; gap: 4px;}
+    .btn-undo:active { background: var(--danger-light); }
     
     .section-divider { margin: 24px 0 16px 0; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; font-size: 14px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; }
 
@@ -221,10 +277,24 @@
     .mini-btn-cancel { background-color: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); margin-top: 10px; }
     .mini-btn-danger { background-color: var(--danger-color); color: #fff; }
 
-    /* Responsive adjustments */
-    @media (max-width: 600px) {
-        .engine-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    /* GPay Style Overlay */
+    .gpay-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-color: var(--bg-color); z-index: 300; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out;
     }
+    .gpay-overlay.active { opacity: 1; pointer-events: all; }
+    .gpay-circle { width: 120px; height: 120px; border-radius: 50%; background-color: #e5f4eb; display: flex; justify-content: center; align-items: center; margin-bottom: 24px; transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    @media (prefers-color-scheme: dark) { .gpay-circle { background-color: rgba(15, 157, 88, 0.15); } }
+    .gpay-overlay.active .gpay-circle { transform: scale(1); }
+    .gpay-check { width: 60px; height: 60px; fill: none; stroke: var(--success-color); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; }
+    .gpay-overlay.active .gpay-check { animation: drawCheck 0.6s ease forwards 0.3s; }
+    @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+    .gpay-title { font-size: 24px; font-weight: 800; color: var(--text-main); margin: 0 0 8px 0; opacity: 0; transform: translateY(10px); transition: 0.4s ease 0.5s; letter-spacing: -0.5px;}
+    .gpay-amount { font-size: 48px; font-weight: 800; color: var(--text-main); margin: 0 0 32px 0; opacity: 0; transform: translateY(10px); transition: 0.4s ease 0.6s; letter-spacing: -1px;}
+    .gpay-overlay.active .gpay-title, .gpay-overlay.active .gpay-amount, .gpay-overlay.active .gpay-footer { opacity: 1; transform: translateY(0); }
+    .gpay-footer { position: absolute; bottom: 32px; font-size: 12px; color: var(--brand-accent); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0; transition: 0.4s ease 0.8s;}
 
   </style>
 </head>
@@ -245,7 +315,7 @@
         <span class="search-icon">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
         </span>
-        <input type="text" id="master-search" class="search-input" placeholder="Search ID, Name, or Phone...">
+        <input type="text" id="master-search" class="search-input" placeholder="Search ID, Name, or Phone..." autocomplete="off">
       </div>
       
       <div class="section-header-row">
@@ -267,49 +337,82 @@
         <div class="modal-subtitle" id="md-u-id">@LOADING</div>
       </div>
     </div>
-    <div class="modal-body">
+    <div class="modal-body" id="user-modal-scroll-area">
       
-      <div class="input-group">
-        <label>Analyzing Ledger For Group:</label>
-        <select id="u-group-select">
-          <option value="">-- Choose a group --</option>
-        </select>
-      </div>
+      <!-- Premium Single Group Badge (Replaces Dropdown) -->
+      <div id="static-group-badge-container"></div>
 
       <div id="ledger-view" style="display: none;">
+        
+        <!-- Redesigned Executive Dashboard -->
         <div class="detail-card">
-          <div class="status-badge" id="md-u-status">Calculating...</div>
+          <div class="status-row">
+            <div style="font-size: 14px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Financial Overview</div>
+            <div class="status-badge" id="md-u-status">Calculating...</div>
+          </div>
           
           <div id="arrears-warning" class="arrears-banner"></div>
 
-          <div class="engine-grid">
-            <div class="engine-box">
-              <div class="e-label">Total Paid</div>
-              <div class="e-val success" id="md-u-paid">₹0</div>
+          <div class="financial-summary">
+            <div class="fin-box">
+              <div class="fin-label">Total Paid</div>
+              <div class="fin-val success" id="md-u-paid">₹0</div>
             </div>
-            <div class="engine-box">
-              <div class="e-label">Pending Dues</div>
-              <div class="e-val danger" id="md-u-pending">₹0</div>
-            </div>
-            <div class="engine-box">
-              <div class="e-label">Target Mo.</div>
-              <div class="e-val" id="md-u-current-mo">--</div>
-            </div>
-            <div class="engine-box">
-              <div class="e-label">Months Paid</div>
-              <div class="e-val" id="md-u-months-paid">--</div>
+            <div class="fin-box" style="text-align: right;">
+              <div class="fin-label">Pending Dues</div>
+              <div class="fin-val danger" id="md-u-pending">₹0</div>
             </div>
           </div>
           
-          <div class="btn-grid" id="whatsapp-container" style="display: none;">
-              </div>
+          <div class="progress-container">
+            <div class="progress-labels">
+              <span>Chit Progress</span>
+              <span id="md-u-progress-text">0 / 0 Months</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="md-u-progress-bar" style="width: 0%;"></div>
+            </div>
+          </div>
+          
+          <div class="btn-grid" id="whatsapp-container" style="display: none;"></div>
         </div>
 
-        <div class="section-divider">Transaction History</div>
-        <div id="txn-history-list">
-            </div>
+        <div class="section-divider">Complete Timeline Ledger</div>
+        
+        <!-- 100% Client-Side Timeline Injection -->
+        <div class="timeline-container" id="txn-history-list"></div>
       </div>
 
+    </div>
+  </aside>
+
+  <!-- Confirm Payment Modal -->
+  <aside id="confirm-pay-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div class="msg-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--brand-accent)"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+      </div>
+      <h3 class="mini-modal-title">Confirm Payment</h3>
+      <p class="mini-modal-text" id="confirm-pay-text">Approve transaction?</p>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+          <button class="mini-btn" id="execute-pay-btn">Approve Transaction</button>
+          <button class="mini-btn mini-btn-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Undo Payment Modal -->
+  <aside id="undo-pay-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div class="msg-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--danger-color)"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+      </div>
+      <h3 class="mini-modal-title">Undo Payment</h3>
+      <p class="mini-modal-text" id="undo-pay-text">Are you sure you want to reverse this payment? This will delete the ledger entry permanently.</p>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+          <button class="mini-btn mini-btn-danger" id="execute-undo-btn">Reverse Transaction</button>
+          <button class="mini-btn mini-btn-cancel" onclick="closeModal()">Cancel</button>
+      </div>
     </div>
   </aside>
 
@@ -367,14 +470,26 @@
     </div>
   </aside>
 
+  <!-- GPay Style Success Overlay -->
+  <div id="gpay-overlay" class="gpay-overlay">
+    <div class="gpay-circle">
+      <svg class="gpay-check" viewBox="0 0 24 24">
+        <path d="M4 12 l5 5 l11 -11" />
+      </svg>
+    </div>
+    <div class="gpay-title">Payment Successful</div>
+    <div class="gpay-amount" id="gpay-amount-text">₹0</div>
+    <div class="gpay-footer">Verified transaction</div>
+  </div>
+
   <script type="module">
     import { auth, db } from './config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
-    import { collection, query, orderBy, limit, getDocs, startAfter, doc, getDoc, where, updateDoc, deleteDoc, writeBatch, increment, documentId } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+    import { collection, query, orderBy, limit, getDocs, startAfter, doc, getDoc, where, updateDoc, deleteDoc, writeBatch, increment, serverTimestamp, documentId } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
     onAuthStateChanged(auth, (user) => { if (!user) window.location.replace('login.html'); });
 
-    // --- FLAWLESS MODAL NAVIGATION (Hash Based Fallback for File Protocol) ---
+    // --- FLAWLESS MODAL NAVIGATION ---
     window.openModal = function(modalId) {
       document.getElementById(modalId).classList.add('active');
       try {
@@ -447,9 +562,35 @@
         const loadMoreBtn = document.getElementById('main-load-more-btn');
         
         if (!isLoadMore) {
-            usersList.innerHTML = '<div class="loader"></div>';
+            // ADVANCED SKELETON INJECTION
+            let skelHtml = '';
+            for(let i=0; i<4; i++) {
+                skelHtml += `
+                <div class="skeleton-user-card">
+                    <div class="skeleton-u-top">
+                        <div class="skeleton skeleton-icon"></div>
+                        <div class="skeleton-lines">
+                            <div class="skeleton skeleton-text-lg"></div>
+                            <div class="skeleton skeleton-text-md"></div>
+                            <div class="skeleton skeleton-text-sm"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-u-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>
+                </div>`;
+            }
+            usersList.innerHTML = skelHtml;
             lastVisibleUser = null;
+            
+            // PROACTIVE RESET: Guarantee button is hidden during animation phase
+            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
         }
+
+        // SYNTHETIC DELAY FOR LUXURY UX
+        await new Promise(r => setTimeout(r, 350));
 
         try {
             let q;
@@ -561,28 +702,20 @@
                 const initial = user.name ? user.name.charAt(0).toUpperCase() : '?';
                 const phoneText = user.phone ? `${phoneIconSVG} ${user.phone}` : 'No Phone';
                 const locText = user.location ? `${locIconSVG} ${user.location}` : '';
-                const groupsCount = user.activeGroups ? user.activeGroups.length : 0;
 
                 const card = document.createElement('div');
                 card.className = 'user-card';
-                card.style.flexDirection = 'column';
                 card.onclick = () => openUserDetailById(user.id);
                 
                 card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                    <div style="display:flex; align-items:flex-start; width:100%;">
                         <div class="u-left">
                             <div class="u-avatar">${initial}</div>
                             <div class="u-info">
                                 <h3>${user.name || 'Unnamed'}</h3>
-                                <div class="u-meta" style="background: none; padding: 0; margin-bottom: 2px;">
-                                    <span class="u-meta">@${user.id}</span>
-                                </div>
+                                <div class="u-meta">@${user.id}</div>
                                 <div class="u-loc">${phoneText} &nbsp;&nbsp; ${locText}</div>
                             </div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 16px; font-weight: 800; color: var(--brand-accent);">${groupsCount}</div>
-                            <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Groups</div>
                         </div>
                     </div>
                     <div class="user-card-actions">
@@ -622,16 +755,6 @@
     });
 
     // --- CORE ENGINE LOGIC WITH NEW DYNAMIC MONTH ALGORITHM ---
-    function calculateCurrentMonth(startDateStr) {
-        if(!startDateStr) return 1;
-        const start = new Date(startDateStr);
-        const now = new Date();
-        let months = (now.getFullYear() - start.getFullYear()) * 12;
-        months -= start.getMonth();
-        months += now.getMonth();
-        return months <= 0 ? 1 : months + 1; 
-    }
-
     function calculateParticipantExpectedMonth(user, groupData) {
         // Defensive check to prevent "Cannot read properties of undefined"
         if (!user || !groupData) return 1;
@@ -669,6 +792,7 @@
 
     // --- MODAL & REPORTING LOGIC ---
     let activeViewedUser = null;
+    let activeGroupDataCache = null;
 
     window.openUserDetailById = function(id) {
         // Safely extract the user object from the cache
@@ -684,35 +808,20 @@
         document.getElementById('md-u-name').innerText = user.name || "Unnamed";
         document.getElementById('md-u-id').innerText = `@${user.id}`;
         
-        const select = document.getElementById('u-group-select');
-        select.innerHTML = '<option value="">-- Select Group to Analyze --</option>';
+        const badgeContainer = document.getElementById('static-group-badge-container');
+        badgeContainer.innerHTML = '';
         
         if(user.activeGroups && user.activeGroups.length > 0) {
-            user.activeGroups.forEach(gId => {
-                const opt = document.createElement('option');
-                opt.value = gId;
-                opt.innerText = `@${gId}`;
-                select.appendChild(opt);
-            });
-            
-            if(user.activeGroups.length === 1) {
-                select.value = user.activeGroups[0];
-                analyzeUserLedger(user.activeGroups[0]);
-            }
+            const activeGroupId = user.activeGroups[0]; // Strict 1 group requirement
+            analyzeUserLedger(activeGroupId);
         } else {
-            select.innerHTML = '<option value="">Not in any active groups</option>';
+            badgeContainer.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-weight:700;">Participant is not active in any group.</div>`;
+            document.getElementById('ledger-view').style.display = 'none';
         }
         
-        document.getElementById('ledger-view').style.display = user.activeGroups?.length === 1 ? 'block' : 'none';
         document.getElementById('whatsapp-container').style.display = 'none';
-
         openModal('user-detail-modal');
     };
-
-    document.getElementById('u-group-select').addEventListener('change', (e) => {
-        if(e.target.value) analyzeUserLedger(e.target.value);
-        else document.getElementById('ledger-view').style.display = 'none';
-    });
 
     async function analyzeUserLedger(groupId) {
         // Defensive Fail-Safe: If the participant object is empty/lost, stop immediately.
@@ -732,6 +841,19 @@
             const groupSnap = await getDoc(doc(db, "groups", groupId));
             if(!groupSnap.exists()) throw new Error("Group missing");
             const groupData = groupSnap.data();
+            activeGroupDataCache = groupData;
+            activeGroupDataCache.id = groupId;
+            
+            // INJECT PREMIUM GROUP BADGE
+            document.getElementById('static-group-badge-container').innerHTML = `
+                <div class="group-header-card">
+                    <div>
+                        <div class="gh-label">Active Group</div>
+                        <h2 class="gh-name">${groupData.groupName}</h2>
+                    </div>
+                    <div class="gh-id">@${groupId}</div>
+                </div>
+            `;
             
             let txns = [];
             try {
@@ -741,28 +863,23 @@
                     orderBy("date", "desc")
                 );
                 const txnSnap = await getDocs(qTxn);
-                txnSnap.forEach(tDoc => txns.push(tDoc.data()));
+                txnSnap.forEach(tDoc => {
+                    let d = tDoc.data();
+                    d.id = tDoc.id; // Crucial for Undo Logic
+                    txns.push(d);
+                });
             } catch (idxErr) {
-                console.warn("Index missing. Using client-side sort fallback...", idxErr);
-                
-                if(idxErr.message && idxErr.message.includes("https://console.firebase.google.com")) {
-                    const urlRegex = /(https:\/\/console\.firebase\.google\.com[^\s]+)/g;
-                    const match = idxErr.message.match(urlRegex);
-                    if(match && match) {
-                        const extractedUrl = match;
-                        setTimeout(() => {
-                            showMessage("Ledger Index Missing", `Please click the link below to build the required Firebase Composite Index.<br><br><a href="${extractedUrl}" target="_blank" style="display:inline-block; background:var(--brand-accent); color:white; padding:10px 16px; border-radius:8px; text-decoration:none; font-weight:bold; margin-top:10px;">Build Index</a>`, "error");
-                        }, 500);
-                    }
-                }
-
+                console.warn("Index missing. Using client-side sort fallback...");
                 const fallbackQTxn = query(collection(db, "transactions"), 
                     where("subscriberId", "==", activeViewedUser.id),
                     where("groupId", "==", groupId)
                 );
                 const fallbackSnap = await getDocs(fallbackQTxn);
-                fallbackSnap.forEach(tDoc => txns.push(tDoc.data()));
-                
+                fallbackSnap.forEach(tDoc => {
+                    let d = tDoc.data();
+                    d.id = tDoc.id;
+                    txns.push(d);
+                });
                 txns.sort((a, b) => {
                     const timeA = a.date ? (typeof a.date.toMillis === 'function' ? a.date.toMillis() : 0) : 0;
                     const timeB = b.date ? (typeof b.date.toMillis === 'function' ? b.date.toMillis() : 0) : 0;
@@ -775,54 +892,13 @@
             let totalPaid = advanceAmt; 
             let maxMonthPaid = 0;
             
-            const historyList = document.getElementById('txn-history-list');
-            historyList.innerHTML = '';
-            
-            if(txns.length === 0 && advanceAmt === 0) {
-                historyList.innerHTML = '<div class="empty-state"><p>No payments recorded yet.</p></div>';
-            }
-
             txns.forEach(tData => {
-                // FIX: Skip the auto-generated Advance Payment transaction so we don't double-count!
                 if (tData.type === "Advance Payment") return; 
-
                 totalPaid += tData.amount;
                 if(tData.monthAttributed > maxMonthPaid) maxMonthPaid = tData.monthAttributed;
-                
-                let dDate = "N/A";
-                if(tData.date && typeof tData.date.toDate === 'function') {
-                    dDate = tData.date.toDate().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-                }
-                
-                const hc = document.createElement('div');
-                hc.className = 'history-card';
-                hc.innerHTML = `
-                    <div>
-                        <div class="h-month">Month ${tData.monthAttributed}</div>
-                        <div class="h-date">${dDate}</div>
-                    </div>
-                    <div class="h-amount">₹${Number(tData.amount).toLocaleString('en-IN')}</div>
-                `;
-                historyList.appendChild(hc);
             });
 
-            // Append Advanced Amount to bottom of history exactly as requested
-            if (advanceAmt > 0) {
-                const advCard = document.createElement('div');
-                advCard.className = 'history-card';
-                advCard.style.border = '1px dashed var(--brand-accent)';
-                advCard.style.backgroundColor = 'var(--brand-accent-light)';
-                advCard.innerHTML = `
-                    <div>
-                        <div class="h-month" style="color: var(--brand-accent);">Advanced Amount</div>
-                        <div class="h-date" style="color: var(--brand-accent);">Collected at join</div>
-                    </div>
-                    <div class="h-amount" style="color: var(--brand-accent);">₹${Number(advanceAmt).toLocaleString('en-IN')}</div>
-                `;
-                historyList.appendChild(advCard);
-            }
-
-            // Updated Arrears Logic with the Dynamic Expected Month Algorithm
+            // Arrears & Timeline Math
             const expectedMonth = calculateParticipantExpectedMonth(activeViewedUser, groupData);
             const startAmt = groupData.startAmount || 0;
             const schedule = groupData.installmentSchedule || [];
@@ -830,7 +906,6 @@
             
             let pendingTotal = 0;
             let pendingMonthsList = [];
-            
             let evalMonth = expectedMonth;
             if (totalGroupMonths > 0 && evalMonth > totalGroupMonths) evalMonth = totalGroupMonths;
             
@@ -842,6 +917,71 @@
                 }
             }
 
+            // --- 0-EXTRA READS COMPLETE TIMELINE GENERATION ---
+            const timelineList = document.getElementById('txn-history-list');
+            let timelineHtml = '';
+            
+            for(let m = 1; m <= totalGroupMonths; m++) {
+                let dueForM = calculateDueForMonth(m, startAmt, schedule);
+                let txnForThisMonth = txns.find(t => t.monthAttributed === m && t.type !== "Advance Payment");
+                
+                if (m <= maxMonthPaid && txnForThisMonth) {
+                    // PAID STATE
+                    timelineHtml += `
+                    <div class="t-row paid">
+                        <div class="t-left">
+                            <div class="t-month">Month ${m}</div>
+                            <div class="t-status s-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Paid</div>
+                        </div>
+                        <div class="t-right">
+                            <div class="t-amt a-paid">₹${Number(txnForThisMonth.amount).toLocaleString('en-IN')}</div>
+                            <button class="btn-undo" onclick="initiateUndoPay('${txnForThisMonth.id}', ${m}, ${txnForThisMonth.amount})"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg> Undo</button>
+                        </div>
+                    </div>`;
+                } else if (m === maxMonthPaid + 1) {
+                    // ACTIONABLE STATE
+                    timelineHtml += `
+                    <div class="t-row actionable" id="active-pay-row">
+                        <div class="t-left">
+                            <div class="t-month">Month ${m}</div>
+                            <div class="t-status s-action"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> Due Now</div>
+                        </div>
+                        <div class="t-right">
+                            <div class="t-amt a-action">₹${Number(dueForM).toLocaleString('en-IN')}</div>
+                            <button class="btn-action-pay" onclick="initiateDirectPay(${m}, ${dueForM})">Pay Now</button>
+                        </div>
+                    </div>`;
+                } else {
+                    // PENDING STATE
+                    timelineHtml += `
+                    <div class="t-row pending">
+                        <div class="t-left">
+                            <div class="t-month">Month ${m}</div>
+                            <div class="t-status s-pend">Upcoming</div>
+                        </div>
+                        <div class="t-right">
+                            <div class="t-amt">₹${Number(dueForM).toLocaleString('en-IN')}</div>
+                        </div>
+                    </div>`;
+                }
+            }
+            
+            // Advance Amount Card appended at the very bottom
+            if (advanceAmt > 0) {
+                timelineHtml += `
+                <div class="t-row" style="background: var(--brand-accent-light); border: 1px dashed var(--brand-accent);">
+                    <div class="t-left">
+                        <div class="t-month" style="color: var(--brand-accent);">Advanced Amount</div>
+                        <div class="t-status s-action">Collected at join</div>
+                    </div>
+                    <div class="t-right">
+                        <div class="t-amt a-action">₹${Number(advanceAmt).toLocaleString('en-IN')}</div>
+                    </div>
+                </div>`;
+            }
+            
+            timelineList.innerHTML = timelineHtml;
+
             // Arrears Engine Integration
             const arrears = evalMonth - maxMonthPaid;
             const arrearsWarning = document.getElementById('arrears-warning');
@@ -852,9 +992,12 @@
                 arrearsWarning.style.display = 'none';
             }
 
+            // Dashboard Stats Updates
             document.getElementById('md-u-paid').innerText = `₹${Number(totalPaid).toLocaleString('en-IN')}`;
-            document.getElementById('md-u-current-mo').innerText = evalMonth;
-            document.getElementById('md-u-months-paid').innerText = maxMonthPaid;
+            
+            let progressPercent = totalGroupMonths > 0 ? (maxMonthPaid / totalGroupMonths) * 100 : 0;
+            document.getElementById('md-u-progress-text').innerText = `${maxMonthPaid} / ${totalGroupMonths} Months`;
+            document.getElementById('md-u-progress-bar').style.width = `${progressPercent}%`;
             
             const pendingUI = document.getElementById('md-u-pending');
             const statusUI = document.getElementById('md-u-status');
@@ -862,21 +1005,18 @@
             pendingUI.innerText = `₹${Number(pendingTotal).toLocaleString('en-IN')}`;
             
             if (pendingTotal > 0) {
-                pendingUI.className = "e-val danger";
+                pendingUI.className = "fin-val danger";
                 statusUI.innerText = "Payment Overdue";
                 statusUI.className = "status-badge danger";
                 
                 if (activeViewedUser.phone) {
                     const waContainer = document.getElementById('whatsapp-container');
-                    
                     let breakdownText = "";
                     pendingMonthsList.forEach(pm => {
                         breakdownText += `- Month ${pm.month}: ₹${pm.amount}\n`;
                     });
 
-                    // Zero split errors generated. Safely renders payload text string.
                     const msg = `*Meena Chitfunds*\nGroup: ${groupData.groupName.toUpperCase()} (@${groupId})\nTimeline: Month ${evalMonth} of ${totalGroupMonths}\n\nDear ${activeViewedUser.name.toUpperCase()},\nYou have pending payments for the following months:\n\n${breakdownText}\n*Total Pending: ₹${pendingTotal}*\n\nKindly clear your dues at the earliest.`;
-                    
                     const safePhone = activeViewedUser.phone.replace(/\D/g,'');
                     const waLink = `https://wa.me/${safePhone}?text=${encodeURIComponent(msg)}`;
                     
@@ -888,18 +1028,148 @@
                     `;
                     waContainer.style.display = 'grid';
                 }
-                
             } else {
-                pendingUI.className = "e-val success";
+                pendingUI.className = "fin-val success";
                 statusUI.innerText = "All Clear";
                 statusUI.className = "status-badge";
             }
+
+            // AUTO-SCROLL TO ACTIONABLE MONTH
+            setTimeout(() => {
+                const actionRow = document.getElementById('active-pay-row');
+                if(actionRow) actionRow.scrollIntoView({behavior: 'smooth', block: 'center'});
+            }, 300);
 
         } catch (err) {
             console.error(err);
             showMessage("Engine Error", `Failed to sync ledger: ${err.message}`, "error");
         }
     }
+
+    // --- PAY NOW DIRECT LOGIC ---
+    let pendingPaymentState = null;
+    window.initiateDirectPay = function(month, amount) {
+        pendingPaymentState = { month, amount };
+        document.getElementById('confirm-pay-text').innerHTML = `Approve transaction of <b>₹${amount.toLocaleString('en-IN')}</b> for <b>Month ${month}</b>?`;
+        openModal('confirm-pay-modal');
+    };
+
+    document.getElementById('execute-pay-btn').addEventListener('click', async () => {
+        if(!pendingPaymentState || !activeGroupDataCache || !activeViewedUser) return;
+        const btn = document.getElementById('execute-pay-btn');
+        btn.innerText = "Processing..."; btn.disabled = true;
+
+        try {
+            const batch = writeBatch(db);
+            const groupId = activeGroupDataCache.id;
+
+            // 1. Insert Transaction
+            const newTxRef = doc(collection(db, "transactions"));
+            batch.set(newTxRef, {
+                subscriberId: activeViewedUser.id,
+                subscriberName: activeViewedUser.name || "Unnamed",
+                groupId: groupId,
+                amount: pendingPaymentState.amount,
+                monthAttributed: pendingPaymentState.month,
+                type: "Monthly Installment",
+                date: serverTimestamp()
+            });
+
+            // 2. Update Group Member Snapshot
+            const groupRef = doc(db, "groups", groupId);
+            let snapshotArray = activeGroupDataCache.memberSnapshot || [];
+            let userSnapIndex = snapshotArray.findIndex(m => m && m.id === activeViewedUser.id);
+            
+            if(userSnapIndex > -1) {
+                snapshotArray[userSnapIndex].monthsPaid = (snapshotArray[userSnapIndex].monthsPaid || 0) + 1;
+            } else {
+                snapshotArray.push({
+                    id: activeViewedUser.id, name: activeViewedUser.name, monthsPaid: pendingPaymentState.month, balanceDue: 0, hasAdvance: false
+                });
+            }
+
+            batch.update(groupRef, { 
+                memberSnapshot: snapshotArray,
+                totalPotCollected: increment(pendingPaymentState.amount) 
+            });
+
+            await batch.commit();
+
+            // GPay Premium Success Trigger
+            if ("vibrate" in navigator && typeof navigator.vibrate === 'function') navigator.vibrate(200);
+            
+            document.getElementById('gpay-amount-text').innerText = `₹${pendingPaymentState.amount.toLocaleString('en-IN')}`;
+            closeModal(); // Close confirm modal
+            const overlay = document.getElementById('gpay-overlay');
+            overlay.classList.add('active');
+
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                analyzeUserLedger(groupId); // Seamless inline refresh
+            }, 2500);
+
+        } catch (err) {
+            console.error(err);
+            showMessage("Payment Failed", err.message, "error");
+        } finally {
+            btn.innerText = "Approve Transaction"; btn.disabled = false;
+            pendingPaymentState = null;
+        }
+    });
+
+    // --- UNDO PAYMENT LOGIC ---
+    let pendingUndoState = null;
+    window.initiateUndoPay = function(txnId, month, amount) {
+        pendingUndoState = { txnId, month, amount };
+        document.getElementById('undo-pay-text').innerHTML = `Are you sure you want to reverse the payment of <b>₹${amount.toLocaleString('en-IN')}</b> for <b>Month ${month}</b>? This will permanently delete the ledger entry.`;
+        openModal('undo-pay-modal');
+    };
+
+    document.getElementById('execute-undo-btn').addEventListener('click', async () => {
+        if(!pendingUndoState || !activeGroupDataCache || !activeViewedUser) return;
+        const btn = document.getElementById('execute-undo-btn');
+        btn.innerText = "Reversing..."; btn.disabled = true;
+
+        try {
+            const batch = writeBatch(db);
+            const groupId = activeGroupDataCache.id;
+
+            // 1. Delete Transaction Document
+            batch.delete(doc(db, "transactions", pendingUndoState.txnId));
+
+            // 2. Decrement Group Member Snapshot
+            const groupRef = doc(db, "groups", groupId);
+            let snapshotArray = activeGroupDataCache.memberSnapshot || [];
+            let userSnapIndex = snapshotArray.findIndex(m => m && m.id === activeViewedUser.id);
+            
+            if(userSnapIndex > -1) {
+                let currentPaid = snapshotArray[userSnapIndex].monthsPaid || 0;
+                // Only decrement if greater than 0
+                if(currentPaid > 0) {
+                    snapshotArray[userSnapIndex].monthsPaid = currentPaid - 1;
+                }
+            }
+
+            batch.update(groupRef, { 
+                memberSnapshot: snapshotArray,
+                totalPotCollected: increment(-Math.abs(pendingUndoState.amount)) 
+            });
+
+            await batch.commit();
+
+            closeModal();
+            showMessage("Payment Reversed", `Month ${pendingUndoState.month} payment was successfully deleted.`, "success");
+            analyzeUserLedger(groupId); // Refresh inline
+
+        } catch (err) {
+            console.error(err);
+            showMessage("Undo Failed", err.message, "error");
+        } finally {
+            btn.innerText = "Reverse Transaction"; btn.disabled = false;
+            pendingUndoState = null;
+        }
+    });
+
 
     // --- USER EDIT LOGIC WITH LIVE VALIDATION & ADVANCED MIGRATION ---
     
