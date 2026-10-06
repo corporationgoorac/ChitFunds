@@ -9,10 +9,10 @@
  * 4. High-performance, targeted Firestore reads (1 Group Read + N Defaulter Reads).
  * 5. Strict Indian Phone Number Normalization Pipeline.
  * 6. Live Dashboard with matching Meena Chitfunds Design System.
- * 7. Global Auto-Dispatch Engine (Chitfunds all) with Cross-Group Memory Caching.
+ * 7. Global Priority Engine: Auto-Dispatch Runs First, Manual Queues Second.
  * 8. Individualized Sequential Math Engine (No Global Timeline Traps).
- * 9. JIT Checkpoint Architecture with Firebase State Management for Crash Recovery.
- * 10. Anti-Ban Typing Simulation with 4-6m Delays and 15m Inter-Group Cooldowns.
+ * 9. Dual JIT Checkpoint Architecture (Isolated Auto & Manual State Management).
+ * 10. Anti-Ban Typing Simulation with Interruptible Delays (No Ghost Locks).
  * 11. Quiet Hours (11 PM - 6 AM IST) with Mid-Loop Cutoff and Manual Overrides.
  * 12. Dynamic Admin Phone Engine & Personalized Participant Payment Links.
  */
@@ -53,7 +53,10 @@ if (!admin.apps.length) {
 }
 
 const db = admin.firestore();
-const STATE_DOC_REF = db.collection('system_state').doc('whatsapp_auto_dispatch');
+
+// DUAL STATE MANAGEMENT DOCUMENTS
+const AUTO_STATE_REF = db.collection('system_state').doc('whatsapp_auto_dispatch');
+const MANUAL_STATE_REF = db.collection('system_state').doc('whatsapp_manual_dispatch');
 console.log('[FIREBASE] Firestore Admin SDK initialized.');
 
 // --- 2. GLOBAL STATE FOR DASHBOARD UI & DISPATCH TIMERS ---
@@ -64,14 +67,27 @@ const PORT = process.env.PORT || 5555;
 let currentQRCodeDataURL = null;
 let connectionStatus = 'initializing'; 
 let connectedUser = null;
-let isDispatching = false;
+let isDispatching = false; // Central lock for the Priority Master Queue
 let globalCancelFlag = false; 
 let isAutoDispatchPaused = false; 
 let autoDispatchInterval = null;
 
 // Delay Helpers
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-const waitMinutes = (min, max) => wait(Math.floor(Math.random() * ((max * 60000) - (min * 60000) + 1)) + (min * 60000));
+
+// SMART INTERRUPTIBLE DELAY (Breaks out instantly on kill-switch)
+async function interruptibleWaitMinutes(min, max, type = 'DELAY') {
+    const ms = Math.floor(Math.random() * ((max * 60000) - (min * 60000) + 1)) + (min * 60000);
+    const intervals = Math.floor(ms / 5000); // 5-second pulse checks
+    for (let i = 0; i < intervals; i++) {
+        if (globalCancelFlag || isAutoDispatchPaused) {
+            console.log(`[${type}] Sleep interrupted by system flag.`);
+            return true; // Indicates the sleep was interrupted
+        }
+        await wait(5000);
+    }
+    return false; // Completed naturally
+}
 
 // Quiet Hours Helper (11:00 PM to 6:00 AM IST)
 function isQuietHours() {
@@ -243,7 +259,6 @@ async function startWhatsAppBot() {
         console.log('[BOT] Client was logged out or disconnected:', reason);
         console.log('[BOT] Reinitializing and clearing memory processes...');
         
-        // RAM LEAK FIX: Ensures the zombie chromium processes are killed properly before reinitializing
         try {
             await client.destroy();
         } catch (destroyErr) {
@@ -259,7 +274,7 @@ async function startWhatsAppBot() {
             const messageText = msg.body.trim();
             const senderJid = msg.from;
 
-            // DYNAMIC ADMIN NUMBER REGISTRATION (UPDATED REGEX TO AVOID "SYSTEM BUSY")
+            // DYNAMIC ADMIN NUMBER REGISTRATION
             const adminRegex = /^(?:chitfunds\s+)?change admin number\s+(.+)$/i;
             const adminMatch = messageText.match(adminRegex);
             if (adminMatch && adminMatch[1]) {
@@ -278,24 +293,32 @@ async function startWhatsAppBot() {
             if (messageText.toLowerCase() === 'chitfunds stop') {
                 globalCancelFlag = true;
                 isAutoDispatchPaused = true;
-                await client.sendMessage(senderJid, `🛑 *System Halted*\nAll active manual and automated dispatches have been commanded to stop. Please wait a moment for the loops to exit safely.`);
+                
+                // Hard-delete manual queue on stop to prevent it from ghost-resuming later
+                await MANUAL_STATE_REF.set({
+                    pendingGroups: [],
+                    currentProcessingGroup: admin.firestore.FieldValue.delete(),
+                    pendingUsers: admin.firestore.FieldValue.delete()
+                }, { merge: true });
+
+                await client.sendMessage(senderJid, `🛑 *System Halted*\nManual queue cleared. Automated queue paused. Existing tasks are breaking out of loops safely.`);
                 return;
             }
 
             // PAUSE / RESUME BACKGROUND AUTO-SENDER
             if (messageText.toLowerCase() === 'chitfunds pause') {
                 isAutoDispatchPaused = true;
-                await client.sendMessage(senderJid, `⏸️ *Auto-Dispatch Paused*\nThe background chron job will not execute any queues until resumed.`);
+                await client.sendMessage(senderJid, `⏸️ *System Paused*\nThe Master Queue will not execute any groups until resumed.`);
                 return;
             }
             if (messageText.toLowerCase() === 'chitfunds resume') {
                 isAutoDispatchPaused = false;
                 globalCancelFlag = false;
                 if (isQuietHours()) {
-                    await client.sendMessage(senderJid, `▶️ *Auto-Dispatch Resumed*\nHowever, Quiet Hours (11 PM - 6 AM) are active. The queue will automatically start at 6:00 AM.`);
+                    await client.sendMessage(senderJid, `▶️ *System Resumed*\nHowever, Quiet Hours (11 PM - 6 AM) are active. Master Queue will run at 6:00 AM.`);
                 } else {
-                    await client.sendMessage(senderJid, `▶️ *Auto-Dispatch Resumed*\nThe background chron job is active. Checking Firebase state...`);
-                    checkAndRunAutoDispatch();
+                    await client.sendMessage(senderJid, `▶️ *System Resumed*\nChecking Master Queue priorities...`);
+                    triggerMasterQueue(); // Kick off the master engine
                 }
                 return;
             }
@@ -303,10 +326,6 @@ async function startWhatsAppBot() {
             // GLOBAL DISPATCH TRIGGER (MANUAL)
             if (messageText.toLowerCase() === 'chitfunds all' || messageText.toLowerCase() === 'auto chitfunds all') {
                 console.log(`[TRIGGER] Received GLOBAL Chitfunds command from ${senderJid}`);
-                if (isDispatching) {
-                    await client.sendMessage(senderJid, `⚠️ *System Busy*\nAnother dispatch is currently running. Use 'Chitfunds stop' if you need to abort it.`);
-                    return;
-                }
                 globalCancelFlag = false;
                 await handleGlobalChitfundsDispatch(senderJid);
                 return;
@@ -320,11 +339,6 @@ async function startWhatsAppBot() {
 
             const targetGroupId = match[1].trim();
             console.log(`[TRIGGER] Received Chitfunds command for group: "${targetGroupId}" from ${senderJid}`);
-
-            if (isDispatching) {
-                await client.sendMessage(senderJid, `⚠️ *System Busy*\nAnother group dispatch is currently running. Use 'Chitfunds stop' if you need to abort it.`);
-                return;
-            }
             globalCancelFlag = false;
             await handleChitfundsDispatch(targetGroupId, senderJid);
 
@@ -336,14 +350,12 @@ async function startWhatsAppBot() {
     client.initialize();
 }
 
-// --- 5.1 THE BACKGROUND AUTO-TRIGGER LOGIC (FIREBASE STATE MANAGER) ---
+// --- 6. THE PRIORITY DISPATCH ENGINE (REPLACES OLD SCATTERED LOGIC) ---
+
+// 6.1 Timer that identifies if the automated batch needs to be injected into the queue
 async function checkAndRunAutoDispatch() {
-    if (isAutoDispatchPaused || isDispatching || globalCancelFlag) return;
-    
-    if (isQuietHours()) {
-        console.log('[AUTO-DISPATCH] Quiet hours (11 PM - 6 AM) are active. Sleeping until 6:00 AM.');
-        return;
-    }
+    if (isAutoDispatchPaused || globalCancelFlag) return;
+    if (isQuietHours()) return;
 
     try {
         const now = new Date();
@@ -355,271 +367,121 @@ async function checkAndRunAutoDispatch() {
         let currentWindow = day <= 15 ? 'Window1' : 'Window2';
         let fieldName = day <= 15 ? 'lastRunWindow1' : 'lastRunWindow2';
 
-        const stateSnap = await STATE_DOC_REF.get();
+        const stateSnap = await AUTO_STATE_REF.get();
         const state = stateSnap.exists ? stateSnap.data() : {};
 
-        // If the window hasn't run this month, reset the queue in Firebase
+        // Inject new groups into the AUTO queue if window matches
         if (state[fieldName] !== monthYear) {
             console.log(`[AUTO-DISPATCH] Triggering new cycle for ${currentWindow} (${monthYear})`);
             const groupsSnap = await db.collection('groups').get();
             const allGroupIds = groupsSnap.docs.map(d => d.id);
             
-            await STATE_DOC_REF.set({
+            await AUTO_STATE_REF.set({
                 [fieldName]: monthYear,
                 pendingGroups: allGroupIds
             }, { merge: true });
-
-            processAutoDispatchQueue();
-        } else if (state.pendingGroups && state.pendingGroups.length > 0) {
-            // Power-Cut Recovery
-            console.log(`[AUTO-DISPATCH] Resuming interrupted queue for ${currentWindow}. ${state.pendingGroups.length} groups remaining.`);
-            processAutoDispatchQueue();
         }
+        
+        // Spin up the engine
+        triggerMasterQueue();
     } catch (err) {
         console.error(`[AUTO-DISPATCH ERROR] Failed to check state:`, err);
     }
 }
 
-// --- 5.2 THE CRASH-PROOF JIT BACKGROUND PROCESSOR ---
-async function processAutoDispatchQueue() {
+// 6.2 The Master Execution Engine (Auto takes Priority over Manual)
+async function triggerMasterQueue() {
     if (isDispatching || isAutoDispatchPaused || globalCancelFlag) return;
-    isDispatching = true;
-    const adminJid = await getAdminJid();
-    let nightHalt = false;
-    let isFirstGroupAuto = true;
+    
+    isDispatching = true; // Engage Global Lock
+    let groupsProcessedThisSession = 0;
 
     try {
-        let stateSnap = await STATE_DOC_REF.get();
-        let pendingQueue = stateSnap.exists ? (stateSnap.data().pendingGroups || []) : [];
-
-        if (adminJid && pendingQueue.length > 0) {
-            await client.sendMessage(adminJid, `⚙️ *Background Auto-Dispatch Started*\nGroups remaining in queue: ${pendingQueue.length}\nExecuting 15m JIT cool-downs between groups.`);
-        }
-
-        while (pendingQueue.length > 0) {
-            if (globalCancelFlag || isAutoDispatchPaused) {
-                if (adminJid) await client.sendMessage(adminJid, `⏸️ Background Dispatch Aborted/Paused mid-run.`);
-                break;
-            }
-
+        console.log('[MASTER ENGINE] Scanning queues...');
+        
+        while (!globalCancelFlag && !isAutoDispatchPaused) {
             if (isQuietHours()) {
-                if (adminJid) await client.sendMessage(adminJid, `🌙 *Quiet Hours Reached (11:00 PM)*\nAuto-dispatch paused. Will resume remaining queue at 6:00 AM.`);
+                console.log('[MASTER ENGINE] Quiet hours active. Pausing engine until 6:00 AM.');
                 break;
             }
 
-            const groupId = pendingQueue[0];
-            
-            if (!isFirstGroupAuto) {
-                console.log(`[AUTO-DISPATCH] Group @${groupId} is next. Waiting 15 minutes before reading ledger...`);
-                await waitMinutes(15, 15);
-                
-                if (globalCancelFlag || isAutoDispatchPaused) break; 
+            // PRIORITY 1: AUTO QUEUE
+            let autoState = (await AUTO_STATE_REF.get()).data() || {};
+            let autoPending = autoState.pendingGroups || [];
+            let autoCurrent = autoState.currentProcessingGroup;
 
-                if (isQuietHours()) {
-                    if (adminJid) await client.sendMessage(adminJid, `🌙 *Quiet Hours Reached (11:00 PM)*\nAuto-dispatch paused. Will resume remaining queue at 6:00 AM.`);
-                    break;
+            if (autoCurrent || autoPending.length > 0) {
+                if (groupsProcessedThisSession > 0) {
+                    console.log(`[MASTER ENGINE] Initiating 15m inter-group JIT cooldown (AUTO)...`);
+                    let interrupted = await interruptibleWaitMinutes(15, 15, 'GROUP COOLDOWN');
+                    if (interrupted) break;
                 }
-            } else {
-                console.log(`[AUTO-DISPATCH] Starting immediately for @${groupId}...`);
-            }
-            
-            isFirstGroupAuto = false;
-
-            // JIT READ: Safe and 100% Real-Time
-            console.log(`[AUTO-DISPATCH] Performing JIT read for @${groupId}...`);
-            const groupSnap = await db.collection('groups').doc(groupId).get();
-            
-            if (!groupSnap.exists) {
-                // Ghost group, just remove it from queue
-                await STATE_DOC_REF.update({ pendingGroups: admin.firestore.FieldValue.arrayRemove(groupId) }).catch(err => console.error("Firebase Sync Error", err));
-                pendingQueue.shift();
-                continue;
+                await processOneGroup('AUTO', AUTO_STATE_REF);
+                groupsProcessedThisSession++;
+                continue; 
             }
 
-            const groupData = groupSnap.data();
-            const memberSnapshot = groupData.memberSnapshot || [];
-            const startAmt = groupData.startAmount || 0;
-            const schedule = groupData.installmentSchedule || [];
-            
-            const allUserIds = memberSnapshot.map(m => m.id);
-            if (allUserIds.length === 0) {
-                await STATE_DOC_REF.update({ pendingGroups: admin.firestore.FieldValue.arrayRemove(groupId) }).catch(err => console.error("Firebase Sync Error", err));
-                pendingQueue.shift();
-                continue;
-            }
+            // PRIORITY 2: MANUAL QUEUE (Only runs if Auto is 100% finished)
+            let manualState = (await MANUAL_STATE_REF.get()).data() || {};
+            let manualPending = manualState.pendingGroups || [];
+            let manualCurrent = manualState.currentProcessingGroup;
 
-            const idBatches = chunkArray(allUserIds, 30);
-            let userRecords = [];
-            for (const batch of idBatches) {
-                const userSnap = await db.collection('users').where(admin.firestore.FieldPath.documentId(), 'in', batch).get();
-                userSnap.forEach(docSnap => { userRecords.push({ id: docSnap.id, ...docSnap.data() }); });
-            }
-
-            const snapshotMap = new Map();
-            memberSnapshot.forEach(m => snapshotMap.set(m.id, m));
-
-            const dispatchQueue = [];
-            let groupPendingTotal = 0;
-
-            for (const user of userRecords) {
-                const expectedUserMonth = calculateParticipantExpectedMonth(user, groupData);
-                const snap = snapshotMap.get(user.id) || { monthsPaid: 0 };
-                const monthsPaid = snap.monthsPaid || 0;
-                
-                if (monthsPaid < expectedUserMonth) {
-                    let totalOwed = 0;
-                    let pendingMonthsList = [];
-
-                    for (let m = monthsPaid + 1; m <= expectedUserMonth; m++) {
-                        const dueForM = calculateDueForMonth(m, startAmt, schedule);
-                        totalOwed += dueForM;
-                        pendingMonthsList.push({ month: m, amount: dueForM });
-                    }
-
-                    const targetJid = formatIndianPhoneNumber(user.phone);
-                    if (!targetJid) continue;
-
-                    groupPendingTotal += totalOwed;
-                    let breakdownText = "";
-                    pendingMonthsList.forEach(pm => { breakdownText += `- Month ${pm.month}: ₹${pm.amount.toLocaleString('en-IN')}\n`; });
-
-                    const participantName = (user.name || 'Participant').toUpperCase();
-                    const groupName = (groupData.groupName || groupId).toUpperCase();
-
-                    const message = 
-`*Meena Chitfunds*
-Group: ${groupName} (@${groupId})
-Timeline: Month ${expectedUserMonth} of ${groupData.totalMonths || 0}
-
-Dear ${participantName},
-You have pending payments for the following months:
-
-${breakdownText}
-*Total Pending: ₹${totalOwed.toLocaleString('en-IN')}*
-
-Kindly clear your dues at the earliest.
-
-View your ledger & pay here:
-https://corporationgoorac.github.io/ChitFunds/#${user.id}`;
-
-                    // Added User ID to queue for Firebase Tracking
-                    dispatchQueue.push({ id: user.id, name: participantName, jid: targetJid, text: message, amount: totalOwed });
+            if (manualCurrent || manualPending.length > 0) {
+                if (groupsProcessedThisSession > 0) {
+                    console.log(`[MASTER ENGINE] Initiating 15m inter-group JIT cooldown (MANUAL)...`);
+                    let interrupted = await interruptibleWaitMinutes(15, 15, 'GROUP COOLDOWN');
+                    if (interrupted) break;
                 }
+                await processOneGroup('MANUAL', MANUAL_STATE_REF);
+                groupsProcessedThisSession++;
+                continue; 
             }
 
-            // FIREBASE TRACKER: Prevent duplicates upon restart
-            let currentSysState = await STATE_DOC_REF.get();
-            let sysData = currentSysState.exists ? currentSysState.data() : {};
-            
-            // QUEUE SYNC FIX: Ensure pendingUsers exists to prevent crash locks
-            if (sysData.currentProcessingGroup !== groupId || !sysData.pendingUsers) {
-                let allPendingIds = dispatchQueue.map(item => item.id);
-                await STATE_DOC_REF.set({
-                    currentProcessingGroup: groupId,
-                    pendingUsers: allPendingIds
-                }, { merge: true });
-                sysData.pendingUsers = allPendingIds;
-            }
-            
-            let pendingUsers = sysData.pendingUsers || [];
-            let filteredDispatchQueue = dispatchQueue.filter(item => pendingUsers.includes(item.id));
-
-            let successCount = 0;
-            let failCount = 0;
-
-            for (let i = 0; i < filteredDispatchQueue.length; i++) {
-                if (globalCancelFlag || isAutoDispatchPaused) break;
-
-                if (isQuietHours()) {
-                    nightHalt = true;
-                    if (adminJid) await client.sendMessage(adminJid, `🌙 *Quiet Hours Reached (11:00 PM) mid-group*\nAuto-dispatch paused for the night. Will resume at 6:00 AM.`);
-                    break;
-                }
-
-                const item = filteredDispatchQueue[i];
-                try {
-                    await sendWithTyping(item.jid, item.text);
-                    successCount++;
-                    console.log(`[AUTO-DISPATCH] Sent to ${item.name} (${item.jid})`);
-                    
-                    // FIREBASE ARRAY REMOVAL - INSTANT CLEAR
-                    await STATE_DOC_REF.update({ pendingUsers: admin.firestore.FieldValue.arrayRemove(item.id) }).catch(err => console.error("Firebase Sync Error", err));
-                } catch (sendErr) {
-                    failCount++;
-                }
-
-                if (i < filteredDispatchQueue.length - 1) {
-                    console.log(`[AUTO-DISPATCH] Waiting 4-6 minutes before next message...`);
-                    await waitMinutes(4, 6);
-                }
-            }
-
-            // FIREBASE TRACKER: Completion Verification
-            let postState = await STATE_DOC_REF.get();
-            let postPending = postState.exists ? (postState.data().pendingUsers || []) : [];
-
-            // QUEUE SYNC FIX: Infinite Loop Prevention (Checking if actionable items are remaining rather than an empty array)
-            let remainingActionable = postPending.filter(id => dispatchQueue.some(item => item.id === id));
-
-            if (!globalCancelFlag && !isAutoDispatchPaused && !nightHalt && remainingActionable.length === 0) {
-                // Group fully sent. Safe to strike from global queue and clear tracking ID.
-                await STATE_DOC_REF.update({ 
-                    pendingGroups: admin.firestore.FieldValue.arrayRemove(groupId),
-                    currentProcessingGroup: admin.firestore.FieldValue.delete(),
-                    pendingUsers: admin.firestore.FieldValue.delete()
-                }).catch(err => console.error("Firebase Finalize Sync Error", err));
-                pendingQueue.shift(); 
-
+            // If we reach here, both queues are completely empty
+            console.log('[MASTER ENGINE] All queues empty. Entering idle state.');
+            if (groupsProcessedThisSession > 0 && !globalCancelFlag && !isAutoDispatchPaused && !isQuietHours()) {
+                const adminJid = await getAdminJid();
                 if (adminJid) {
-                    const report = 
-`✅ *Auto-Dispatch Complete: Group @${groupId}*
-Group Name: ${(groupData.groupName || groupId).toUpperCase()}
-- Reminders Delivered: ${successCount}
-- Delivery Failures: ${failCount}
-- Pending Value Reminded: ₹${groupPendingTotal.toLocaleString('en-IN')}
-
-Group struck from active database queue. Proceeding to next group.`;
-                    await client.sendMessage(adminJid, report);
+                    await client.sendMessage(adminJid, `🏁 *Master Engine Idle*\nAll automated and manual queues are completely clear. Everything is done.`);
                 }
-            } else if (nightHalt) {
-                break; 
             }
-            
-            // RAM GC Optimization for long waits
-            userRecords = null;
-            dispatchQueue.length = 0; 
-            snapshotMap.clear();
+            break;
         }
-
-        if (pendingQueue.length === 0 && adminJid && !globalCancelFlag && !isAutoDispatchPaused && !nightHalt) {
-            await client.sendMessage(adminJid, `🏁 *Background Auto-Dispatch Finished!*\nAll active groups have been processed for this time window. Going to sleep.`);
-        }
-
     } catch (criticalErr) {
-        console.error('[CRITICAL AUTO-DISPATCH ERROR]:', criticalErr);
-        if (adminJid) await client.sendMessage(adminJid, `❌ *Background Server Error:*\n${criticalErr.message}`);
+        console.error('[CRITICAL MASTER ENGINE ERROR]:', criticalErr);
     } finally {
-        isDispatching = false;
+        isDispatching = false; // Release Global Lock
     }
 }
 
-// --- 6. TARGETED DISPATCH PIPELINE (MANUAL - INDEPENDENT OF STATE MANAGER) ---
-async function handleChitfundsDispatch(groupId, requesterJid) {
-    isDispatching = true;
+// 6.3 The Singular Processing Logic (Runs cleanly on whichever Ref is passed to it)
+async function processOneGroup(queueType, STATE_REF) {
     const adminJid = await getAdminJid();
-    const finalReportTarget = adminJid || requesterJid;
-
+    
     try {
-        await client.sendMessage(requesterJid, `⏳ *Analyzing Group @${groupId}...*\nFetching ledger status and isolating pending dues. Please wait.`);
+        let stateSnap = await STATE_REF.get();
+        let state = stateSnap.exists ? stateSnap.data() : {};
+        
+        let groupId = state.currentProcessingGroup;
 
-        await STATE_DOC_REF.update({ pendingGroups: admin.firestore.FieldValue.arrayRemove(groupId) }).catch(err => console.error("Firebase Sync Error", err));
+        // Claim the next group if one isn't currently locked
+        if (!groupId && state.pendingGroups && state.pendingGroups.length > 0) {
+            groupId = state.pendingGroups[0];
+            await STATE_REF.set({ currentProcessingGroup: groupId }, { merge: true });
+        }
 
-        const groupRef = db.collection('groups').doc(groupId);
-        const groupSnap = await groupRef.get();
+        if (!groupId) return; // Failsafe
+        console.log(`[${queueType}] Processing Group @${groupId}...`);
 
+        const groupSnap = await db.collection('groups').doc(groupId).get();
+        
         if (!groupSnap.exists) {
-            await client.sendMessage(requesterJid, `❌ *Group Not Found*\nNo chit group exists with ID: @${groupId}`);
-            isDispatching = false;
+            // Clean Wipe: Ghost group removed instantly
+            await STATE_REF.update({ 
+                pendingGroups: admin.firestore.FieldValue.arrayRemove(groupId),
+                currentProcessingGroup: admin.firestore.FieldValue.delete(),
+                pendingUsers: admin.firestore.FieldValue.delete()
+            }).catch(() => {});
             return;
         }
 
@@ -627,35 +489,35 @@ async function handleChitfundsDispatch(groupId, requesterJid) {
         const memberSnapshot = groupData.memberSnapshot || [];
         const startAmt = groupData.startAmount || 0;
         const schedule = groupData.installmentSchedule || [];
-
+        
         const allUserIds = memberSnapshot.map(m => m.id);
-
         if (allUserIds.length === 0) {
-            await client.sendMessage(requesterJid, `✅ *Empty Group*\nGroup *${(groupData.groupName || groupId).toUpperCase()}* has no participants.`);
-            isDispatching = false;
+            await STATE_REF.update({ 
+                pendingGroups: admin.firestore.FieldValue.arrayRemove(groupId),
+                currentProcessingGroup: admin.firestore.FieldValue.delete(),
+                pendingUsers: admin.firestore.FieldValue.delete()
+            }).catch(() => {});
             return;
         }
 
         const idBatches = chunkArray(allUserIds, 30);
         let userRecords = [];
-
         for (const batch of idBatches) {
             const userSnap = await db.collection('users').where(admin.firestore.FieldPath.documentId(), 'in', batch).get();
             userSnap.forEach(docSnap => { userRecords.push({ id: docSnap.id, ...docSnap.data() }); });
         }
 
-        const dispatchQueue = [];
-        let invalidPhoneCount = 0;
-        let groupPendingTotal = 0;
-
         const snapshotMap = new Map();
         memberSnapshot.forEach(m => snapshotMap.set(m.id, m));
+
+        const dispatchQueue = [];
+        let groupPendingTotal = 0;
 
         for (const user of userRecords) {
             const expectedUserMonth = calculateParticipantExpectedMonth(user, groupData);
             const snap = snapshotMap.get(user.id) || { monthsPaid: 0 };
             const monthsPaid = snap.monthsPaid || 0;
-
+            
             if (monthsPaid < expectedUserMonth) {
                 let totalOwed = 0;
                 let pendingMonthsList = [];
@@ -667,11 +529,7 @@ async function handleChitfundsDispatch(groupId, requesterJid) {
                 }
 
                 const targetJid = formatIndianPhoneNumber(user.phone);
-
-                if (!targetJid) {
-                    invalidPhoneCount++;
-                    continue;
-                }
+                if (!targetJid) continue;
 
                 groupPendingTotal += totalOwed;
                 let breakdownText = "";
@@ -700,312 +558,123 @@ https://corporationgoorac.github.io/ChitFunds/#${user.id}`;
             }
         }
 
-        // FIREBASE TRACKER: Manual Dispatch Safety
-        let currentSysState = await STATE_DOC_REF.get();
+        // LOCK PENDING USERS (Prevents crash duplicates)
+        let currentSysState = await STATE_REF.get();
         let sysData = currentSysState.exists ? currentSysState.data() : {};
         
-        // QUEUE SYNC FIX
-        if (sysData.currentProcessingGroup !== groupId || !sysData.pendingUsers) {
+        if (!sysData.pendingUsers) {
             let allPendingIds = dispatchQueue.map(item => item.id);
-            await STATE_DOC_REF.set({
-                currentProcessingGroup: groupId,
-                pendingUsers: allPendingIds
-            }, { merge: true });
+            await STATE_REF.set({ pendingUsers: allPendingIds }, { merge: true });
             sysData.pendingUsers = allPendingIds;
         }
         
         let pendingUsers = sysData.pendingUsers || [];
         let filteredDispatchQueue = dispatchQueue.filter(item => pendingUsers.includes(item.id));
 
-        if (filteredDispatchQueue.length === 0) {
-            await client.sendMessage(requesterJid, `✅ *All Clear!*\nEvery participant in group *${(groupData.groupName || groupId).toUpperCase()}* is up to date based on their individual timelines. No messages needed.`);
-            
-            // Clean up state manually
-            await STATE_DOC_REF.update({
-                currentProcessingGroup: admin.firestore.FieldValue.delete(),
-                pendingUsers: admin.firestore.FieldValue.delete()
-            }).catch(err => console.error("Firebase Reset Error", err));
-
-            isDispatching = false;
-            return;
-        }
-
-        await client.sendMessage(requesterJid, `🚀 *Dispatch Started*\nQueue size: ${filteredDispatchQueue.length} participants.\nThrottling active: Messages will be sent with human typing delays (4-6 mins).`);
-
         let successCount = 0;
         let failCount = 0;
 
+        // TYPING SEND LOOP
         for (let i = 0; i < filteredDispatchQueue.length; i++) {
-            if (globalCancelFlag) break;
+            if (globalCancelFlag || isAutoDispatchPaused || isQuietHours()) {
+                return; // Break immediately, preserving precise state
+            }
 
             const item = filteredDispatchQueue[i];
             try {
                 await sendWithTyping(item.jid, item.text);
                 successCount++;
-                console.log(`[DISPATCH] [${i + 1}/${filteredDispatchQueue.length}] Sent to ${item.name} (${item.jid})`);
-                await STATE_DOC_REF.update({ pendingUsers: admin.firestore.FieldValue.arrayRemove(item.id) }).catch(err => console.error("Firebase Sync Error", err));
+                console.log(`[${queueType}] Sent to ${item.name} (${item.jid})`);
+                await STATE_REF.update({ pendingUsers: admin.firestore.FieldValue.arrayRemove(item.id) }).catch(() => {});
             } catch (sendErr) {
                 failCount++;
-                console.error(`[DISPATCH ERROR] Failed sending to ${item.name}:`, sendErr.message);
             }
 
             if (i < filteredDispatchQueue.length - 1) {
-                console.log(`[DISPATCH] Pausing for 4-6 minutes...`);
-                await waitMinutes(4, 6);
+                console.log(`[${queueType}] Waiting 4-6 minutes before next message...`);
+                let interrupted = await interruptibleWaitMinutes(4, 6, 'MSG COOLDOWN');
+                if (interrupted) return;
             }
         }
 
-        let postState = await STATE_DOC_REF.get();
+        // VERIFY GROUP COMPLETION
+        let postState = await STATE_REF.get();
         let postPending = postState.exists ? (postState.data().pendingUsers || []) : [];
         let remainingActionable = postPending.filter(id => dispatchQueue.some(item => item.id === id));
-        
-        if (!globalCancelFlag && remainingActionable.length === 0) {
-             await STATE_DOC_REF.update({
-                 currentProcessingGroup: admin.firestore.FieldValue.delete(),
-                 pendingUsers: admin.firestore.FieldValue.delete()
-             }).catch(err => console.error("Firebase Sync Error", err));
-        }
 
-        const reportTitle = globalCancelFlag ? "*Meena Chitfunds Manual Dispatch Aborted*" : "*Meena Chitfunds Manual Dispatch Completed*";
-        const report = 
-`${reportTitle}
+        if (!globalCancelFlag && !isAutoDispatchPaused && remainingActionable.length === 0) {
+            // ZERO JUNK DATA CLEANUP: Hard delete the memory footprint for this group
+            await STATE_REF.update({ 
+                pendingGroups: admin.firestore.FieldValue.arrayRemove(groupId),
+                currentProcessingGroup: admin.firestore.FieldValue.delete(),
+                pendingUsers: admin.firestore.FieldValue.delete()
+            }).catch(err => console.error("Firebase Finalize Sync Error", err));
 
-Group: *${(groupData.groupName || groupId).toUpperCase()}*
-Status:
-- Reminders Delivered: *${successCount}*
-- Delivery Failures: *${failCount}*
-- Skipped (Invalid Phone): *${invalidPhoneCount}*
+            if (adminJid) {
+                const report = 
+`✅ *${queueType} Dispatch Complete: Group @${groupId}*
+Group Name: ${(groupData.groupName || groupId).toUpperCase()}
+- Reminders Delivered: ${successCount}
+- Delivery Failures: ${failCount}
 - Pending Value Reminded: ₹${groupPendingTotal.toLocaleString('en-IN')}
 
-All active queues are cleared.`;
-
-        await client.sendMessage(finalReportTarget, report);
-        if (adminJid && adminJid !== requesterJid) {
-            await client.sendMessage(requesterJid, `✅ Dispatch finished. Audit report sent to Admin.`);
+Group struck from active queue.`;
+                await client.sendMessage(adminJid, report);
+            }
         }
-        console.log(`[DISPATCH COMPLETED] Successfully processed group @${groupId}`);
-
-        // GC Optimization
-        userRecords = null;
-        dispatchQueue.length = 0;
-        snapshotMap.clear();
-
-    } catch (criticalErr) {
-        console.error('[CRITICAL DISPATCH ERROR]:', criticalErr);
-        await client.sendMessage(requesterJid, `❌ *Server Error during execution:*\n${criticalErr.message}`);
-    } finally {
-        isDispatching = false;
+    } catch (err) {
+        console.error(`[PROCESS GROUP ERROR]`, err);
+        if (adminJid) await client.sendMessage(adminJid, `❌ *Server Error during execution:*\n${err.message}`);
     }
 }
 
-// --- 6.1 GLOBAL AUTO-DISPATCH PIPELINE (MANUAL - JIT & INDEPENDENT) ---
-async function handleGlobalChitfundsDispatch(requesterJid) {
-    isDispatching = true;
-    const adminJid = await getAdminJid();
-    const finalReportTarget = adminJid || requesterJid;
+// --- 7. MANUAL COMMAND INGESTION HANDLERS ---
+// Instead of running logic directly, these inject data cleanly into the MANUAL_STATE_REF queue
 
+async function handleChitfundsDispatch(groupId, requesterJid) {
     try {
-        await client.sendMessage(requesterJid, `🌐 *Starting Global Manual Dispatch...*\nScanning all active groups in Firestore. JIT 15-minute cooldowns will apply.`);
-
-        const now = new Date();
-        const istString = now.toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
-        const istDate = new Date(istString);
-        const day = istDate.getDate();
-        const monthYear = `${istDate.getMonth() + 1}-${istDate.getFullYear()}`;
-        let fieldName = day <= 15 ? 'lastRunWindow1' : 'lastRunWindow2';
-
-        await STATE_DOC_REF.set({
-            [fieldName]: monthYear,
-            pendingGroups: []
-        }, { merge: true }).catch(err => console.error("Firebase Sync Error", err));
-
-        const groupsSnap = await db.collection('groups').get();
-        if (groupsSnap.empty) {
-            await client.sendMessage(requesterJid, `✅ No active groups found in database.`);
-            isDispatching = false;
+        const groupSnap = await db.collection('groups').doc(groupId).get();
+        if (!groupSnap.exists) {
+            await client.sendMessage(requesterJid, `❌ *Group Not Found*\nNo chit group exists with ID: @${groupId}`);
             return;
         }
 
-        let totalRemindersSent = 0;
-        let totalFailures = 0;
-        let groupsProcessed = 0;
+        await MANUAL_STATE_REF.set({
+            pendingGroups: admin.firestore.FieldValue.arrayUnion(groupId)
+        }, { merge: true });
 
-        for (let gIndex = 0; gIndex < groupsSnap.docs.length; gIndex++) {
-            if (globalCancelFlag) break;
-
-            const groupDoc = groupsSnap.docs[gIndex];
-            const groupId = groupDoc.id;
-
-            if (gIndex > 0) {
-                console.log(`[GLOBAL-MANUAL] Waiting 15 minutes before reading ledger for @${groupId}...`);
-                await client.sendMessage(requesterJid, `⏳ *Waiting 15m* before reading ledger for Group @${groupId}...`);
-                await waitMinutes(15, 15);
-                
-                if (globalCancelFlag) break;
-            }
-
-            const groupSnap = await db.collection('groups').doc(groupId).get();
-            if (!groupSnap.exists) continue; // Protection against ghost/deleted groups mid-run
-            
-            const groupData = groupSnap.data();
-            const memberSnapshot = groupData.memberSnapshot || [];
-            
-            if (memberSnapshot.length === 0) continue; 
-
-            const startAmt = groupData.startAmount || 0;
-            const schedule = groupData.installmentSchedule || [];
-            const allUserIds = memberSnapshot.map(m => m.id);
-
-            const idBatches = chunkArray(allUserIds, 30);
-            let userRecords = [];
-            for (const batch of idBatches) {
-                const userSnap = await db.collection('users').where(admin.firestore.FieldPath.documentId(), 'in', batch).get();
-                userSnap.forEach(docSnap => { userRecords.push({ id: docSnap.id, ...docSnap.data() }); });
-            }
-
-            const snapshotMap = new Map();
-            memberSnapshot.forEach(m => snapshotMap.set(m.id, m));
-
-            const dispatchQueue = [];
-            let groupPendingTotal = 0;
-
-            for (const user of userRecords) {
-                const expectedUserMonth = calculateParticipantExpectedMonth(user, groupData);
-                const snap = snapshotMap.get(user.id) || { monthsPaid: 0 };
-                const monthsPaid = snap.monthsPaid || 0;
-                
-                if (monthsPaid < expectedUserMonth) {
-                    let totalOwed = 0;
-                    let pendingMonthsList = [];
-
-                    for (let m = monthsPaid + 1; m <= expectedUserMonth; m++) {
-                        const dueForM = calculateDueForMonth(m, startAmt, schedule);
-                        totalOwed += dueForM;
-                        pendingMonthsList.push({ month: m, amount: dueForM });
-                    }
-
-                    const targetJid = formatIndianPhoneNumber(user.phone);
-                    if (!targetJid) continue;
-
-                    groupPendingTotal += totalOwed;
-
-                    let breakdownText = "";
-                    pendingMonthsList.forEach(pm => {
-                        breakdownText += `- Month ${pm.month}: ₹${pm.amount.toLocaleString('en-IN')}\n`;
-                    });
-
-                    const participantName = (user.name || 'Participant').toUpperCase();
-                    const groupName = (groupData.groupName || groupId).toUpperCase();
-
-                    const message = 
-`*Meena Chitfunds*
-Group: ${groupName} (@${groupId})
-Timeline: Month ${expectedUserMonth} of ${groupData.totalMonths || 0}
-
-Dear ${participantName},
-You have pending payments for the following months:
-
-${breakdownText}
-*Total Pending: ₹${totalOwed.toLocaleString('en-IN')}*
-
-Kindly clear your dues at the earliest.
-
-View your ledger & pay here:
-https://corporationgoorac.github.io/ChitFunds/#${user.id}`;
-
-                    dispatchQueue.push({ id: user.id, name: participantName, jid: targetJid, text: message, amount: totalOwed });
-                }
-            }
-
-            // FIREBASE TRACKER: Global Loop
-            let currentSysState = await STATE_DOC_REF.get();
-            let sysData = currentSysState.exists ? currentSysState.data() : {};
-            
-            // QUEUE SYNC FIX
-            if (sysData.currentProcessingGroup !== groupId || !sysData.pendingUsers) {
-                let allPendingIds = dispatchQueue.map(item => item.id);
-                await STATE_DOC_REF.set({
-                    currentProcessingGroup: groupId,
-                    pendingUsers: allPendingIds
-                }, { merge: true });
-                sysData.pendingUsers = allPendingIds;
-            }
-            
-            let pendingUsers = sysData.pendingUsers || [];
-            let filteredDispatchQueue = dispatchQueue.filter(item => pendingUsers.includes(item.id));
-
-            if (filteredDispatchQueue.length > 0) {
-                groupsProcessed++;
-                await client.sendMessage(requesterJid, `🚀 *Dispatching Group @${groupId}*\nFound ${filteredDispatchQueue.length} defaulters. Starting 4-6m typing loop...`);
-
-                let groupSuccessCount = 0;
-                let groupFailCount = 0;
-
-                for (let i = 0; i < filteredDispatchQueue.length; i++) {
-                    if (globalCancelFlag) break;
-
-                    const item = filteredDispatchQueue[i];
-                    try {
-                        await sendWithTyping(item.jid, item.text);
-                        groupSuccessCount++;
-                        totalRemindersSent++;
-                        await STATE_DOC_REF.update({ pendingUsers: admin.firestore.FieldValue.arrayRemove(item.id) }).catch(err => console.error("Firebase Sync Error", err));
-                    } catch (sendErr) {
-                        groupFailCount++;
-                        totalFailures++;
-                    }
-
-                    if (i < filteredDispatchQueue.length - 1) {
-                        await waitMinutes(4, 6);
-                    }
-                }
-
-                let postState = await STATE_DOC_REF.get();
-                let postPending = postState.exists ? (postState.data().pendingUsers || []) : [];
-                let remainingActionable = postPending.filter(id => dispatchQueue.some(item => item.id === id));
-                
-                if (!globalCancelFlag && remainingActionable.length === 0) {
-                    await STATE_DOC_REF.update({
-                        currentProcessingGroup: admin.firestore.FieldValue.delete(),
-                        pendingUsers: admin.firestore.FieldValue.delete()
-                    }).catch(err => console.error("Firebase Sync Error", err));
-                    await client.sendMessage(finalReportTarget, `✅ *Completed Group @${groupId}*\nSent ${groupSuccessCount} reminders (₹${groupPendingTotal.toLocaleString('en-IN')} pending). Moving to next...`);
-                }
-
-            } else {
-                console.log(`[GLOBAL-MANUAL] Group @${groupId} is fully paid up. Skipping.`);
-            }
-
-            // RAM GC Optimization for long waits
-            userRecords = null;
-            dispatchQueue.length = 0;
-            snapshotMap.clear();
-        }
-
-        const reportTitle = globalCancelFlag ? "🏁 *Global Manual Dispatch Aborted!*" : "🏁 *Global Manual Dispatch Finished!*";
-        const finalReport = 
-`${reportTitle}
-
-Processed ${groupsProcessed} active groups with pending dues.
-- Total Reminders Sent: *${totalRemindersSent}*
-- Delivery Failures: *${totalFailures}*
-
-All queues are cleared.`;
-        await client.sendMessage(finalReportTarget, finalReport);
-        if (adminJid && adminJid !== requesterJid) {
-            await client.sendMessage(requesterJid, `✅ Global Manual Dispatch action completed. Audit report sent to Admin.`);
-        }
-        console.log(`[GLOBAL COMPLETED] Finished manual dispatch for all groups.`);
-
-    } catch (criticalErr) {
-        console.error('[CRITICAL GLOBAL ERROR]:', criticalErr);
-        await client.sendMessage(requesterJid, `❌ *Server Error during global execution:*\n${criticalErr.message}`);
-    } finally {
-        isDispatching = false;
+        await client.sendMessage(requesterJid, `⏳ *Queued*\nGroup @${groupId} safely injected into the Manual Queue.\n\n*Note:* The Master Engine respects Priority execution. If Auto-Tasks are running, this group will automatically execute once they finish.`);
+        
+        triggerMasterQueue(); // Call the engine
+    } catch (err) {
+        console.error(err);
+        await client.sendMessage(requesterJid, `❌ Error enqueuing command: ${err.message}`);
     }
 }
 
-// --- 7. EXPRESS DASHBOARD ---
+async function handleGlobalChitfundsDispatch(requesterJid) {
+    try {
+        const groupsSnap = await db.collection('groups').get();
+        if (groupsSnap.empty) {
+            await client.sendMessage(requesterJid, `✅ No active groups found in database.`);
+            return;
+        }
+
+        const allGroupIds = groupsSnap.docs.map(d => d.id);
+        await MANUAL_STATE_REF.set({
+            pendingGroups: admin.firestore.FieldValue.arrayUnion(...allGroupIds)
+        }, { merge: true });
+
+        await client.sendMessage(requesterJid, `🌐 *Global Queue Added*\nAppended all active database groups to the Manual Queue.\n\n*Note:* The Master Engine executes with priority. If system is currently running scheduled auto-tasks, global manual execution will yield until auto-tasks finish.`);
+        
+        triggerMasterQueue(); // Call the engine
+    } catch (err) {
+        console.error(err);
+        await client.sendMessage(requesterJid, `❌ Error enqueuing global command: ${err.message}`);
+    }
+}
+
+// --- 8. EXPRESS DASHBOARD ---
 app.get('/api/status', (req, res) => {
     res.json({
         status: connectionStatus,
@@ -1153,7 +822,7 @@ app.get('/', (req, res) => {
     `);
 });
 
-// --- 8. START SERVER ---
+// --- 9. START SERVER ---
 server.listen(PORT, () => {
     console.log(`[HTTP] Express Dashboard active on http://0.0.0.0:${PORT}`);
     startWhatsAppBot();
