@@ -1,18 +1,16 @@
 {
-  "name": "chitfunds-whatsapp-backend",
+  "name": "meena-chitfunds-whatsapp-bot",
   "version": "1.0.0",
-  "description": "WhatsApp Automation API for Meena Chitfunds",
+  "description": "Production WhatsApp Bot & Gateway for Meena Chitfunds",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.21.2",
-    "whatsapp-web.js": "^1.34.7",
-    "qrcode": "^1.5.3",
-    "firebase-admin": "^13.8.0",
-    "puppeteer": "^24.42.0",
-    "node-cron": "^4.2.1"
+    "express": "^4.19.2",
+    "firebase-admin": "^12.6.0",
+    "qrcode": "^1.5.4",
+    "whatsapp-web.js": "^1.23.0"
   },
   "engines": {
     "node": ">=18.0.0"
