@@ -269,9 +269,9 @@ async function startWhatsAppBot() {
     });
 
     // --- MESSAGE LISTENER ---
-    client.on('message', async (msg) => {
+    client.on('message_create', async (msg) => {
         try {
-            const messageText = msg.body.trim();
+            const messageText = (msg.body || '').trim();
             const senderJid = msg.from;
 
             // DYNAMIC ADMIN NUMBER REGISTRATION
@@ -308,7 +308,7 @@ async function startWhatsAppBot() {
             // PAUSE / RESUME BACKGROUND AUTO-SENDER
             if (messageText.toLowerCase() === 'chitfunds pause') {
                 isAutoDispatchPaused = true;
-                await client.sendMessage(senderJid, `⏸️ *System Paused*\nThe Master Queue will not execute any groups until resumed.`);
+                await client.sendMessage(senderJid, `⏸️️ *System Paused*\nThe Master Queue will not execute any groups until resumed.`);
                 return;
             }
             if (messageText.toLowerCase() === 'chitfunds resume') {
@@ -380,6 +380,11 @@ async function checkAndRunAutoDispatch() {
                 [fieldName]: monthYear,
                 pendingGroups: allGroupIds
             }, { merge: true });
+
+            const adminJid = await getAdminJid();
+            if (adminJid) {
+                await client.sendMessage(adminJid, `🚀 *Background Auto-Dispatch Started*\nCycle: ${currentWindow} (${monthYear})\nQueued ${allGroupIds.length} groups for processing.`);
+            }
         }
         
         // Spin up the engine
@@ -585,9 +590,10 @@ https://corporationgoorac.github.io/ChitFunds/#${user.id}`;
                 await sendWithTyping(item.jid, item.text);
                 successCount++;
                 console.log(`[${queueType}] Sent to ${item.name} (${item.jid})`);
-                await STATE_REF.update({ pendingUsers: admin.firestore.FieldValue.arrayRemove(item.id) }).catch(() => {});
             } catch (sendErr) {
                 failCount++;
+            } finally {
+                await STATE_REF.update({ pendingUsers: admin.firestore.FieldValue.arrayRemove(item.id) }).catch(() => {});
             }
 
             if (i < filteredDispatchQueue.length - 1) {
