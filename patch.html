@@ -22,6 +22,7 @@
       --danger-light: #fde8e8;
       --success-color: #0f9d58;
       --success-light: #e6f4ea;
+      --modal-overlay: rgba(0, 0, 0, 0.6);
       --card-shadow: 0 4px 12px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.02);
     }
 
@@ -39,6 +40,7 @@
         --danger-light: rgba(255, 78, 69, 0.15);
         --success-color: #34a853;
         --success-light: rgba(52, 168, 83, 0.15);
+        --modal-overlay: rgba(0, 0, 0, 0.85);
         --card-shadow: 0 4px 12px rgba(0,0,0,0.2);
       }
     }
@@ -135,7 +137,7 @@
     .log-container {
       background: #000000;
       color: #00ff66;
-      font-family: 'JetBrains Mono', monospace, monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
       padding: 16px;
       border-radius: 14px;
@@ -145,6 +147,16 @@
       border: 1px solid var(--border-color);
     }
     .log-line { margin-bottom: 6px; word-break: break-all; }
+
+    /* System Alert Modals */
+    .center-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(8px); }
+    .center-modal.active { opacity: 1; pointer-events: all; }
+    .mini-modal-content { background-color: var(--surface-color); width: 90%; max-width: 340px; border-radius: 24px; padding: 30px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid var(--border-color); text-align: center; }
+    .center-modal.active .mini-modal-content { transform: scale(1); }
+    .msg-icon { font-size: 48px; margin-bottom: 16px; }
+    .mini-modal-title { font-size: 20px; font-weight: 800; margin: 0 0 12px 0; color: var(--text-main); }
+    .mini-modal-text { font-size: 14px; color: var(--text-muted); margin: 0 0 28px 0; line-height: 1.5; font-weight: 500; word-break: break-word;}
+    .mini-btn { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; width: 100%; background-color: var(--brand-accent); color: #fff;}
   </style>
 </head>
 <body>
@@ -171,12 +183,35 @@
     </div>
   </main>
 
+  <aside id="message-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div id="msg-icon" class="msg-icon">✅</div>
+      <h3 class="mini-modal-title" id="msg-title">Alert</h3>
+      <p class="mini-modal-text" id="msg-body">Operation completed.</p>
+      <div class="mini-modal-actions">
+        <button class="mini-btn" onclick="closeMessageModal()">OK</button>
+      </div>
+    </div>
+  </aside>
+
   <script type="module">
     import { auth, db } from './config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
     import { collection, getDocs, doc, getDoc, updateDoc, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
     onAuthStateChanged(auth, (user) => { if (!user) window.location.replace('login.html'); });
+
+    window.showMessage = function(title, body, type = 'success') {
+      document.getElementById('msg-title').innerText = title;
+      document.getElementById('msg-body').innerHTML = body; 
+      const icon = document.getElementById('msg-icon');
+      icon.innerText = type === 'success' ? '✅' : '⚠️';
+      document.getElementById('message-modal').classList.add('active');
+    };
+
+    window.closeMessageModal = function() {
+      document.getElementById('message-modal').classList.remove('active');
+    };
 
     function logMessage(text, type = 'info') {
       const box = document.getElementById('log-box');
@@ -233,7 +268,6 @@
                   for (const tDoc of nestedSnap.docs) {
                     const tData = tDoc.data();
                     if (tData.userId === uId || tData.subscriberId === uId) {
-                      // Recreate in root transactions collection
                       const newRootTxRef = doc(collection(db, "transactions"));
                       batch.set(newRootTxRef, {
                         subscriberId: uId,
@@ -248,9 +282,7 @@
                     }
                   }
                 }
-              } catch (subErr) {
-                // Ignore if subcollection does not exist
-              }
+              } catch (subErr) {}
             }
           }
 
@@ -260,7 +292,6 @@
             fixedCount++;
           }
 
-          // Commit batch safely every 400 operations to respect Firestore limits
           if (batchOpCount >= 400) {
             await batch.commit();
             logMessage("Committed intermediate batch of corrections...");
@@ -274,11 +305,11 @@
         }
 
         logMessage(`=== PATCH COMPLETE === Successfully repaired ${fixedCount} participant profile(s).`, 'success');
-        showMessage("System Patched Successfully", `All participant schemas and database references have been successfully normalized.<br><br>Repaired: <b>${fixedCount}</b> profile(s).`, "success");
+        window.showMessage("System Patched Successfully", `All participant schemas and database references have been successfully normalized.<br><br>Repaired: <b>${fixedCount}</b> profile(s).`, "success");
 
       } catch (err) {
         logMessage(`CRITICAL ERROR DURING PATCH: ${err.message}`, 'error');
-        showMessage("Patch Failed", err.message, "error");
+        window.showMessage("Patch Failed", err.message, "error");
       } finally {
         btn.disabled = false;
         btn.innerText = "Start Comprehensive Patch";
