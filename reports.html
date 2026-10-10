@@ -216,6 +216,10 @@
       width: 100%; background-color: var(--surface-color); border: 2px solid var(--border-color);
       color: var(--text-main); padding: 16px; border-radius: 14px; font-size: 16px; outline: none; appearance: none; font-weight: 700; transition: border-color 0.2s, box-shadow 0.2s;
     }
+    
+    /* Ensure date inputs look proper */
+    input[type="date"] { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    
     .input-group input:focus, .input-group select:focus { border-color: var(--brand-accent); box-shadow: 0 0 0 4px var(--brand-accent-light); }
 
     /* Validation Icons for Editing */
@@ -494,6 +498,10 @@
         <div class="input-group">
           <label>Phone Number</label>
           <input type="tel" id="edit-p-phone" required>
+        </div>
+        <div class="input-group">
+          <label>Join Date</label>
+          <input type="date" id="edit-p-join-date" required>
         </div>
         <button type="submit" class="m-btn btn-primary" id="edit-p-submit-btn" style="background: var(--brand-accent); box-shadow: 0 8px 20px rgba(6, 95, 212, 0.25);">Save Changes</button>
       </form>
@@ -1334,7 +1342,7 @@
         
         // Validation Rule 1: Same as Original = Valid
         if (inputVal === originalId) {
-            icon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>'; 
+            icon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>'; 
             icon.className = 'validation-icon valid';
             btn.disabled = false;
             return;
@@ -1391,6 +1399,22 @@
         document.getElementById('edit-p-name').value = userToEdit.name || '';
         document.getElementById('edit-p-phone').value = userToEdit.phone || '';
         
+        // --- Safely Extract and Format joinedAt Date ---
+        let formattedDate = "";
+        if (userToEdit.joinedAt) {
+            let jDate = userToEdit.joinedAt;
+            // Handle Firestore Timestamps
+            if (typeof jDate.toDate === 'function') {
+                jDate = jDate.toDate();
+            } else if (!(jDate instanceof Date)) {
+                jDate = new Date(jDate);
+            }
+            
+            // Output to native YYYY-MM-DD reliably avoiding UTC off-by-one errors
+            formattedDate = `${jDate.getFullYear()}-${String(jDate.getMonth() + 1).padStart(2, '0')}-${String(jDate.getDate()).padStart(2, '0')}`;
+        }
+        document.getElementById('edit-p-join-date').value = formattedDate;
+
         // Reset validation UI defaults
         const icon = document.getElementById('edit-p-id-icon');
         icon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>';
@@ -1411,6 +1435,10 @@
             const newName = document.getElementById('edit-p-name').value;
             const newPhone = document.getElementById('edit-p-phone').value;
             
+            // Extract and construct standard Javascript Date for Database
+            const newJoinDateStr = document.getElementById('edit-p-join-date').value;
+            const newJoinDateObj = new Date(newJoinDateStr);
+            
             let userToEdit = allUsersCache.find(u => u && u.id === originalId);
             if(!userToEdit) throw new Error("Participant profile out of sync. Please reload.");
 
@@ -1421,9 +1449,9 @@
                 console.log(`Executing Deep Migration: ${originalId} -> ${newId}`);
                 const batch = writeBatch(db);
                 
-                // 1. Clone User Document to New ID
+                // 1. Clone User Document to New ID and append the new joinedAt
                 const newUserRef = doc(db, "users", newId);
-                let newUserData = { ...userToEdit, name: newName, phone: newPhone };
+                let newUserData = { ...userToEdit, name: newName, phone: newPhone, joinedAt: newJoinDateObj };
                 delete newUserData.id; 
                 batch.set(newUserRef, newUserData);
                 
@@ -1485,17 +1513,19 @@
                 
             } else {
                 // ============================================
-                // STANDARD PROFILE UPDATE (Name/Phone Only)
+                // STANDARD PROFILE UPDATE (Name, Phone, Join Date)
                 // ============================================
                 await updateDoc(doc(db, "users", originalId), {
                     name: newName,
-                    phone: newPhone
+                    phone: newPhone,
+                    joinedAt: newJoinDateObj
                 });
                 
                 const userIndex = allUsersCache.findIndex(u => u && u.id === originalId);
                 if(userIndex > -1) {
                     allUsersCache[userIndex].name = newName;
                     allUsersCache[userIndex].phone = newPhone;
+                    allUsersCache[userIndex].joinedAt = newJoinDateObj; // Live cache update triggers engine reload
                 }
                 
                 // Sync the name change inside Group Snapshots to keep dashboards accurate
