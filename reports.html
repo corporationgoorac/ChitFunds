@@ -1185,7 +1185,8 @@
     // ==========================================
 
     let activeActionState = {};
-
+    let pendingUndoState = {};
+    
     window.initiateSettleFull = function(month, targetAmount) {
         activeActionState = { action: 'settle_full', month, amount: targetAmount };
         document.getElementById('confirm-pay-title').innerText = `Settle Month ${month}`;
