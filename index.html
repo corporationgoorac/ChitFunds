@@ -26,6 +26,8 @@
       --pending-bg: #FFF8E5;
       --pending-txt: #F5A623;
       --danger-txt: #FA383E;
+      --partial-bg: #e6f0fa;
+      --partial-txt: #065fd4;
       
       --text-main: #050505;
       --text-muted: #65676B;
@@ -56,6 +58,8 @@
         --pending-bg: rgba(245, 166, 35, 0.15);
         --pending-txt: #E4A231;
         --danger-txt: #FC5C65;
+        --partial-bg: rgba(62, 166, 255, 0.15);
+        --partial-txt: #3ea6ff;
         
         --text-main: #E4E6EB;
         --text-muted: #B0B3B8;
@@ -178,7 +182,6 @@
     .btn-logout:hover { background: var(--modal-btn-hover); }
 
     /* Summary Stats Grid */
-    /* UPDATED: Changed grid to 3 equal columns for Total, Paid, and Remaining */
     .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px; }
     .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px 10px; box-shadow: var(--card-shadow); text-align: center; }
     .s-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;}
@@ -211,6 +214,7 @@
     .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;}
     .badge-paid { background: var(--success-bg); color: var(--success-txt); }
     .badge-pending { background: var(--pending-bg); color: var(--pending-txt); }
+    .badge-partial { background: var(--partial-bg); color: var(--partial-txt); }
 
     /* Footer */
     .site-footer { text-align: center; padding: 30px; color: var(--text-muted); font-size: 0.85rem; margin-top: auto; border-top: 1px solid var(--border); font-weight: 600;}
@@ -283,7 +287,6 @@
 
     <div id="ledger-wrapper" style="display: none;">
         
-        <!-- UPDATED: Replaced Amount box with Remaining Months box -->
         <div class="summary-grid">
             <div class="summary-box">
                 <div class="s-label">Total</div>
@@ -479,9 +482,14 @@
             
             // 2. Find User's specific snapshot inside this group to see how many months they paid
             let monthsPaid = 0;
+            let partialPaid = 0; // NEW: 0-Read Memory Extraction
+            
             if (groupData.memberSnapshot) {
                 const userState = groupData.memberSnapshot.find(s => s.id === currentUserData.id);
-                if(userState) monthsPaid = userState.monthsPaid;
+                if(userState) {
+                    monthsPaid = userState.monthsPaid || 0;
+                    partialPaid = userState.partialPaidAmount || 0;
+                }
             }
 
             // 3. Engine Variables
@@ -491,7 +499,7 @@
             const systemCurrentMonth = calculateCurrentSystemMonth(groupData.startDate);
             const expectedMonth = calculateParticipantExpectedMonth(currentUserData, groupData);
             
-            // 4. Update UI Headers (UPDATED: Added logic to calculate remaining months)
+            // 4. Update UI Headers
             document.getElementById("sum-months").innerText = totalMonths;
             document.getElementById("sum-paid").innerText = monthsPaid;
             
@@ -531,15 +539,32 @@
                 
                 // Determine Status
                 let statusHtml = "";
-                let amountHtml = `<span class="amount-text">₹${Number(dueAmount).toLocaleString('en-IN')}</span>`;
+                let amountHtml = "";
+                let highlightStyle = "";
                 
                 if (m <= monthsPaid) {
                     // Paid
                     statusHtml = `<span class="badge badge-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Paid</span>`;
+                    amountHtml = `<span class="amount-text">₹${Number(dueAmount).toLocaleString('en-IN')}</span>`;
+                } else if (m === monthsPaid + 1 && partialPaid > 0) {
+                    // NEW: Partial / In Progress Breakdown
+                    let balanceDue = dueAmount - partialPaid;
+                    statusHtml = `<span class="badge badge-partial">In Progress</span>`;
+                    amountHtml = `
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+                            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">TARGET: ₹${Number(dueAmount).toLocaleString('en-IN')}</div>
+                            <div style="font-size: 0.85rem; color: var(--success-txt); font-weight: 800;">PAID: ₹${Number(partialPaid).toLocaleString('en-IN')}</div>
+                            <div class="amount-text" style="color: var(--danger-txt); margin-top: 4px;">DUE: ₹${Number(balanceDue).toLocaleString('en-IN')}</div>
+                        </div>
+                    `;
+                    highlightStyle = "background: var(--surface-hover); border-left: 4px solid var(--brand-primary);";
                 } else if (m <= expectedMonth) {
                     // Missed / Currently Due
                     statusHtml = `<span class="badge badge-pending">Pending</span>`;
                     amountHtml = `<span class="amount-text" style="color:var(--danger-txt);">₹${Number(dueAmount).toLocaleString('en-IN')}</span>`;
+                    if (m === monthsPaid + 1) {
+                        highlightStyle = "background: var(--pending-bg);";
+                    }
                 } else {
                     // Future Month (Not yet due)
                     statusHtml = `<span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Upcoming</span>`;
@@ -548,10 +573,8 @@
 
                 const row = document.createElement("div");
                 row.className = "grid-table";
-                
-                // Highlight current active month slightly
-                if(m === expectedMonth && m > monthsPaid) {
-                    row.style.background = "var(--pending-bg)";
+                if (highlightStyle) {
+                    row.style.cssText = highlightStyle;
                 }
 
                 row.innerHTML = `
