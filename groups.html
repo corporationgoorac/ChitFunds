@@ -409,7 +409,7 @@
     <div class="list-container">
       <div class="search-wrapper">
         <span class="search-icon">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 14z"/></svg>
         </span>
         <input type="text" id="master-search" class="search-input" placeholder="Search Groups by ID or Name...">
       </div>
@@ -1924,15 +1924,11 @@
                 
                 await batch.commit();
                 
-                document.getElementById('txn-history-list').innerHTML = '<div class="loader"></div>';
                 closeModal();
+                await analyzeUserLedger(groupId);
                 
-                setTimeout(() => {
-                    showMessage("Funds Reduced", `Successfully reversed ₹${val.toLocaleString('en-IN')}`, "success");
-                    renderParticipantsList();
-                    renderPendingList();
-                    analyzeUserLedger(groupId);
-                }, 150);
+                renderParticipantsList();
+                renderPendingList();
             }
         } catch (err) {
             console.error(err); showMessage("Update Failed", err.message, "error");
@@ -1959,15 +1955,11 @@
             
             await batch.commit();
             
-            document.getElementById('txn-history-list').innerHTML = '<div class="loader"></div>';
             closeModal();
+            await analyzeUserLedger(groupId);
             
-            setTimeout(() => {
-                showMessage("Transaction Voided", `Partial payment cleared completely.`, "success");
-                renderParticipantsList();
-                renderPendingList();
-                analyzeUserLedger(groupId);
-            }, 150);
+            renderParticipantsList();
+            renderPendingList();
             
         } catch (err) {
             console.error(err); showMessage("Void Failed", err.message, "error");
@@ -2004,15 +1996,11 @@
             
             await batch.commit();
 
-            document.getElementById('txn-history-list').innerHTML = '<div class="loader"></div>';
             closeModal();
+            await analyzeUserLedger(groupId);
             
-            setTimeout(() => {
-                showMessage("Payment Reversed", `Month ${pendingUndoState.month} payment was successfully deleted.`, "success");
-                renderParticipantsList();
-                renderPendingList();
-                analyzeUserLedger(groupId);
-            }, 150);
+            renderParticipantsList();
+            renderPendingList();
 
         } catch (err) {
             console.error(err);
