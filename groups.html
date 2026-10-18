@@ -178,6 +178,7 @@
       position: fixed; top: 0; right: 0; width: 100%; height: 100%;
       background-color: var(--bg-color); z-index: 100; transform: translateX(100%);
       transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column;
+      will-change: transform;
     }
     .modal.active { transform: translateX(0); }
     
@@ -270,6 +271,25 @@
     
     .t-row.paid { border-left: 4px solid var(--success-color); }
     .t-row.actionable { border: 2px solid var(--brand-accent); background: var(--brand-accent-light); transform: scale(1.02); box-shadow: 0 8px 20px rgba(6, 95, 212, 0.15); margin: 8px 0; z-index: 2; position: relative;}
+    
+    /* Expanded Partial Payment Card */
+    .t-row.partial-expanded {
+        flex-direction: column; align-items: flex-start;
+        border: 2px solid var(--brand-accent); background: var(--brand-accent-light);
+        box-shadow: 0 8px 20px rgba(6, 95, 212, 0.15); margin: 12px 0; padding: 20px;
+    }
+    .partial-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px dashed rgba(6, 95, 212, 0.3); padding-bottom: 12px;}
+    .partial-stats { display: flex; justify-content: space-between; width: 100%; font-size: 12px; font-weight: 800; color: var(--text-main); margin-bottom: 8px;}
+    .partial-progress-track { width: 100%; height: 8px; background: rgba(6, 95, 212, 0.2); border-radius: 4px; margin-bottom: 20px; overflow: hidden;}
+    .partial-progress-fill { height: 100%; background: var(--brand-accent); border-radius: 4px; transition: 0.3s; }
+    .partial-actions { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; width: 100%; }
+    .btn-partial-approve { background: var(--success-color); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 800; text-transform: uppercase; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(15, 157, 88, 0.3);}
+    .btn-partial-approve:active { transform: scale(0.95); }
+    .btn-partial-manage { background: var(--surface-color); color: var(--brand-accent); border: 2px solid var(--brand-accent); padding: 12px; border-radius: 12px; font-weight: 800; text-transform: uppercase; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(6, 95, 212, 0.1);}
+    .btn-partial-manage:active { transform: scale(0.95); background: var(--brand-accent-light); }
+    .btn-partial-undo { background: var(--danger-light); color: var(--danger-color); border: none; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
+    .btn-partial-undo:active { transform: scale(0.95); background: #f8d7da; }
+
     .t-row.overdue { border: 1px solid var(--warning-color); background: var(--warning-light); }
     .t-row.pending { opacity: 0.6; background: transparent; border-style: dashed; }
     
@@ -287,8 +307,11 @@
     .t-amt.a-action { color: var(--brand-accent); font-size: 20px; }
     .t-amt.a-warn { color: var(--warning-color); }
     
-    .btn-action-pay { background: var(--brand-accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 10px rgba(6, 95, 212, 0.3); transition: 0.2s;}
+    .btn-action-pay { background: var(--success-color); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 10px rgba(15, 157, 88, 0.3); transition: 0.2s; will-change: transform;}
     .btn-action-pay:active { transform: scale(0.95); }
+    
+    .t-actions-split { display: flex; gap: 8px; margin-top: 6px; }
+
     .btn-undo { background: var(--surface-hover); color: var(--danger-color); border: 1px solid var(--danger-light); padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.2s; display: flex; align-items: center; gap: 4px;}
     .btn-undo:active { background: var(--danger-light); }
     .section-divider { margin: 24px 0 16px 0; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; font-size: 14px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; }
@@ -304,9 +327,9 @@
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     /* System Alert Modals */
-    .center-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);}
+    .center-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.75); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; will-change: opacity;}
     .center-modal.active { opacity: 1; pointer-events: all; }
-    .mini-modal-content { background-color: var(--surface-color); width: 90%; max-width: 340px; border-radius: 24px; padding: 30px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid var(--border-color); text-align: center; }
+    .mini-modal-content { background-color: var(--surface-color); width: 90%; max-width: 340px; border-radius: 24px; padding: 30px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid var(--border-color); text-align: center; will-change: transform; }
     .center-modal.active .mini-modal-content { transform: scale(1); }
     .msg-icon { font-size: 48px; margin-bottom: 16px; }
     .mini-modal-title { font-size: 20px; font-weight: 800; margin: 0 0 12px 0; color: var(--text-main); }
@@ -314,6 +337,11 @@
     .mini-btn { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; width: 100%; background-color: var(--brand-accent); color: #fff;}
     .mini-btn-cancel { background-color: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); margin-top: 10px; }
     .mini-btn-danger { background-color: var(--danger-color); color: #fff; }
+
+    /* Extra Numeric Keypad Styling for Custom Amount Modals */
+    .numeric-input { width: 100%; font-size: 36px; font-weight: 800; color: var(--brand-accent); text-align: center; background: none; border: none; outline: none; padding: 10px 0; letter-spacing: -1px; margin-bottom: 16px; border-bottom: 2px solid var(--border-color);}
+    .numeric-input:focus { border-bottom-color: var(--brand-accent); }
+    .currency-prefix { position: absolute; left: 20px; top: 12px; font-size: 28px; font-weight: 800; color: var(--brand-accent); }
 
     /* GPay Style Overlay */
     .gpay-overlay {
@@ -525,14 +553,16 @@
     </div>
   </aside>
 
-  <!-- Confirm Payment Modal -->
+  <!-- Modals for Payment Engine (Hardware Back Button Supported via JS) -->
+
+  <!-- 1. Confirm FULL Payment Modal (For fresh unpaid months) -->
   <aside id="confirm-pay-modal" class="center-modal">
     <div class="mini-modal-content">
       <div class="msg-icon">
           <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--brand-accent)"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
       </div>
-      <h3 class="mini-modal-title">Confirm Payment</h3>
-      <p class="mini-modal-text" id="confirm-pay-text">Approve transaction?</p>
+      <h3 class="mini-modal-title" id="confirm-pay-title">Settle Month</h3>
+      <p class="mini-modal-text" id="confirm-pay-text">Approve full transaction?</p>
       <div style="display:flex; flex-direction:column; gap:12px;">
           <button class="mini-btn" id="execute-pay-btn">Approve Transaction</button>
           <button class="mini-btn mini-btn-cancel" onclick="closeModal()">Cancel</button>
@@ -540,7 +570,55 @@
     </div>
   </aside>
 
-  <!-- Undo Payment Modal -->
+  <!-- 2. Custom Fund Initializer Modal (When starting a partial month) -->
+  <aside id="custom-fund-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <h3 class="mini-modal-title">Enter Initial Fund</h3>
+      <p class="mini-modal-text" id="custom-fund-text">Target: ₹0</p>
+      <div style="position: relative;">
+          <span class="currency-prefix">₹</span>
+          <input type="number" id="custom-fund-input" class="numeric-input" placeholder="0" oninput="validateCustomInput()">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+          <button class="mini-btn" id="execute-custom-fund-btn" disabled>Add Fund</button>
+          <button class="mini-btn mini-btn-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 3. Manage Fund Modal (Add / Reduce existing partial amount) -->
+  <aside id="manage-fund-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <h3 class="mini-modal-title">Manage Partial Fund</h3>
+      <p class="mini-modal-text" id="manage-fund-text">Currently collected: ₹0</p>
+      <div style="position: relative;">
+          <span class="currency-prefix">₹</span>
+          <input type="number" id="manage-fund-input" class="numeric-input" placeholder="0" oninput="validateManageInput()">
+      </div>
+      <div style="display:flex; gap:12px; margin-bottom: 12px;">
+          <button class="mini-btn" style="flex: 1;" id="btn-add-fund" onclick="executeManageFund('add')" disabled>Add</button>
+          <button class="mini-btn mini-btn-danger" style="flex: 1;" id="btn-reduce-fund" onclick="executeManageFund('reduce')" disabled>Reduce</button>
+      </div>
+      <button class="mini-btn mini-btn-cancel" style="margin-top:0;" onclick="closeModal()">Cancel</button>
+    </div>
+  </aside>
+
+  <!-- 4. Undo Partial Payment Modal -->
+  <aside id="undo-partial-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div class="msg-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--danger-color)"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+      </div>
+      <h3 class="mini-modal-title">Void Transaction</h3>
+      <p class="mini-modal-text" id="undo-partial-text">Are you sure you want to completely void this partial payment and reset the month?</p>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+          <button class="mini-btn mini-btn-danger" id="execute-undo-partial-btn">Void Completely</button>
+          <button class="mini-btn mini-btn-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Standard Undo Payment Modal (For fully paid months) -->
   <aside id="undo-pay-modal" class="center-modal">
     <div class="mini-modal-content">
       <div class="msg-icon">
@@ -582,7 +660,7 @@
   <script type="module">
     import { auth, db } from './config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
-    import { collection, query, orderBy, limit, getDocs, doc, getDoc, where, startAfter, documentId, writeBatch, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+    import { collection, query, orderBy, limit, getDocs, doc, getDoc, where, startAfter, documentId, writeBatch, increment, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
     onAuthStateChanged(auth, (user) => { if (!user) window.location.replace('login.html'); });
 
@@ -596,50 +674,50 @@
         } catch(e) { }
     };
 
-    // --- FLAWLESS MODAL NAVIGATION (Hash Based) ---
+    // --- FLAWLESS MODAL NAVIGATION (HARDWARE BACK BUTTON SUPPORTED) ---
     window.openModal = function(modalId) {
-      haptic('light');
-      document.getElementById(modalId).classList.add('active');
-      if (window.location.hash !== `#${modalId}`) {
-          history.pushState({ id: modalId }, '', `#${modalId}`);
-      }
+        if (window.history.state && window.history.state.id === modalId) {
+            document.getElementById(modalId).classList.add('active');
+            return;
+        }
+        haptic('light');
+        document.getElementById(modalId).classList.add('active');
+        history.pushState({ id: modalId }, '', `#${modalId}`);
     };
     
-    window.closeModal = function() {
-      haptic('light');
-      if (window.location.hash) {
-          history.back(); 
-      } else {
-          closeAllModals();
-      }
-    };
-    
-    function closeAllModals() { 
-      document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-      document.querySelectorAll('.center-modal').forEach(m => m.classList.remove('active'));
-    }
-    
-    // UPDATED POPSTATE HANDLER - PREVENTS SLIDE-IN BUG
     window.addEventListener('popstate', (e) => {
-       if(e.state && e.state.id) {
-           const targetId = e.state.id;
-           // Remove active class ONLY from modals that are not the current history target
-           document.querySelectorAll('.modal, .center-modal').forEach(m => {
-               if (m.id !== targetId) {
-                   m.classList.remove('active');
-               }
-           });
-           
-           // Ensure target modal is active (prevents it from re-animating if it was already active underneath)
-           const targetModal = document.getElementById(targetId);
-           if(targetModal && !targetModal.classList.contains('active')) {
-               targetModal.classList.add('active');
-           }
-       } else {
-           // If there is no history state, we are at the base dashboard
-           closeAllModals();
-       }
+        const targetId = e.state ? e.state.id : (window.location.hash ? window.location.hash.substring(1) : null);
+        
+        document.querySelectorAll('.modal, .center-modal').forEach(m => {
+            if (targetId && m.id === targetId) {
+                m.classList.add('active');
+            } else if (m.id === 'user-detail-modal' && targetId !== 'user-detail-modal' && targetId) {
+                // Keep background open
+            } else {
+                if (m.id === 'user-detail-modal' && targetId && document.getElementById(targetId).classList.contains('center-modal')) {
+                } else {
+                    m.classList.remove('active');
+                }
+            }
+        });
     });
+
+    window.closeModal = function() {
+        haptic('light');
+        if (window.history.state && window.history.state.id) {
+            history.back(); 
+        } else {
+            document.querySelectorAll('.modal, .center-modal').forEach(m => m.classList.remove('active'));
+        }
+    };
+    
+    window.closeMessageModal = function() {
+        if (window.history.state && window.history.state.id === 'message-modal') {
+            history.back();
+        } else {
+            document.getElementById('message-modal').classList.remove('active');
+        }
+    };
 
     // --- CUSTOM UI ALERTS ---
     window.showMessage = function(title, body, type = 'success') {
@@ -654,12 +732,11 @@
         iconContainer.innerHTML = '<svg viewBox="0 0 24 24" width="48" height="48" fill="var(--warning-color)"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
         haptic('heavy');
       }
-      
-      document.getElementById('message-modal').classList.add('active');
+      openModal('message-modal'); 
     };
-    window.closeMessageModal = function() {
-      document.getElementById('message-modal').classList.remove('active');
-    };
+
+    const phoneIconSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>`;
+    const locIconSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
 
     // --- GLOBAL CACHE & SEARCH ENGINE ---
     let allGroupsCache = []; 
@@ -1089,6 +1166,7 @@
 
             users.forEach(u => {
                 const snapData = snapshotMap.get(u.id) || { monthsPaid: 0 };
+                const partialPaid = snapData.partialPaidAmount || 0;
                 const expectedUserMonth = calculateParticipantExpectedMonth(u, activeGroupData);
                 
                 if(snapData.monthsPaid < expectedUserMonth) {
@@ -1097,14 +1175,27 @@
                     let totalOwed = 0;
                     let pendingMonthsList = []; 
                     
-                    for(let m = snapData.monthsPaid + 1; m <= expectedUserMonth; m++) {
-                        let dueAmount = calculateDueForMonth(m, startAmt, schedule);
-                        totalOwed += dueAmount;
-                        pendingMonthsList.push({ month: m, amount: dueAmount });
+                    // Month right after what they fully paid might have a partial payment
+                    let actionableMonth = snapData.monthsPaid + 1;
+                    if (actionableMonth <= expectedUserMonth) {
+                        let currentDue = calculateDueForMonth(actionableMonth, startAmt, schedule);
+                        let remainingForActionable = currentDue - partialPaid;
+                        totalOwed += remainingForActionable;
+                        pendingMonthsList.push({ month: actionableMonth, amount: remainingForActionable, isPartial: partialPaid > 0 });
+                        
+                        // Remaining fully unpaid months
+                        for(let m = actionableMonth + 1; m <= expectedUserMonth; m++) {
+                            let dueAmount = calculateDueForMonth(m, startAmt, schedule);
+                            totalOwed += dueAmount;
+                            pendingMonthsList.push({ month: m, amount: dueAmount, isPartial: false });
+                        }
                     }
 
                     const initial = u.name ? u.name.charAt(0).toUpperCase() : '?';
-                    const missedCount = expectedUserMonth - snapData.monthsPaid;
+                    let missedCountText = `${expectedUserMonth - snapData.monthsPaid} Month(s) Behind`;
+                    if (partialPaid > 0 && (expectedUserMonth - snapData.monthsPaid === 1)) {
+                         missedCountText = `Partial Payment Due`;
+                    }
                     
                     const callButtonHTML = u.phone 
                         ? `<a href="tel:${u.phone}" class="call-btn" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg></a>`
@@ -1114,7 +1205,8 @@
                     if (u.phone) {
                         let breakdownText = "";
                         pendingMonthsList.forEach(pm => {
-                            breakdownText += `- Month ${pm.month}: ₹${pm.amount}\n`;
+                            if(pm.isPartial) breakdownText += `- Month ${pm.month} (Remaining): ₹${pm.amount}\n`;
+                            else breakdownText += `- Month ${pm.month}: ₹${pm.amount}\n`;
                         });
 
                         const msg = `*Meena Chitfunds*\nGroup: ${activeGroupData.groupName.toUpperCase()} (@${activeGroupData.id})\nTimeline: Month ${expectedUserMonth} of ${activeGroupData.totalMonths || 0}\n\nDear ${(u.name || 'Participant').toUpperCase()},\nYou have pending payments for the following months:\n\n${breakdownText}\n*Total Pending: ₹${totalOwed}*\n\nKindly clear your dues at the earliest.`;
@@ -1135,7 +1227,7 @@
                                 <div class="u-info">
                                     <h3 style="color: var(--danger-color);">${u.name || 'Unnamed'}</h3>
                                     <div class="u-meta">@${u.id}</div>
-                                    <div class="d-months">${missedCount} Month(s) Behind</div>
+                                    <div class="d-months">${missedCountText}</div>
                                 </div>
                             </div>
                             <div style="text-align: right; flex-shrink:0;">
@@ -1217,6 +1309,16 @@
         document.getElementById('md-u-status').innerText = "Syncing Engine...";
         
         try {
+            const groupSnap = await getDoc(doc(db, "groups", groupId));
+            if(!groupSnap.exists()) throw new Error("Group missing");
+            const groupData = groupSnap.data();
+            activeGroupDataCache = groupData;
+            activeGroupDataCache.id = groupId;
+
+            const userSnapData = (groupData.memberSnapshot || []).find(u => u && u.id === activeViewedUser.id) || {};
+            const snapshotMonthsPaid = userSnapData.monthsPaid || 0;
+            const snapshotPartialPaid = userSnapData.partialPaidAmount || 0;
+
             let txns = [];
             try {
                 const qTxn = query(collection(db, "transactions"), 
@@ -1251,29 +1353,27 @@
             
             let advanceAmt = activeViewedUser?.advanceAmount ? Number(activeViewedUser.advanceAmount) : 0;
             let totalPaid = advanceAmt; 
-            let maxMonthPaid = 0;
             
             txns.forEach(tData => {
                 if (tData.type === "Advance Payment") return; 
                 totalPaid += tData.amount;
-                if(tData.monthAttributed > maxMonthPaid) maxMonthPaid = tData.monthAttributed;
             });
 
-            const expectedMonth = calculateParticipantExpectedMonth(activeViewedUser, activeGroupData);
-            const startAmt = activeGroupData.startAmount || 0;
-            const schedule = activeGroupData.installmentSchedule || [];
-            const totalGroupMonths = activeGroupData.totalMonths || 0;
+            const expectedMonth = calculateParticipantExpectedMonth(activeViewedUser, groupData);
+            const startAmt = groupData.startAmount || 0;
+            const schedule = groupData.installmentSchedule || [];
+            const totalGroupMonths = groupData.totalMonths || 0;
             
             let pendingTotal = 0;
-            let pendingMonthsList = [];
             let evalMonth = expectedMonth;
             if (totalGroupMonths > 0 && evalMonth > totalGroupMonths) evalMonth = totalGroupMonths;
             
-            if (maxMonthPaid < evalMonth) {
-                for (let m = maxMonthPaid + 1; m <= evalMonth; m++) {
-                    const dueForM = calculateDueForMonth(m, startAmt, schedule);
-                    pendingTotal += dueForM;
-                    pendingMonthsList.push({ month: m, amount: dueForM });
+            let mathCurrentMonth = snapshotMonthsPaid + 1;
+            if (mathCurrentMonth <= evalMonth) {
+                let currentDue = calculateDueForMonth(mathCurrentMonth, startAmt, schedule);
+                pendingTotal += (currentDue - snapshotPartialPaid);
+                for (let m = mathCurrentMonth + 1; m <= evalMonth; m++) {
+                    pendingTotal += calculateDueForMonth(m, startAmt, schedule);
                 }
             }
 
@@ -1284,66 +1384,82 @@
                 let dueForM = calculateDueForMonth(m, startAmt, schedule);
                 let txnForThisMonth = txns.find(t => t.monthAttributed === m && t.type !== "Advance Payment");
                 
-                if (m <= maxMonthPaid) {
-                    if (txnForThisMonth) {
-                        let dateStr = "Paid";
-                        if(txnForThisMonth.date && typeof txnForThisMonth.date.toDate === 'function') {
-                            dateStr = txnForThisMonth.date.toDate().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-                        }
-                        let undoHtml = '';
-                        if (m === maxMonthPaid) {
-                            undoHtml = `<button class="btn-undo" onclick="initiateUndoPay('${txnForThisMonth.id}', ${m}, ${txnForThisMonth.amount})"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg> Undo</button>`;
-                        }
+                if (m <= snapshotMonthsPaid) {
+                    let dateStr = "Paid";
+                    if(txnForThisMonth && txnForThisMonth.date && typeof txnForThisMonth.date.toDate === 'function') {
+                        dateStr = txnForThisMonth.date.toDate().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                    }
+                    
+                    let undoHtml = '';
+                    if (m === snapshotMonthsPaid && snapshotPartialPaid === 0 && txnForThisMonth) {
+                        undoHtml = `<button class="btn-undo" onclick="initiateUndoPay('${txnForThisMonth.id}', ${m}, ${txnForThisMonth.amount})"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg> Undo</button>`;
+                    }
+
+                    timelineHtml += `
+                    <div class="t-row paid">
+                        <div class="t-left">
+                            <div class="t-month">Month ${m}</div>
+                            <div class="t-status s-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> ${dateStr}</div>
+                        </div>
+                        <div class="t-right">
+                            <div class="t-amt a-paid">₹${txnForThisMonth ? Number(txnForThisMonth.amount).toLocaleString('en-IN') : Number(dueForM).toLocaleString('en-IN')}</div>
+                            ${undoHtml}
+                        </div>
+                    </div>`;
+
+                } else if (m === snapshotMonthsPaid + 1) {
+                    if (snapshotPartialPaid > 0) {
+                        let shortage = dueForM - snapshotPartialPaid;
+                        let pct = Math.min((snapshotPartialPaid / dueForM) * 100, 100);
+                        let safeTxnId = txnForThisMonth ? txnForThisMonth.id : '';
+
                         timelineHtml += `
-                        <div class="t-row paid">
-                            <div class="t-left">
+                        <div class="t-row partial-expanded" id="active-pay-row">
+                            <div class="partial-header">
                                 <div class="t-month">Month ${m}</div>
-                                <div class="t-status s-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> ${dateStr}</div>
+                                <div class="u-meta" style="margin:0;">In Progress</div>
                             </div>
-                            <div class="t-right">
-                                <div class="t-amt a-paid">₹${Number(txnForThisMonth.amount).toLocaleString('en-IN')}</div>
-                                ${undoHtml}
+                            <div class="partial-stats">
+                                <div>Target: ₹${dueForM.toLocaleString('en-IN')}</div>
+                                <div>Collected: ₹${snapshotPartialPaid.toLocaleString('en-IN')}</div>
+                                <div style="color: var(--warning-color);">Pending: ₹${shortage.toLocaleString('en-IN')}</div>
+                            </div>
+                            <div class="partial-progress-track">
+                                <div class="partial-progress-fill" style="width: ${pct}%;"></div>
+                            </div>
+                            <div class="partial-actions">
+                                <button class="btn-partial-approve" onclick="initiateApproveAllPartial(${m}, ${shortage}, '${safeTxnId}')">Approve All (₹${shortage.toLocaleString('en-IN')})</button>
+                                <button class="btn-partial-manage" onclick="initiateManageFund(${m}, ${snapshotPartialPaid}, ${dueForM}, '${safeTxnId}')">Manage Funds</button>
+                                <button class="btn-partial-undo" onclick="initiateUndoPartial(${m}, ${snapshotPartialPaid}, '${safeTxnId}')"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
                             </div>
                         </div>`;
                     } else {
+                        let isOverdue = m <= evalMonth;
+                        let statusHtml = isOverdue 
+                            ? `<div class="t-status s-warn"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C22 2 22 12 22 12s0 10-10 10S2 22 2 12 2 2 12 2zm-1 15h2v2h-2v-2zm0-10h2v8h-2V7z"/></svg> Pending</div>`
+                            : `<div class="t-status s-action"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> Due Now</div>`;
+                        
+                        let rowStyle = isOverdue ? "border-color: var(--warning-color); background: var(--warning-light);" : "";
+                        let textStyle = isOverdue ? "color: var(--warning-color);" : "";
+
                         timelineHtml += `
-                        <div class="t-row paid">
+                        <div class="t-row actionable" id="active-pay-row" style="${rowStyle}">
                             <div class="t-left">
                                 <div class="t-month">Month ${m}</div>
-                                <div class="t-status s-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Paid</div>
+                                ${statusHtml}
                             </div>
                             <div class="t-right">
-                                <div class="t-amt a-paid">₹${Number(dueForM).toLocaleString('en-IN')}</div>
+                                <div class="t-amt a-action" style="${textStyle}">₹${Number(dueForM).toLocaleString('en-IN')}</div>
+                                <div class="t-actions-split" style="align-items: center;">
+                                    <button class="u-action-btn edit" style="margin-right: 6px; padding: 6px;" onclick="initiateCustomFund(${m}, ${dueForM})" title="Custom Amount">
+                                        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                                    </button>
+                                    <button class="btn-action-pay" onclick="initiateSettleFull(${m}, ${dueForM})">Pay Now</button>
+                                </div>
                             </div>
                         </div>`;
                     }
-                } else if (m === maxMonthPaid + 1) {
-                    if (m <= evalMonth) {
-                        timelineHtml += `
-                        <div class="t-row actionable" id="active-pay-row" style="border-color: var(--warning-color); background: var(--warning-light);">
-                            <div class="t-left">
-                                <div class="t-month">Month ${m}</div>
-                                <div class="t-status s-warn"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C22 2 22 12 22 12s0 10-10 10S2 22 2 12 2 2 12 2zm-1 15h2v2h-2v-2zm0-10h2v8h-2V7z"/></svg> Pending</div>
-                            </div>
-                            <div class="t-right">
-                                <div class="t-amt a-action" style="color: var(--warning-color);">₹${Number(dueForM).toLocaleString('en-IN')}</div>
-                                <button class="btn-action-pay" onclick="initiateDirectPay(${m}, ${dueForM})">Pay Now</button>
-                            </div>
-                        </div>`;
-                    } else {
-                        timelineHtml += `
-                        <div class="t-row actionable" id="active-pay-row">
-                            <div class="t-left">
-                                <div class="t-month">Month ${m}</div>
-                                <div class="t-status s-action"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> Due Now</div>
-                            </div>
-                            <div class="t-right">
-                                <div class="t-amt a-action">₹${Number(dueForM).toLocaleString('en-IN')}</div>
-                                <button class="btn-action-pay" onclick="initiateDirectPay(${m}, ${dueForM})">Pay Now</button>
-                            </div>
-                        </div>`;
-                    }
-                } else if (m > maxMonthPaid + 1 && m <= evalMonth) {
+                } else if (m > snapshotMonthsPaid + 1 && m <= evalMonth) {
                     timelineHtml += `
                     <div class="t-row overdue">
                         <div class="t-left">
@@ -1383,18 +1499,18 @@
             
             timelineList.innerHTML = timelineHtml;
 
-            const arrears = evalMonth - maxMonthPaid;
+            const arrears = evalMonth - snapshotMonthsPaid;
             const arrearsWarning = document.getElementById('arrears-warning');
-            if (arrears > 0) {
+            if (arrears > 1 || (arrears === 1 && snapshotPartialPaid === 0)) {
                 arrearsWarning.style.display = 'block';
-                arrearsWarning.innerText = `⚠️ Participant is ${arrears} month(s) behind schedule.`;
+                arrearsWarning.innerText = `⚠️ Participant is ${Math.floor(arrears)} month(s) behind schedule.`;
             } else {
                 arrearsWarning.style.display = 'none';
             }
 
             document.getElementById('md-u-paid').innerText = `₹${Number(totalPaid).toLocaleString('en-IN')}`;
-            let progressPercent = totalGroupMonths > 0 ? (maxMonthPaid / totalGroupMonths) * 100 : 0;
-            document.getElementById('md-u-progress-text').innerText = `${maxMonthPaid} / ${totalGroupMonths} Months`;
+            let progressPercent = totalGroupMonths > 0 ? (snapshotMonthsPaid / totalGroupMonths) * 100 : 0;
+            document.getElementById('md-u-progress-text').innerText = `${snapshotMonthsPaid} / ${totalGroupMonths} Months`;
             document.getElementById('md-u-progress-bar').style.width = `${progressPercent}%`;
             
             const pendingUI = document.getElementById('md-u-pending');
@@ -1408,12 +1524,19 @@
                 
                 if (activeViewedUser.phone) {
                     const waContainer = document.getElementById('whatsapp-container');
-                    let breakdownText = "";
-                    pendingMonthsList.forEach(pm => { breakdownText += `- Month ${pm.month}: ₹${pm.amount}\n`; });
-                    const msg = `*Meena Chitfunds*\nGroup: ${activeGroupData.groupName.toUpperCase()} (@${groupId})\nTimeline: Month ${evalMonth} of ${totalGroupMonths}\n\nDear ${activeViewedUser.name.toUpperCase()},\nYou have pending payments for the following months:\n\n${breakdownText}\n*Total Pending: ₹${pendingTotal}*\n\nKindly clear your dues at the earliest.`;
-                    const safePhone = activeViewedUser.phone.replace(/\D/g,'');
-                    const waLink = `https://wa.me/${safePhone}?text=${encodeURIComponent(msg)}`;
                     
+                    const safePhone = activeViewedUser.phone.replace(/\D/g, '');
+                    const waNumber = safePhone.length === 10 ? `91${safePhone}` : safePhone;
+                    
+                    let msg = `*Meena Chitfunds*\nGroup: ${groupData.groupName.toUpperCase()} (@${groupId})\nTimeline: Month ${evalMonth} of ${totalGroupMonths}\n\nDear ${activeViewedUser.name.toUpperCase()},\n\n`;
+                    
+                    if (snapshotPartialPaid > 0 && snapshotMonthsPaid + 1 === evalMonth) {
+                         msg += `Month ${evalMonth} Target: ₹${calculateDueForMonth(evalMonth, startAmt, schedule)}\nReceived: ₹${snapshotPartialPaid}\n*Pending Balance: ₹${pendingTotal}*\n\nKindly clear your partial dues.`;
+                    } else {
+                         msg += `You have pending payments.\n*Total Pending: ₹${pendingTotal}*\n\nKindly clear your dues at the earliest.`;
+                    }
+
+                    const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
                     waContainer.innerHTML = `
                         <a href="${waLink}" target="_blank" class="m-btn btn-whatsapp" style="text-decoration: none;">
                             <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.422C7.145 7.63 6 8.7 6 10.923c0 2.222 1.98 4.372 2.254 4.743.274.371 3.235 4.939 7.838 6.936 1.103.479 1.963.765 2.633.978 1.107.351 2.115.301 2.912.182.894-.134 2.748-1.122 3.134-2.207.386-1.085.386-2.015.271-2.208-.115-.192-.413-.301-.71-.45zM12.002 22.002h-.006c-1.666 0-3.294-.447-4.726-1.293l-.339-.2-3.513.921.936-3.424-.22-.349a9.92 9.92 0 01-1.517-5.328c0-5.513 4.49-9.998 10.013-9.998 2.671 0 5.182 1.042 7.07 2.932 1.889 1.888 2.93 4.398 2.931 7.069 0 5.514-4.49 10.003-10.01 10.003z"/></svg>
@@ -1439,121 +1562,374 @@
         }
     }
 
-    let pendingPaymentState = null;
-    window.initiateDirectPay = function(month, amount) {
-        haptic('light');
-        pendingPaymentState = { month, amount };
-        document.getElementById('confirm-pay-text').innerHTML = `Approve transaction of <b>₹${amount.toLocaleString('en-IN')}</b> for <b>Month ${month}</b>?`;
+    // ==========================================
+    // PAYMENT ACTION ENGINES
+    // ==========================================
+
+    let activeActionState = {};
+    let pendingUndoState = {};
+    
+    window.initiateSettleFull = function(month, targetAmount) {
+        activeActionState = { action: 'settle_full', month, amount: targetAmount };
+        document.getElementById('confirm-pay-title').innerText = `Settle Month ${month}`;
+        document.getElementById('confirm-pay-text').innerHTML = `Approve full transaction of <b>₹${targetAmount.toLocaleString('en-IN')}</b>?`;
         openModal('confirm-pay-modal');
     };
 
-    document.getElementById('execute-pay-btn').addEventListener('click', async () => {
-        if(!pendingPaymentState || !activeGroupData || !activeViewedUser) return;
-        const btn = document.getElementById('execute-pay-btn');
-        btn.innerText = "Processing..."; btn.disabled = true;
+    window.initiateCustomFund = function(month, targetAmount) {
+        activeActionState = { action: 'custom_fund', month, targetAmount };
+        document.getElementById('custom-fund-text').innerText = `Target: ₹${targetAmount.toLocaleString('en-IN')}`;
+        document.getElementById('custom-fund-input').value = '';
+        validateCustomInput();
+        openModal('custom-fund-modal');
+    };
 
-        try {
-            const batch = writeBatch(db);
-            const groupId = activeGroupData.id;
+    window.validateCustomInput = function() {
+        const val = Number(document.getElementById('custom-fund-input').value);
+        const btn = document.getElementById('execute-custom-fund-btn');
+        if (val > 0 && val < activeActionState.targetAmount) {
+            btn.disabled = false;
+            btn.innerText = `Add ₹${val.toLocaleString('en-IN')}`;
+        } else if (val >= activeActionState.targetAmount) {
+             btn.disabled = false;
+             btn.innerText = `Pay Now (₹${activeActionState.targetAmount.toLocaleString('en-IN')})`;
+        } else {
+            btn.disabled = true;
+            btn.innerText = "Add Fund";
+        }
+    };
 
-            const newTxRef = doc(collection(db, "transactions"));
-            batch.set(newTxRef, {
-                subscriberId: activeViewedUser.id,
-                subscriberName: activeViewedUser.name || "Unnamed",
-                groupId: groupId,
-                amount: pendingPaymentState.amount,
-                monthAttributed: pendingPaymentState.month,
-                type: "Monthly Installment",
-                date: serverTimestamp()
-            });
+    window.initiateApproveAllPartial = function(month, remaining, txnId) {
+        if (!txnId) return showMessage("Error", "Transaction record missing. Please reload.", "error");
+        activeActionState = { action: 'approve_all_partial', month, remaining, txnId };
+        document.getElementById('confirm-pay-title').innerText = `Approve Remaining`;
+        document.getElementById('confirm-pay-text').innerHTML = `Approve final transaction of <b>₹${remaining.toLocaleString('en-IN')}</b> to settle Month ${month}?`;
+        openModal('confirm-pay-modal');
+    };
 
-            const groupRef = doc(db, "groups", groupId);
-            let snapshotArray = activeGroupData.memberSnapshot || [];
-            let userSnapIndex = snapshotArray.findIndex(m => m && m.id === activeViewedUser.id);
-            
-            if(userSnapIndex > -1) {
-                snapshotArray[userSnapIndex].monthsPaid = (snapshotArray[userSnapIndex].monthsPaid || 0) + 1;
+    window.initiateManageFund = function(month, currentPaid, targetAmount, txnId) {
+        if (!txnId) return showMessage("Error", "Transaction record missing. Please reload.", "error");
+        activeActionState = { action: 'manage_fund', month, currentPaid, targetAmount, txnId };
+        document.getElementById('manage-fund-text').innerHTML = `Currently collected: <b>₹${currentPaid.toLocaleString('en-IN')}</b>`;
+        document.getElementById('manage-fund-input').value = '';
+        validateManageInput();
+        openModal('manage-fund-modal');
+    };
+
+    window.validateManageInput = function() {
+        const val = Number(document.getElementById('manage-fund-input').value);
+        const btnAdd = document.getElementById('btn-add-fund');
+        const btnReduce = document.getElementById('btn-reduce-fund');
+        
+        if (val > 0) {
+            let maxAdd = activeActionState.targetAmount - activeActionState.currentPaid;
+            if (val <= maxAdd) {
+                btnAdd.disabled = false;
+                btnAdd.innerText = val === maxAdd ? 'Pay Now' : `Add ₹${val}`;
             } else {
-                snapshotArray.push({ id: activeViewedUser.id, name: activeViewedUser.name, monthsPaid: pendingPaymentState.month, balanceDue: 0, hasAdvance: false });
+                btnAdd.disabled = true;
+                btnAdd.innerText = 'Exceeds Target';
             }
-
-            batch.update(groupRef, { memberSnapshot: snapshotArray, totalPotCollected: increment(pendingPaymentState.amount) });
-            await batch.commit();
-
-            haptic('success');
-            document.getElementById('gpay-amount-text').innerText = `₹${pendingPaymentState.amount.toLocaleString('en-IN')}`;
             
-            // 0-READ BACKGROUND UI REFRESH
-            renderParticipantsList();
-            renderPendingList();
+            if (val <= activeActionState.currentPaid) {
+                btnReduce.disabled = false;
+                btnReduce.innerText = val === activeActionState.currentPaid ? 'Void Entirely' : `Reduce ₹${val}`;
+            } else {
+                btnReduce.disabled = true;
+                btnReduce.innerText = 'Exceeds Paid';
+            }
+        } else {
+            btnAdd.disabled = true; btnAdd.innerText = 'Add';
+            btnReduce.disabled = true; btnReduce.innerText = 'Reduce';
+        }
+    };
+
+    window.initiateUndoPartial = function(month, currentPaid, txnId) {
+        if (!txnId) return showMessage("Error", "Transaction record missing. Please reload.", "error");
+        activeActionState = { action: 'undo_partial', month, txnId, amount: currentPaid };
+        document.getElementById('undo-partial-text').innerHTML = `Are you sure you want to completely void this <b>₹${currentPaid.toLocaleString('en-IN')}</b> partial payment and reset Month ${month}?`;
+        openModal('undo-partial-modal');
+    };
+
+    // ==========================================
+    // FIREBASE TRANSACTION EXECUTION LOGIC
+    // ==========================================
+
+    function applyGroupModifications(gData, activeUser, modifications) {
+        let arr = gData.memberSnapshot || [];
+        let idx = arr.findIndex(u => u && u.id === activeUser.id);
+        
+        if (idx === -1) {
+            arr.push({ id: activeUser.id, name: activeUser.name, monthsPaid: 0 });
+            idx = arr.length - 1;
+        }
+
+        if (modifications.incrementMonths !== undefined) {
+            arr[idx].monthsPaid = (arr[idx].monthsPaid || 0) + modifications.incrementMonths;
+        }
+        if (modifications.setPartial !== undefined) {
+            arr[idx].partialPaidAmount = modifications.setPartial;
+        }
+        if (modifications.incrementPartial !== undefined) {
+            arr[idx].partialPaidAmount = (arr[idx].partialPaidAmount || 0) + modifications.incrementPartial;
+        }
+        if (modifications.deletePartial) {
+            delete arr[idx].partialPaidAmount;
+        }
+        return arr;
+    }
+
+    async function handleGpaySuccess(amount, groupId) {
+        haptic('success');
+        document.getElementById('gpay-amount-text').innerText = `₹${amount.toLocaleString('en-IN')}`;
+        
+        if (window.history.state && window.history.state.id) { history.back(); }
+        else { closeModal(); }
+
+        const overlay = document.getElementById('gpay-overlay');
+        overlay.classList.add('active');
+        setTimeout(() => {
+            overlay.classList.remove('active');
+            analyzeUserLedger(groupId); 
+        }, 2200);
+    }
+
+    document.getElementById('execute-pay-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('execute-pay-btn');
+        btn.disabled = true; btn.innerText = "Processing...";
+        try {
+            const groupId = activeGroupDataCache.id;
             
-            closeModal(); 
-            const overlay = document.getElementById('gpay-overlay');
-            overlay.classList.add('active');
-
-            setTimeout(() => {
-                overlay.classList.remove('active');
-                analyzeUserLedger(groupId); 
-            }, 2500);
-
+            if (activeActionState.action === 'settle_full') {
+                await runTransaction(db, async (transaction) => {
+                    const groupRef = doc(db, "groups", groupId);
+                    const gSnap = await transaction.get(groupRef);
+                    if (!gSnap.exists()) throw new Error("Group missing");
+                    
+                    let gData = gSnap.data();
+                    let updatedArray = applyGroupModifications(gData, activeViewedUser, { incrementMonths: 1 });
+                    let currentPot = gData.totalPotCollected || 0;
+                    
+                    transaction.update(groupRef, {
+                        memberSnapshot: updatedArray,
+                        totalPotCollected: currentPot + activeActionState.amount
+                    });
+                    
+                    const newTxnRef = doc(collection(db, "transactions"));
+                    transaction.set(newTxnRef, {
+                        subscriberId: activeViewedUser.id, subscriberName: activeViewedUser.name,
+                        groupId: groupId, amount: activeActionState.amount, monthAttributed: activeActionState.month,
+                        type: "Monthly Installment", date: serverTimestamp()
+                    });
+                });
+                handleGpaySuccess(activeActionState.amount, groupId);
+                
+            } else if (activeActionState.action === 'approve_all_partial') {
+                await runTransaction(db, async (transaction) => {
+                    const groupRef = doc(db, "groups", groupId);
+                    const txnRef = doc(db, "transactions", activeActionState.txnId);
+                    
+                    const [gSnap, txnSnap] = await Promise.all([transaction.get(groupRef), transaction.get(txnRef)]);
+                    if (!gSnap.exists()) throw new Error("Group missing");
+                    if (!txnSnap.exists()) throw new Error("Transaction missing");
+                    
+                    let gData = gSnap.data();
+                    let updatedArray = applyGroupModifications(gData, activeViewedUser, { incrementMonths: 1, deletePartial: true });
+                    let currentPot = gData.totalPotCollected || 0;
+                    let currentTxnAmt = txnSnap.data().amount || 0;
+                    
+                    transaction.update(groupRef, {
+                        memberSnapshot: updatedArray,
+                        totalPotCollected: currentPot + activeActionState.remaining
+                    });
+                    transaction.update(txnRef, {
+                        amount: currentTxnAmt + activeActionState.remaining
+                    });
+                });
+                handleGpaySuccess(activeActionState.remaining, groupId);
+            }
         } catch (err) {
-            console.error(err);
-            showMessage("Payment Failed", err.message, "error");
+            console.error(err); showMessage("Payment Failed", err.message, "error");
         } finally {
-            btn.innerText = "Approve Transaction"; btn.disabled = false;
-            pendingPaymentState = null;
+            btn.disabled = false; btn.innerText = "Approve Transaction";
         }
     });
 
-    let pendingUndoState = null;
+    document.getElementById('execute-custom-fund-btn').addEventListener('click', async () => {
+        const val = Number(document.getElementById('custom-fund-input').value);
+        if(!val || val <= 0) return;
+        const btn = document.getElementById('execute-custom-fund-btn');
+        btn.disabled = true; btn.innerText = "Processing...";
+        try {
+            const groupId = activeGroupDataCache.id;
+            let processAmount = val;
+            
+            await runTransaction(db, async (transaction) => {
+                const groupRef = doc(db, "groups", groupId);
+                const gSnap = await transaction.get(groupRef);
+                if (!gSnap.exists()) throw new Error("Group missing");
+                
+                let gData = gSnap.data();
+                let currentPot = gData.totalPotCollected || 0;
+                
+                if (val >= activeActionState.targetAmount) {
+                    processAmount = activeActionState.targetAmount;
+                    let updatedArray = applyGroupModifications(gData, activeViewedUser, { incrementMonths: 1 });
+                    
+                    transaction.update(groupRef, { memberSnapshot: updatedArray, totalPotCollected: currentPot + processAmount });
+                    
+                    const newTxnRef = doc(collection(db, "transactions"));
+                    transaction.set(newTxnRef, {
+                        subscriberId: activeViewedUser.id, subscriberName: activeViewedUser.name,
+                        groupId: groupId, amount: processAmount, monthAttributed: activeActionState.month,
+                        type: "Monthly Installment", date: serverTimestamp()
+                    });
+                } else {
+                    let updatedArray = applyGroupModifications(gData, activeViewedUser, { setPartial: processAmount });
+                    
+                    transaction.update(groupRef, { memberSnapshot: updatedArray, totalPotCollected: currentPot + processAmount });
+                    
+                    const newTxnRef = doc(collection(db, "transactions"));
+                    transaction.set(newTxnRef, {
+                        subscriberId: activeViewedUser.id, subscriberName: activeViewedUser.name,
+                        groupId: groupId, amount: processAmount, monthAttributed: activeActionState.month,
+                        type: "Monthly Installment", date: serverTimestamp()
+                    });
+                }
+            });
+            handleGpaySuccess(processAmount, groupId);
+        } catch (err) {
+            console.error(err); showMessage("Payment Failed", err.message, "error");
+        } finally {
+            btn.disabled = false; btn.innerText = "Add Fund";
+        }
+    });
+
+    window.executeManageFund = async function(type) {
+        const val = Number(document.getElementById('manage-fund-input').value);
+        if(!val || val <= 0) return;
+        
+        const btnAdd = document.getElementById('btn-add-fund');
+        const btnRed = document.getElementById('btn-reduce-fund');
+        btnAdd.disabled = true; btnRed.disabled = true;
+        
+        try {
+            const groupId = activeGroupDataCache.id;
+            
+            await runTransaction(db, async (transaction) => {
+                const groupRef = doc(db, "groups", groupId);
+                const txnRef = doc(db, "transactions", activeActionState.txnId);
+                
+                const [gSnap, txnSnap] = await Promise.all([transaction.get(groupRef), transaction.get(txnRef)]);
+                if (!gSnap.exists()) throw new Error("Group missing");
+                if (!txnSnap.exists()) throw new Error("Transaction missing");
+                
+                let gData = gSnap.data();
+                let currentPot = gData.totalPotCollected || 0;
+                let currentTxnAmt = txnSnap.data().amount || 0;
+                
+                if (type === 'add') {
+                    if (activeActionState.currentPaid + val >= activeActionState.targetAmount) {
+                        const exactRemaining = activeActionState.targetAmount - activeActionState.currentPaid;
+                        let updatedArray = applyGroupModifications(gData, activeViewedUser, { incrementMonths: 1, deletePartial: true });
+                        transaction.update(groupRef, { memberSnapshot: updatedArray, totalPotCollected: currentPot + exactRemaining });
+                        transaction.update(txnRef, { amount: currentTxnAmt + exactRemaining });
+                    } else {
+                        let updatedArray = applyGroupModifications(gData, activeViewedUser, { incrementPartial: val });
+                        transaction.update(groupRef, { memberSnapshot: updatedArray, totalPotCollected: currentPot + val });
+                        transaction.update(txnRef, { amount: currentTxnAmt + val });
+                    }
+                } else if (type === 'reduce') {
+                    let updatedArray = applyGroupModifications(gData, activeViewedUser, { incrementPartial: -val });
+                    transaction.update(groupRef, { memberSnapshot: updatedArray, totalPotCollected: currentPot - val });
+                    transaction.update(txnRef, { amount: currentTxnAmt - val });
+                }
+            });
+
+            if (type === 'add') {
+                const exactRemaining = activeActionState.targetAmount - activeActionState.currentPaid;
+                const amountAdded = (activeActionState.currentPaid + val >= activeActionState.targetAmount) ? exactRemaining : val;
+                handleGpaySuccess(amountAdded, groupId);
+            } else if (type === 'reduce') {
+                if (window.history.state && window.history.state.id) { history.back(); } else { closeModal(); }
+                showMessage("Funds Reduced", `Successfully reversed ₹${val.toLocaleString('en-IN')}`, "success");
+                analyzeUserLedger(groupId);
+            }
+        } catch (err) {
+            console.error(err); showMessage("Update Failed", err.message, "error");
+        } finally {
+            validateManageInput();
+        }
+    };
+
+    document.getElementById('execute-undo-partial-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('execute-undo-partial-btn');
+        btn.disabled = true; btn.innerText = "Voiding...";
+        try {
+            const groupId = activeGroupDataCache.id;
+            
+            await runTransaction(db, async (transaction) => {
+                const groupRef = doc(db, "groups", groupId);
+                const txnRef = doc(db, "transactions", activeActionState.txnId);
+                
+                const gSnap = await transaction.get(groupRef);
+                if (!gSnap.exists()) throw new Error("Group missing");
+                
+                let gData = gSnap.data();
+                let currentPot = gData.totalPotCollected || 0;
+                let updatedArray = applyGroupModifications(gData, activeViewedUser, { deletePartial: true });
+                
+                transaction.update(groupRef, { memberSnapshot: updatedArray, totalPotCollected: currentPot - activeActionState.amount });
+                transaction.delete(txnRef);
+            });
+            
+            if (window.history.state && window.history.state.id) { history.back(); } else { closeModal(); }
+            showMessage("Transaction Voided", `Partial payment cleared completely.`, "success");
+            analyzeUserLedger(groupId);
+        } catch (err) {
+            console.error(err); showMessage("Void Failed", err.message, "error");
+        } finally {
+            btn.disabled = false; btn.innerText = "Void Completely";
+        }
+    });
+
+    document.getElementById('execute-undo-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('execute-undo-btn');
+        btn.innerText = "Reversing..."; btn.disabled = true;
+        try {
+            const groupId = activeGroupDataCache.id;
+            
+            await runTransaction(db, async (transaction) => {
+                const groupRef = doc(db, "groups", groupId);
+                const txnRef = doc(db, "transactions", pendingUndoState.txnId);
+                
+                const gSnap = await transaction.get(groupRef);
+                if (!gSnap.exists()) throw new Error("Group missing");
+                
+                let gData = gSnap.data();
+                let currentPot = gData.totalPotCollected || 0;
+                let updatedArray = applyGroupModifications(gData, activeViewedUser, { incrementMonths: -1 });
+                
+                transaction.update(groupRef, { memberSnapshot: updatedArray, totalPotCollected: currentPot - pendingUndoState.amount });
+                transaction.delete(txnRef);
+            });
+
+            if (window.history.state && window.history.state.id) { history.back(); } else { closeModal(); }
+            showMessage("Payment Reversed", `Month ${pendingUndoState.month} payment was successfully deleted.`, "success");
+            analyzeUserLedger(groupId);
+        } catch (err) {
+            console.error(err); showMessage("Undo Failed", err.message, "error");
+        } finally {
+            btn.innerText = "Reverse Transaction"; btn.disabled = false;
+        }
+    });
+
     window.initiateUndoPay = function(txnId, month, amount) {
         haptic('heavy');
         pendingUndoState = { txnId, month, amount };
-        document.getElementById('undo-pay-text').innerHTML = `Are you sure you want to reverse the payment of <b>₹${amount.toLocaleString('en-IN')}</b> for <b>Month ${month}</b>? This will permanently delete the ledger entry.`;
+        document.getElementById('undo-pay-text').innerHTML = `Are you sure you want to reverse the payment of <b>₹${amount.toLocaleString('en-IN')}</b> for <b>Month ${month}</b>? This will delete the ledger entry permanently.`;
         openModal('undo-pay-modal');
     };
-
-    document.getElementById('execute-undo-btn').addEventListener('click', async () => {
-        if(!pendingUndoState || !activeGroupData || !activeViewedUser) return;
-        const btn = document.getElementById('execute-undo-btn');
-        btn.innerText = "Reversing..."; btn.disabled = true;
-
-        try {
-            const batch = writeBatch(db);
-            const groupId = activeGroupData.id;
-
-            batch.delete(doc(db, "transactions", pendingUndoState.txnId));
-
-            const groupRef = doc(db, "groups", groupId);
-            let snapshotArray = activeGroupData.memberSnapshot || [];
-            let userSnapIndex = snapshotArray.findIndex(m => m && m.id === activeViewedUser.id);
-            
-            if(userSnapIndex > -1) {
-                let currentPaid = snapshotArray[userSnapIndex].monthsPaid || 0;
-                if(currentPaid > 0) {
-                    snapshotArray[userSnapIndex].monthsPaid = currentPaid - 1;
-                }
-            }
-
-            batch.update(groupRef, { memberSnapshot: snapshotArray, totalPotCollected: increment(-Math.abs(pendingUndoState.amount)) });
-            await batch.commit();
-            
-            // 0-READ BACKGROUND UI REFRESH
-            renderParticipantsList();
-            renderPendingList();
-
-            closeModal();
-            showMessage("Payment Reversed", `Month ${pendingUndoState.month} payment was successfully deleted.`, "success");
-            analyzeUserLedger(groupId);
-
-        } catch (err) {
-            console.error(err);
-            showMessage("Undo Failed", err.message, "error");
-        } finally {
-            btn.innerText = "Reverse Transaction"; btn.disabled = false;
-            pendingUndoState = null;
-        }
-    });
 
     // Execute Initial Load
     window.onload = () => loadGroupsFromServer(false);
