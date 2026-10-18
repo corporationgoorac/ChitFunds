@@ -634,7 +634,7 @@
     </div>
   </aside>
 
-  <!-- 1. Confirm FULL Payment Modal (For fresh unpaid months) -->
+  <!-- 1. Confirm FULL Payment Modal -->
   <aside id="confirm-pay-modal" class="center-modal">
     <div class="mini-modal-content">
       <div class="msg-icon">
@@ -649,7 +649,7 @@
     </div>
   </aside>
 
-  <!-- 2. Custom Fund Initializer Modal (When starting a partial month) -->
+  <!-- 2. Custom Fund Initializer Modal -->
   <aside id="custom-fund-modal" class="center-modal">
     <div class="mini-modal-content">
       <h3 class="mini-modal-title">Enter Initial Fund</h3>
@@ -665,7 +665,7 @@
     </div>
   </aside>
 
-  <!-- 3. Manage Fund Modal (Add / Reduce existing partial amount) -->
+  <!-- 3. Manage Fund Modal -->
   <aside id="manage-fund-modal" class="center-modal">
     <div class="mini-modal-content">
       <h3 class="mini-modal-title">Manage Partial Fund</h3>
@@ -697,7 +697,7 @@
     </div>
   </aside>
 
-  <!-- 5. Standard Undo Payment Modal (For fully paid months) -->
+  <!-- 5. Standard Undo Payment Modal -->
   <aside id="undo-pay-modal" class="center-modal">
     <div class="mini-modal-content">
       <div class="msg-icon">
@@ -762,9 +762,7 @@
         haptic('light');
         document.getElementById(modalId).classList.add('active');
         modalStack.push(modalId);
-        if (window.location.hash !== `#${modalId}`) {
-            history.pushState({ id: modalId }, '', `#${modalId}`);
-        }
+        history.pushState({ stack: [...modalStack] }, '', `#${modalId}`);
     };
     
     // Completely rewritten to ONLY use native history to prevent double-pop bug
@@ -789,20 +787,16 @@
     
     // Single Source of Truth for tearing down UI
     window.addEventListener('popstate', (e) => {
-        if (modalStack.length > 0) {
-            const popped = modalStack.pop();
-            const el = document.getElementById(popped);
-            if (el) el.classList.remove('active');
-            
-            // Failsafe cleanup ensuring deep nested layers stay secure
-            document.querySelectorAll('.modal, .center-modal').forEach(m => {
-                if (!modalStack.includes(m.id)) {
-                    m.classList.remove('active');
-                }
-            });
-        } else {
-            closeAllModals();
-        }
+        let activeStack = e.state && e.state.stack ? e.state.stack : [];
+        modalStack = [...activeStack];
+
+        document.querySelectorAll('.modal, .center-modal').forEach(m => {
+            if (modalStack.includes(m.id)) {
+                m.classList.add('active');
+            } else {
+                m.classList.remove('active');
+            }
+        });
     });
 
     // --- CUSTOM UI ALERTS ---
@@ -1201,7 +1195,8 @@
 
             users.forEach(u => {
                 const snapData = snapshotMap.get(u.id) || { monthsPaid: 0 };
-                const partialPaid = snapData.partialPaidAmount || 0;
+                const safeMonthsPaid = Math.max(0, snapData.monthsPaid || 0); // AUTO-HEAL MATH
+                const partialPaid = Math.max(0, snapData.partialPaidAmount || 0);
                 const expectedUserMonth = calculateParticipantExpectedMonth(u, activeGroupData);
                 
                 const initial = u.name ? u.name.charAt(0).toUpperCase() : '?';
@@ -1223,7 +1218,7 @@
                         </div>
                     </div>
                     <div style="text-align: right;">
-                        <div style="font-size: 16px; font-weight: 800; color: var(--text-main);">${snapData.monthsPaid} /${expectedUserMonth}</div>
+                        <div style="font-size: 16px; font-weight: 800; color: var(--text-main);">${safeMonthsPaid} /${expectedUserMonth}</div>
                         <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Mo. Paid</div>
                     </div>
                 `;
@@ -1263,10 +1258,11 @@
 
             users.forEach(u => {
                 const snapData = snapshotMap.get(u.id) || { monthsPaid: 0 };
-                const partialPaid = snapData.partialPaidAmount || 0;
+                const safeMonthsPaid = Math.max(0, snapData.monthsPaid || 0); // AUTO-HEAL MATH
+                const partialPaid = Math.max(0, snapData.partialPaidAmount || 0);
                 const expectedUserMonth = calculateParticipantExpectedMonth(u, activeGroupData);
                 
-                let startMonth = snapData.monthsPaid + 1;
+                let startMonth = safeMonthsPaid + 1;
                 
                 if(startMonth <= expectedUserMonth) {
                     hasPending = true;
@@ -1277,16 +1273,16 @@
                     for(let m = startMonth; m <= expectedUserMonth; m++) {
                         let dueAmount = calculateDueForMonth(m, startAmt, schedule);
                         if (m === startMonth && partialPaid > 0) {
-                            dueAmount -= partialPaid; // Strict math deduction for partials
+                            dueAmount -= partialPaid;
                         }
                         totalOwed += dueAmount;
                         pendingMonthsList.push({ month: m, amount: dueAmount });
                     }
 
-                    if (totalOwed <= 0) return; // Prevent 0 owed rendering
+                    if (totalOwed <= 0) return;
 
                     const initial = u.name ? u.name.charAt(0).toUpperCase() : '?';
-                    const missedCount = expectedUserMonth - snapData.monthsPaid;
+                    const missedCount = expectedUserMonth - safeMonthsPaid;
                     let partialBadge = partialPaid > 0 ? `<div style="font-size: 11px; color: var(--warning-color); font-weight: 800; margin-top: 4px;">Partial Paid: ₹${partialPaid.toLocaleString('en-IN')}</div>` : ``;
                     
                     const callButtonHTML = u.phone 
@@ -1385,7 +1381,7 @@
         document.getElementById('md-u-name').innerText = user.name || "Unnamed";
         document.getElementById('md-u-id').innerText = `@${user.id}`;
         
-        // Set Static Group Badge Header (Slate Style)
+        // Set Static Group Badge Header
         document.getElementById('static-group-badge-container').innerHTML = `
             <div class="group-header-card">
                 <div>
@@ -1440,8 +1436,9 @@
             }
             
             const userSnapData = (activeGroupData.memberSnapshot || []).find(u => u && u.id === activeViewedUser.id) || {};
-            const snapshotMonthsPaid = userSnapData.monthsPaid || 0;
-            const snapshotPartialPaid = userSnapData.partialPaidAmount || 0;
+            // MATHEMATICAL AUTO-HEALING: This prevents -1 from ever registering in the engine.
+            const snapshotMonthsPaid = Math.max(0, userSnapData.monthsPaid || 0); 
+            const snapshotPartialPaid = Math.max(0, userSnapData.partialPaidAmount || 0);
 
             let advanceAmt = activeViewedUser?.advanceAmount ? Number(activeViewedUser.advanceAmount) : 0;
             let totalPaid = advanceAmt; 
@@ -1662,7 +1659,8 @@
 
     let activeActionState = {};
     
-    // Direct memory mutation to keep cache updated without fetching
+    // Direct memory mutation to keep cache updated without fetching.
+    // MATHEMATICALLY HARDENED: Impossible to drop below zero.
     function applyGroupModificationsLocally(modifications) {
         let arr = activeGroupData.memberSnapshot || [];
         let idx = arr.findIndex(u => u && u.id === activeViewedUser.id);
@@ -1673,13 +1671,13 @@
         }
 
         if (modifications.incrementMonths !== undefined) {
-            arr[idx].monthsPaid = (arr[idx].monthsPaid || 0) + modifications.incrementMonths;
+            arr[idx].monthsPaid = Math.max(0, (arr[idx].monthsPaid || 0) + modifications.incrementMonths);
         }
         if (modifications.setPartial !== undefined) {
-            arr[idx].partialPaidAmount = modifications.setPartial;
+            arr[idx].partialPaidAmount = Math.max(0, modifications.setPartial);
         }
         if (modifications.incrementPartial !== undefined) {
-            arr[idx].partialPaidAmount = (arr[idx].partialPaidAmount || 0) + modifications.incrementPartial;
+            arr[idx].partialPaidAmount = Math.max(0, (arr[idx].partialPaidAmount || 0) + modifications.incrementPartial);
         }
         if (modifications.deletePartial) {
             delete arr[idx].partialPaidAmount;
@@ -1689,6 +1687,9 @@
     }
 
     function handleGpaySuccess(amount, groupId) {
+        // Destroy the UI instantly so double clicks are impossible while animating
+        document.getElementById('txn-history-list').innerHTML = '<div class="loader"></div>';
+        
         haptic('success');
         document.getElementById('gpay-amount-text').innerText = `₹${amount.toLocaleString('en-IN')}`;
         
@@ -1923,7 +1924,9 @@
                 
                 await batch.commit();
                 
+                document.getElementById('txn-history-list').innerHTML = '<div class="loader"></div>';
                 closeModal();
+                
                 setTimeout(() => {
                     showMessage("Funds Reduced", `Successfully reversed ₹${val.toLocaleString('en-IN')}`, "success");
                     renderParticipantsList();
@@ -1956,7 +1959,9 @@
             
             await batch.commit();
             
+            document.getElementById('txn-history-list').innerHTML = '<div class="loader"></div>';
             closeModal();
+            
             setTimeout(() => {
                 showMessage("Transaction Voided", `Partial payment cleared completely.`, "success");
                 renderParticipantsList();
@@ -1999,7 +2004,9 @@
             
             await batch.commit();
 
+            document.getElementById('txn-history-list').innerHTML = '<div class="loader"></div>';
             closeModal();
+            
             setTimeout(() => {
                 showMessage("Payment Reversed", `Month ${pendingUndoState.month} payment was successfully deleted.`, "success");
                 renderParticipantsList();
