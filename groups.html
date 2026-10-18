@@ -307,12 +307,8 @@
     .t-amt.a-action { color: var(--brand-accent); font-size: 20px; }
     .t-amt.a-warn { color: var(--warning-color); }
     
-    .btn-action-pay { background: var(--success-color); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 10px rgba(15, 157, 88, 0.3); transition: 0.2s; will-change: transform;}
+    .btn-action-pay { background: var(--brand-accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 10px rgba(6, 95, 212, 0.3); transition: 0.2s;}
     .btn-action-pay:active { transform: scale(0.95); }
-    
-    /* Split Action for Fresh Month */
-    .t-actions-split { display: flex; gap: 8px; margin-top: 6px; }
-
     .btn-undo { background: var(--surface-hover); color: var(--danger-color); border: 1px solid var(--danger-light); padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.2s; display: flex; align-items: center; gap: 4px;}
     .btn-undo:active { background: var(--danger-light); }
     .section-divider { margin: 24px 0 16px 0; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; font-size: 14px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; }
@@ -327,10 +323,10 @@
     .loader { border: 3px solid var(--border-color); border-top: 3px solid var(--brand-accent); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 20px auto; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* System Alert Modals - Removed heavy blur to fix mobile flickering */
-    .center-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.75); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; will-change: opacity;}
+    /* System Alert Modals */
+    .center-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);}
     .center-modal.active { opacity: 1; pointer-events: all; }
-    .mini-modal-content { background-color: var(--surface-color); width: 90%; max-width: 340px; border-radius: 24px; padding: 30px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid var(--border-color); text-align: center; will-change: transform; }
+    .mini-modal-content { background-color: var(--surface-color); width: 90%; max-width: 340px; border-radius: 24px; padding: 30px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid var(--border-color); text-align: center; }
     .center-modal.active .mini-modal-content { transform: scale(1); }
     .msg-icon { font-size: 48px; margin-bottom: 16px; }
     .mini-modal-title { font-size: 20px; font-weight: 800; margin: 0 0 12px 0; color: var(--text-main); }
@@ -338,11 +334,6 @@
     .mini-btn { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; width: 100%; background-color: var(--brand-accent); color: #fff;}
     .mini-btn-cancel { background-color: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); margin-top: 10px; }
     .mini-btn-danger { background-color: var(--danger-color); color: #fff; }
-
-    /* Extra Numeric Keypad Styling for Custom Amount Modals */
-    .numeric-input { width: 100%; font-size: 36px; font-weight: 800; color: var(--brand-accent); text-align: center; background: none; border: none; outline: none; padding: 10px 0; letter-spacing: -1px; margin-bottom: 16px; border-bottom: 2px solid var(--border-color);}
-    .numeric-input:focus { border-bottom-color: var(--brand-accent); }
-    .currency-prefix { position: absolute; left: 20px; top: 12px; font-size: 28px; font-weight: 800; color: var(--brand-accent); }
 
     /* GPay Style Overlay */
     .gpay-overlay {
@@ -554,7 +545,7 @@
     </div>
   </aside>
 
-  <!-- 1. Confirm FULL Payment Modal (For fresh unpaid months) -->
+  <!-- Confirm Payment Modal -->
   <aside id="confirm-pay-modal" class="center-modal">
     <div class="mini-modal-content">
       <div class="msg-icon">
@@ -632,17 +623,50 @@
     </div>
   </aside>
 
-  <!-- GPay Style Success Overlay -->
-  <div id="gpay-overlay" class="gpay-overlay">
-    <div class="gpay-circle">
-      <svg class="gpay-check" viewBox="0 0 24 24">
-        <path d="M4 12 l5 5 l11 -11" />
-      </svg>
+  <aside id="edit-participant-modal" class="modal">
+    <div class="modal-header">
+      <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div class="modal-title">Edit Participant</div>
     </div>
-    <div class="gpay-title">Payment Successful</div>
-    <div class="gpay-amount" id="gpay-amount-text">₹0</div>
-    <div class="gpay-footer">Verified transaction</div>
-  </div>
+    <div class="modal-body">
+      <form id="edit-participant-form">
+        <input type="hidden" id="original-p-id">
+        <div class="input-group">
+          <label>Participant ID (Unique)</label>
+          <span class="loading-text" id="edit-p-id-loading">Checking...</span>
+          <input type="text" id="edit-p-id" required style="text-transform: uppercase; font-family: monospace; font-weight: 800; letter-spacing: 1px;" autocomplete="off">
+          <span class="validation-icon" id="edit-p-id-icon"></span>
+        </div>
+        <div class="input-group">
+          <label>Full Name</label>
+          <input type="text" id="edit-p-name" required>
+        </div>
+        <div class="input-group">
+          <label>Phone Number</label>
+          <input type="tel" id="edit-p-phone" required>
+        </div>
+        <div class="input-group">
+          <label>Join Date</label>
+          <input type="date" id="edit-p-join-date" required>
+        </div>
+        <button type="submit" class="m-btn btn-primary" id="edit-p-submit-btn" style="background: var(--brand-accent); box-shadow: 0 8px 20px rgba(6, 95, 212, 0.25);">Save Changes</button>
+      </form>
+    </div>
+  </aside>
+
+  <aside id="delete-participant-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div class="msg-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="var(--danger-color)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      </div>
+      <h3 class="mini-modal-title">Delete Participant</h3>
+      <p class="mini-modal-text">Are you sure you want to permanently remove this participant from the system? This action cannot be undone.</p>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+          <button class="mini-btn mini-btn-danger" id="confirm-delete-participant-btn">Delete Permanently</button>
+          <button class="mini-btn mini-btn-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </aside>
 
   <aside id="message-modal" class="center-modal">
     <div class="mini-modal-content">
@@ -655,6 +679,18 @@
       </div>
     </div>
   </aside>
+
+  <!-- GPay Style Success Overlay -->
+  <div id="gpay-overlay" class="gpay-overlay">
+    <div class="gpay-circle">
+      <svg class="gpay-check" viewBox="0 0 24 24">
+        <path d="M4 12 l5 5 l11 -11" />
+      </svg>
+    </div>
+    <div class="gpay-title">Payment Successful</div>
+    <div class="gpay-amount" id="gpay-amount-text">₹0</div>
+    <div class="gpay-footer">Verified transaction</div>
+  </div>
 
   <script type="module">
     import { auth, db } from './config.js';
@@ -1002,6 +1038,7 @@
     // --- MODAL VIEWS & ZERO-READ ARCHITECTURE ---
 
     let activeGroupData = null; 
+    let activeGroupDataCache = null;
     let activeLoadedGroupUsers = []; 
 
     window.openGroupDetail = async function(group) {
@@ -1312,7 +1349,6 @@
         const view = document.getElementById('ledger-view');
         view.style.display = 'block';
         document.getElementById('md-u-status').innerText = "Syncing Engine...";
-        document.getElementById('whatsapp-container').style.display = 'none';
         
         try {
             const groupSnap = await getDoc(doc(db, "groups", groupId));
@@ -1443,6 +1479,7 @@
                             </div>
                         </div>`;
                     } else {
+                        // --- REDESIGNED FRESH ACTIONABLE ROW ---
                         let isOverdue = m <= evalMonth;
                         let statusHtml = isOverdue 
                             ? `<div class="t-status s-warn"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C22 2 22 12 22 12s0 10-10 10S2 22 2 12 2 2 12 2zm-1 15h2v2h-2v-2zm0-10h2v8h-2V7z"/></svg> Pending</div>`
@@ -1577,7 +1614,7 @@
     // ==========================================
 
     let activeActionState = {};
-    let pendingUndoState = {};
+    pendingUndoState = {}; 
     
     window.initiateSettleFull = function(month, targetAmount) {
         activeActionState = { action: 'settle_full', month, amount: targetAmount };
