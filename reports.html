@@ -598,6 +598,12 @@
 
     // --- FLAWLESS MODAL NAVIGATION (HARDWARE BACK BUTTON SUPPORTED) ---
     window.openModal = function(modalId) {
+        // ANTI-DUPLICATE GUARD: Prevent double-tapping from stacking identical history states
+        if (window.history.state && window.history.state.id === modalId) {
+            document.getElementById(modalId).classList.add('active');
+            return;
+        }
+        
         haptic('light');
         document.getElementById(modalId).classList.add('active');
         history.pushState({ id: modalId }, '', `#${modalId}`);
