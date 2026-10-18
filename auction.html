@@ -151,7 +151,7 @@
     .search-input:focus { border-color: var(--auction-color); box-shadow: 0 0 0 4px var(--auction-light); }
     .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
 
-    /* Transaction / Group Cards */
+    /* Transaction / Group Cards (Old Compact - Kept for specific search renders) */
     .data-card {
       background-color: var(--surface-color); border: 1px solid var(--border-color);
       border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
@@ -168,6 +168,40 @@
     
     .c-amount { font-size: 18px; font-weight: 800; color: var(--auction-color); text-align: right;}
     .c-date { font-size: 11px; color: var(--text-muted); text-align: right; margin-top: 4px; font-weight: 600; }
+
+    /* HIGH-END LEDGER CARDS (New Premium Injection) */
+    .txn-card {
+      background-color: var(--surface-color); border: 1px solid var(--border-color);
+      border-radius: 20px; padding: 20px; margin-bottom: 20px;
+      box-shadow: var(--card-shadow); transition: transform 0.2s;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .txn-card:active { transform: scale(0.98); background-color: var(--surface-hover); border-color: var(--auction-color);}
+
+    .txn-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .txn-profile { display: flex; gap: 14px; align-items: center; }
+    .txn-avatar { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, var(--auction-color), #5b21b6); color: white; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(139, 92, 246, 0.2);}
+    .txn-user-info { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+    .txn-name { margin: 0; font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-main); line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;}
+    .txn-user-id { font-size: 11px; font-family: monospace; background: var(--surface-hover); color: var(--text-muted); padding: 4px 8px; border-radius: 6px; font-weight: 700; border: 1px solid var(--border-color); }
+    
+    .txn-amount-box { text-align: right; flex-shrink: 0;}
+    .txn-amount { font-size: 22px; font-weight: 800; color: var(--auction-color); letter-spacing: -0.5px; }
+    .txn-status-badge { display: inline-block; font-size: 10px; text-transform: uppercase; background: var(--auction-light); color: var(--auction-color); padding: 4px 8px; border-radius: 6px; font-weight: 800; margin-top: 4px; letter-spacing: 0.5px;}
+
+    .txn-details-row { display: flex; gap: 12px; }
+    .txn-detail-pill { flex: 1; background: var(--bg-color); border: 1px solid var(--border-color); padding: 12px 14px; border-radius: 12px; display: flex; flex-direction: column; gap: 4px; }
+    .detail-label { font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 800; letter-spacing: 0.5px; }
+    .detail-val { font-size: 14px; font-weight: 800; color: var(--text-main); }
+    .detail-val.mono { font-family: monospace; letter-spacing: 0.5px; color: var(--auction-color); }
+
+    .txn-footer { border-top: 1px dashed var(--border-color); padding-top: 14px; display: flex; justify-content: space-between; align-items: center; }
+    .txn-date-time { font-size: 12px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px;}
+    .txn-date-time svg { width: 14px; height: 14px; fill: currentColor; }
+    
+    .btn-delete { background: var(--danger-light); color: var(--danger-color); border: none; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; gap: 4px; transition: 0.2s; z-index: 2; position: relative;}
+    .btn-delete:active { transform: scale(0.95); background: #f8d7da; }
+    .btn-delete svg { width: 14px; height: 14px; fill: currentColor; }
 
     .load-more-btn { width: 100%; background: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 16px; border-radius: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; box-shadow: var(--card-shadow); }
     .load-more-btn:active { background: var(--surface-hover); transform: scale(0.98);}
@@ -258,6 +292,8 @@
     .mini-modal-title { font-size: 20px; font-weight: 800; margin: 0 0 12px 0; color: var(--text-main); }
     .mini-modal-text { font-size: 14px; color: var(--text-muted); margin: 0 0 28px 0; line-height: 1.5; font-weight: 500; word-break: break-word;}
     .mini-btn { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; width: 100%; background-color: var(--auction-color); color: #fff;}
+    .mini-btn-cancel { background-color: var(--surface-hover); color: var(--text-main); border: 1px solid var(--border-color); margin-top: 10px; }
+    .mini-btn-danger { background-color: var(--danger-color); color: #fff; }
     
     /* Styled Link for Indexing Errors */
     .index-link { display: inline-block; background-color: var(--auction-color); color: white !important; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 12px; font-size: 13px; }
@@ -296,6 +332,7 @@
     </div>
   </main>
 
+  <!-- SEARCH MODALS -->
   <aside id="search-user-modal" class="modal">
     <div class="modal-header">
       <button class="back-btn" onclick="closeModal()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
@@ -372,6 +409,21 @@
         </div>
   </aside>
 
+  <!-- CONFIRM DELETE MODAL -->
+  <aside id="delete-payout-modal" class="center-modal">
+    <div class="mini-modal-content">
+      <div class="msg-icon" style="color: var(--danger-color);">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+      </div>
+      <h3 class="mini-modal-title">Void Payout</h3>
+      <p class="mini-modal-text" id="delete-payout-text">Are you sure you want to completely void this payout?</p>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+          <button class="mini-btn mini-btn-danger" id="confirm-delete-btn">Void Transaction</button>
+          <button class="mini-btn mini-btn-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </aside>
+
   <div id="gpay-overlay" class="gpay-overlay">
     <div class="gpay-circle">
       <svg class="gpay-check" viewBox="0 0 24 24" stroke="var(--auction-color)">
@@ -397,7 +449,7 @@
   <script type="module">
     import { auth, db } from './config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
-    import { collection, query, orderBy, limit, getDocs, startAfter, doc, getDoc, writeBatch, serverTimestamp, where, documentId } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+    import { collection, query, orderBy, limit, getDocs, startAfter, doc, getDoc, writeBatch, serverTimestamp, where, documentId, deleteDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
     onAuthStateChanged(auth, (user) => { if (!user) window.location.replace('login.html'); });
 
@@ -480,6 +532,42 @@
       document.getElementById('message-modal').classList.remove('active');
     };
 
+    // --- DELETION ENGINE (100% Secure Transaction Void) ---
+    let pendingDeleteState = null;
+
+    window.initiateDeletePayout = function(docId, amount, name) {
+        window.triggerHaptic([40, 60, 40]);
+        pendingDeleteState = { docId, amount, name };
+        document.getElementById('delete-payout-text').innerHTML = `Are you sure you want to completely void the payout of <b>₹${Number(amount).toLocaleString('en-IN')}</b> for <b>${name}</b>?<br><br>This action cannot be undone.`;
+        openModal('delete-payout-modal');
+    };
+
+    document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+        if(!pendingDeleteState) return;
+        const btn = document.getElementById('confirm-delete-btn');
+        btn.innerText = "Voiding..."; btn.disabled = true;
+
+        try {
+            await deleteDoc(doc(db, "auctions", pendingDeleteState.docId));
+            
+            closeModal();
+            showMessage("Payout Voided", `The payout for ${pendingDeleteState.name} was successfully deleted.`, "success");
+            
+            // Refresh lists seamlessly
+            loadRecentLends(false);
+            if (currentActiveGroup) {
+                openGroupPayoutsModal(currentActiveGroup);
+            }
+
+        } catch(e) {
+            console.error("Deletion Error:", e);
+            showMessage("Error", "Failed to void payout. " + e.message, "error");
+        } finally {
+            btn.innerText = "Void Transaction"; btn.disabled = false;
+            pendingDeleteState = null;
+        }
+    });
+
     // --- RECENT PAYOUTS ENGINE (Dashboard List) ---
     let lastVisibleLend = null;
     
@@ -514,7 +602,7 @@
                 lastVisibleLend = snap.docs[snap.docs.length - 1];
                 
                 snap.forEach(docSnap => {
-                    renderLendCard(docSnap.data(), container);
+                    renderLendCard({ id: docSnap.id, ...docSnap.data() }, container);
                 });
                 
                 loadBtn.style.display = snap.docs.length === 10 ? 'block' : 'none';
@@ -536,7 +624,7 @@
                 const fallbackQ = query(collection(db, "auctions"));
                 const fallbackSnap = await getDocs(fallbackQ);
                 let txns = [];
-                fallbackSnap.forEach(t => txns.push(t.data()));
+                fallbackSnap.forEach(t => txns.push({ id: t.id, ...t.data() }));
                 
                 txns.sort((a, b) => {
                     const timeA = a.date ? (typeof a.date.toMillis === 'function' ? a.date.toMillis() : 0) : 0;
@@ -561,28 +649,49 @@
     };
 
     function renderLendCard(data, container) {
-        let displayDate = "N/A";
+        let displayDate = "Processing...";
         if(data.date && typeof data.date.toDate === 'function') {
-            displayDate = data.date.toDate().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+            displayDate = data.date.toDate().toLocaleDateString('en-IN', { 
+                day: 'numeric', month: 'short', year: 'numeric', 
+                hour: '2-digit', minute:'2-digit', hour12: true 
+            });
         }
         
         const displayName = data.subscriberName || `@${data.subscriberId}`;
         const initial = displayName.charAt(0).toUpperCase();
 
         const card = document.createElement('div');
-        card.className = 'data-card';
+        card.className = 'txn-card';
         card.innerHTML = `
-            <div class="c-left">
-                <div class="c-icon">${initial}</div>
-                <div class="c-info">
-                    <h3>${displayName}</h3>
-                    <div class="c-meta">Grp: ${data.groupId}</div>
-                    <div class="c-sub">ID: ${data.subscriberId}</div>
+            <div class="txn-header">
+                <div class="txn-profile">
+                    <div class="txn-avatar">${initial}</div>
+                    <div class="txn-user-info">
+                        <h3 class="txn-name">${displayName}</h3>
+                        <span class="txn-user-id">@${data.subscriberId || 'UNKNOWN'}</span>
+                    </div>
+                </div>
+                <div class="txn-amount-box">
+                    <div class="txn-amount">₹${Number(data.amount).toLocaleString('en-IN')}</div>
+                    <div class="txn-status-badge">Disbursed</div>
                 </div>
             </div>
-            <div>
-                <div class="c-amount">₹${Number(data.amount).toLocaleString('en-IN')}</div>
-                <div class="c-date">${displayDate}</div>
+            
+            <div class="txn-details-row">
+                <div class="txn-detail-pill">
+                    <span class="detail-label">Active Group</span>
+                    <span class="detail-val mono">@${data.groupId || 'N/A'}</span>
+                </div>
+            </div>
+
+            <div class="txn-footer">
+                <div class="txn-date-time">
+                    <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    ${displayDate}
+                </div>
+                <button class="btn-delete" onclick="initiateDeletePayout('${data.id}', ${data.amount}, '${displayName.replace(/'/g, "\\'")}')">
+                    <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> Void
+                </button>
             </div>
         `;
         container.appendChild(card);
@@ -731,7 +840,7 @@
 
                 card.innerHTML = `
                     <div class="c-left">
-                        <div class="c-icon">${initial}</div>
+                        <div class="c-icon" style="background:var(--bg-color); border: 1px solid var(--border-color); color:var(--text-main);">${initial}</div>
                         <div class="c-info">
                             <h3>${user.name || 'Unnamed'}</h3>
                             <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
@@ -984,7 +1093,10 @@
 
 
     // --- VIEW SPECIFIC GROUP PAYOUTS ---
+    let currentActiveGroup = null;
+
     window.openGroupPayoutsModal = async function(group) {
+        currentActiveGroup = group;
         document.getElementById('gp-name').innerText = group.groupName || "Unnamed";
         document.getElementById('gp-id').innerText = `@${group.id}`;
         
@@ -1000,14 +1112,14 @@
                     orderBy("date", "desc")
                 );
                 const snap = await getDocs(q);
-                snap.forEach(d => txns.push(d.data()));
+                snap.forEach(d => txns.push({ id: d.id, ...d.data() }));
             } catch(idxErr) {
                 console.warn("Index missing. Client side fallback...");
                 const fQ = query(collection(db, "auctions"), 
                     where("groupId", "==", group.id)
                 );
                 const snap = await getDocs(fQ);
-                snap.forEach(d => txns.push(d.data()));
+                snap.forEach(d => txns.push({ id: d.id, ...d.data() }));
                 txns.sort((a,b) => {
                     const tA = a.date && typeof a.date.toMillis === 'function' ? a.date.toMillis() : 0;
                     const tB = b.date && typeof b.date.toMillis === 'function' ? b.date.toMillis() : 0;
