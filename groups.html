@@ -272,7 +272,7 @@
     .t-row.paid { border-left: 4px solid var(--success-color); }
     .t-row.actionable { border: 2px solid var(--brand-accent); background: var(--brand-accent-light); transform: scale(1.02); box-shadow: 0 8px 20px rgba(6, 95, 212, 0.15); margin: 8px 0; z-index: 2; position: relative;}
     
-    /* Expanded Partial Payment Card */
+    /* --- Expanded Partial Payment Card --- */
     .t-row.partial-expanded {
         flex-direction: column; align-items: flex-start;
         border: 2px solid var(--brand-accent); background: var(--brand-accent-light);
@@ -304,16 +304,14 @@
     .t-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
     .t-amt { font-size: 18px; font-weight: 800; color: var(--text-main); }
     .t-amt.a-paid { color: var(--success-color); }
-    .t-amt.a-action { color: var(--brand-accent); font-size: 18px; }
+    .t-amt.a-action { color: var(--brand-accent); font-size: 20px; }
     .t-amt.a-warn { color: var(--warning-color); }
     
     .btn-action-pay { background: var(--success-color); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 10px rgba(15, 157, 88, 0.3); transition: 0.2s; will-change: transform;}
     .btn-action-pay:active { transform: scale(0.95); }
-    .u-action-btn.edit { background: none; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 6px; border-radius: 8px; color: var(--brand-accent); transition: 0.2s; margin-right: 6px;}
-    .u-action-btn.edit:active { transform: scale(0.95); background: var(--brand-accent-light); }
-    .u-action-btn.edit svg { width: 18px; height: 18px; fill: currentColor; }
     
-    .t-actions-split { display: flex; align-items: center; margin-top: 6px; }
+    /* Split Action for Fresh Month */
+    .t-actions-split { display: flex; gap: 8px; margin-top: 6px; }
 
     .btn-undo { background: var(--surface-hover); color: var(--danger-color); border: 1px solid var(--danger-light); padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.2s; display: flex; align-items: center; gap: 4px;}
     .btn-undo:active { background: var(--danger-light); }
@@ -397,6 +395,7 @@
       </div>
       
       <div id="main-groups-list">
+        <!-- Professional Embedded Skeletons replaced the old spinner -->
         <div class="skeleton-user-card">
             <div class="skeleton-u-top">
                 <div class="skeleton skeleton-icon"></div>
@@ -555,7 +554,7 @@
     </div>
   </aside>
 
-  <!-- Confirm Payment Modal -->
+  <!-- 1. Confirm FULL Payment Modal (For fresh unpaid months) -->
   <aside id="confirm-pay-modal" class="center-modal">
     <div class="mini-modal-content">
       <div class="msg-icon">
@@ -618,7 +617,7 @@
     </div>
   </aside>
 
-  <!-- Undo Payment Modal -->
+  <!-- Standard Undo Payment Modal (For fully paid months) -->
   <aside id="undo-pay-modal" class="center-modal">
     <div class="mini-modal-content">
       <div class="msg-icon">
@@ -676,7 +675,7 @@
 
     // --- FLAWLESS MODAL NAVIGATION (Hash Based) ---
     window.openModal = function(modalId) {
-      // ANTI-DUPLICATE GUARD
+      // ANTI-DUPLICATE GUARD: Prevent double-tapping from stacking identical history states
       if (window.history.state && window.history.state.id === modalId) {
           document.getElementById(modalId).classList.add('active');
           return;
@@ -684,12 +683,14 @@
       
       haptic('light');
       document.getElementById(modalId).classList.add('active');
-      history.pushState({ id: modalId }, '', `#${modalId}`);
+      if (window.location.hash !== `#${modalId}`) {
+          history.pushState({ id: modalId }, '', `#${modalId}`);
+      }
     };
     
     window.closeModal = function() {
       haptic('light');
-      if (window.history.state && window.history.state.id) {
+      if (window.location.hash) {
           history.back(); 
       } else {
           closeAllModals();
@@ -697,24 +698,30 @@
     };
     
     function closeAllModals() { 
-      document.querySelectorAll('.modal, .center-modal').forEach(m => m.classList.remove('active'));
+      document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+      document.querySelectorAll('.center-modal').forEach(m => m.classList.remove('active'));
     }
     
+    // UPDATED POPSTATE HANDLER - PREVENTS SLIDE-IN BUG
     window.addEventListener('popstate', (e) => {
-       const targetId = e.state ? e.state.id : (window.location.hash ? window.location.hash.substring(1) : null);
-        
-       document.querySelectorAll('.modal, .center-modal').forEach(m => {
-           if (targetId && m.id === targetId) {
-               m.classList.add('active');
-           } else if (m.id === 'user-detail-modal' && targetId !== 'user-detail-modal' && targetId) {
-               // Keep background open
-           } else {
-               if (m.id === 'user-detail-modal' && targetId && document.getElementById(targetId).classList.contains('center-modal')) {
-               } else {
+       if(e.state && e.state.id) {
+           const targetId = e.state.id;
+           // Remove active class ONLY from modals that are not the current history target
+           document.querySelectorAll('.modal, .center-modal').forEach(m => {
+               if (m.id !== targetId) {
                    m.classList.remove('active');
                }
+           });
+           
+           // Ensure target modal is active (prevents it from re-animating if it was already active underneath)
+           const targetModal = document.getElementById(targetId);
+           if(targetModal && !targetModal.classList.contains('active')) {
+               targetModal.classList.add('active');
            }
-       });
+       } else {
+           // If there is no history state, we are at the base dashboard
+           closeAllModals();
+       }
     });
 
     // --- CUSTOM UI ALERTS ---
@@ -731,15 +738,10 @@
         haptic('heavy');
       }
       
-      openModal('message-modal'); 
+      document.getElementById('message-modal').classList.add('active');
     };
-    
     window.closeMessageModal = function() {
-      if (window.history.state && window.history.state.id === 'message-modal') {
-          history.back();
-      } else {
-          document.getElementById('message-modal').classList.remove('active');
-      }
+      document.getElementById('message-modal').classList.remove('active');
     };
 
     // --- GLOBAL CACHE & SEARCH ENGINE ---
@@ -1169,25 +1171,28 @@
             const schedule = activeGroupData.installmentSchedule || [];
 
             users.forEach(u => {
-                const snapData = snapshotMap.get(u.id) || { monthsPaid: 0, partialPaidAmount: 0 };
+                const snapData = snapshotMap.get(u.id) || { monthsPaid: 0 };
+                const partialPaid = snapData.partialPaidAmount || 0;
                 const expectedUserMonth = calculateParticipantExpectedMonth(u, activeGroupData);
-                const snapshotPartialPaid = snapData.partialPaidAmount || 0;
                 
-                // If they are fully behind, or partially behind on the current month
-                if(snapData.monthsPaid < expectedUserMonth) {
+                let mathCurrentMonth = snapData.monthsPaid + 1;
+                
+                if(mathCurrentMonth <= expectedUserMonth) {
                     hasPending = true;
                     
                     let totalOwed = 0;
                     let pendingMonthsList = []; 
                     
-                    let mathCurrentMonth = snapData.monthsPaid + 1;
-                    
-                    // Subtract the partial payment from the immediately next pending month
+                    // Current month logic (with partial deduction)
                     let currentDue = calculateDueForMonth(mathCurrentMonth, startAmt, schedule);
-                    totalOwed += (currentDue - snapshotPartialPaid);
-                    pendingMonthsList.push({ month: mathCurrentMonth, amount: (currentDue - snapshotPartialPaid) });
+                    let currentShortage = currentDue - partialPaid;
                     
-                    // Add remaining entirely unpaid months
+                    if (currentShortage > 0) {
+                        totalOwed += currentShortage;
+                        pendingMonthsList.push({ month: mathCurrentMonth, amount: currentShortage });
+                    }
+                    
+                    // Subsequent purely unpaid months
                     for(let m = mathCurrentMonth + 1; m <= expectedUserMonth; m++) {
                         let dueAmount = calculateDueForMonth(m, startAmt, schedule);
                         totalOwed += dueAmount;
@@ -1196,6 +1201,7 @@
 
                     const initial = u.name ? u.name.charAt(0).toUpperCase() : '?';
                     const missedCount = expectedUserMonth - snapData.monthsPaid;
+                    const dMonthsText = partialPaid > 0 ? `${missedCount - 1} Mo. Behind + Partial` : `${missedCount} Month(s) Behind`;
                     
                     const callButtonHTML = u.phone 
                         ? `<a href="tel:${u.phone}" class="call-btn" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg></a>`
@@ -1226,7 +1232,7 @@
                                 <div class="u-info">
                                     <h3 style="color: var(--danger-color);">${u.name || 'Unnamed'}</h3>
                                     <div class="u-meta">@${u.id}</div>
-                                    <div class="d-months">${missedCount} Month(s) Behind</div>
+                                    <div class="d-months">${dMonthsText}</div>
                                 </div>
                             </div>
                             <div style="text-align: right; flex-shrink:0;">
@@ -1286,7 +1292,7 @@
         document.getElementById('md-u-name').innerText = user.name || "Unnamed";
         document.getElementById('md-u-id').innerText = `@${user.id}`;
         
-        // Set Static Group Badge Header
+        // Set Static Group Badge Header (Preserving the blue gradient styling from groups.html)
         document.getElementById('static-group-badge-container').innerHTML = `
             <div class="group-header-card">
                 <div>
@@ -1306,8 +1312,19 @@
         const view = document.getElementById('ledger-view');
         view.style.display = 'block';
         document.getElementById('md-u-status').innerText = "Syncing Engine...";
+        document.getElementById('whatsapp-container').style.display = 'none';
         
         try {
+            const groupSnap = await getDoc(doc(db, "groups", groupId));
+            if(!groupSnap.exists()) throw new Error("Group missing");
+            const groupData = groupSnap.data();
+            activeGroupDataCache = groupData;
+            activeGroupDataCache.id = groupId;
+            
+            const userSnapData = (groupData.memberSnapshot || []).find(u => u && u.id === activeViewedUser.id) || {};
+            const snapshotMonthsPaid = userSnapData.monthsPaid || 0;
+            const snapshotPartialPaid = userSnapData.partialPaidAmount || 0;
+
             let txns = [];
             try {
                 const qTxn = query(collection(db, "transactions"), 
@@ -1340,11 +1357,6 @@
                 });
             }
             
-            // Extract single source of truth for Month Counters and Partial Status from group snapshot
-            const userSnapData = (activeGroupData.memberSnapshot || []).find(u => u && u.id === activeViewedUser.id) || {};
-            const snapshotMonthsPaid = userSnapData.monthsPaid || 0;
-            const snapshotPartialPaid = userSnapData.partialPaidAmount || 0;
-
             let advanceAmt = activeViewedUser?.advanceAmount ? Number(activeViewedUser.advanceAmount) : 0;
             let totalPaid = advanceAmt; 
             
@@ -1354,17 +1366,16 @@
                 }
             });
 
-            const expectedMonth = calculateParticipantExpectedMonth(activeViewedUser, activeGroupData);
-            const startAmt = activeGroupData.startAmount || 0;
-            const schedule = activeGroupData.installmentSchedule || [];
-            const totalGroupMonths = activeGroupData.totalMonths || 0;
+            const expectedMonth = calculateParticipantExpectedMonth(activeViewedUser, groupData);
+            const startAmt = groupData.startAmount || 0;
+            const schedule = groupData.installmentSchedule || [];
+            const totalGroupMonths = groupData.totalMonths || 0;
             
             let pendingTotal = 0;
             let pendingMonthsList = [];
             let evalMonth = expectedMonth;
             if (totalGroupMonths > 0 && evalMonth > totalGroupMonths) evalMonth = totalGroupMonths;
             
-            // Re-calculate exactly what is owed based strictly on the absolute Months Paid + Partial truth
             let mathCurrentMonth = snapshotMonthsPaid + 1;
             if (mathCurrentMonth <= evalMonth) {
                 let currentDue = calculateDueForMonth(mathCurrentMonth, startAmt, schedule);
@@ -1432,7 +1443,6 @@
                             </div>
                         </div>`;
                     } else {
-                        // --- REDESIGNED FRESH ACTIONABLE ROW ---
                         let isOverdue = m <= evalMonth;
                         let statusHtml = isOverdue 
                             ? `<div class="t-status s-warn"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C22 2 22 12 22 12s0 10-10 10S2 22 2 12 2 2 12 2zm-1 15h2v2h-2v-2zm0-10h2v8h-2V7z"/></svg> Pending</div>`
@@ -1524,12 +1534,19 @@
                 
                 if (activeViewedUser.phone) {
                     const waContainer = document.getElementById('whatsapp-container');
-                    let breakdownText = "";
-                    pendingMonthsList.forEach(pm => { breakdownText += `- Month ${pm.month}: ₹${pm.amount}\n`; });
-                    const msg = `*Meena Chitfunds*\nGroup: ${activeGroupData.groupName.toUpperCase()} (@${groupId})\nTimeline: Month ${evalMonth} of ${totalGroupMonths}\n\nDear ${activeViewedUser.name.toUpperCase()},\nYou have pending payments for the following months:\n\n${breakdownText}\n*Total Pending: ₹${pendingTotal}*\n\nKindly clear your dues at the earliest.`;
-                    const safePhone = activeViewedUser.phone.replace(/\D/g,'');
-                    const waLink = `https://wa.me/${safePhone}?text=${encodeURIComponent(msg)}`;
                     
+                    const safePhone = activeViewedUser.phone.replace(/\D/g, '');
+                    const waNumber = safePhone.length === 10 ? `91${safePhone}` : safePhone;
+                    
+                    let msg = `*Meena Chitfunds*\nGroup: ${groupData.groupName.toUpperCase()} (@${groupId})\nTimeline: Month ${evalMonth} of ${totalGroupMonths}\n\nDear ${activeViewedUser.name.toUpperCase()},\n\n`;
+                    
+                    if (snapshotPartialPaid > 0 && snapshotMonthsPaid + 1 === evalMonth) {
+                         msg += `Month ${evalMonth} Target: ₹${calculateDueForMonth(evalMonth, startAmt, schedule)}\nReceived: ₹${snapshotPartialPaid}\n*Pending Balance: ₹${pendingTotal}*\n\nKindly clear your partial dues.`;
+                    } else {
+                         msg += `You have pending payments.\n*Total Pending: ₹${pendingTotal}*\n\nKindly clear your dues at the earliest.`;
+                    }
+
+                    const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
                     waContainer.innerHTML = `
                         <a href="${waLink}" target="_blank" class="m-btn btn-whatsapp" style="text-decoration: none;">
                             <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.422C7.145 7.63 6 8.7 6 10.923c0 2.222 1.98 4.372 2.254 4.743.274.371 3.235 4.939 7.838 6.936 1.103.479 1.963.765 2.633.978 1.107.351 2.115.301 2.912.182.894-.134 2.748-1.122 3.134-2.207.386-1.085.386-2.015.271-2.208-.115-.192-.413-.301-.71-.45zM12.002 22.002h-.006c-1.666 0-3.294-.447-4.726-1.293l-.339-.2-3.513.921.936-3.424-.22-.349a9.92 9.92 0 01-1.517-5.328c0-5.513 4.49-9.998 10.013-9.998 2.671 0 5.182 1.042 7.07 2.932 1.889 1.888 2.93 4.398 2.931 7.069 0 5.514-4.49 10.003-10.01 10.003z"/></svg>
@@ -1681,6 +1698,11 @@
 
         const overlay = document.getElementById('gpay-overlay');
         overlay.classList.add('active');
+        
+        // 0-Read Background Sync for Dashboards
+        renderParticipantsList();
+        renderPendingList();
+        
         setTimeout(() => {
             overlay.classList.remove('active');
             analyzeUserLedger(groupId); 
@@ -1846,6 +1868,8 @@
             } else if (type === 'reduce') {
                 if (window.history.state && window.history.state.id) { history.back(); } else { closeModal(); }
                 showMessage("Funds Reduced", `Successfully reversed ₹${val.toLocaleString('en-IN')}`, "success");
+                renderParticipantsList();
+                renderPendingList();
                 analyzeUserLedger(groupId);
             }
         } catch (err) {
@@ -1878,6 +1902,8 @@
             
             if (window.history.state && window.history.state.id) { history.back(); } else { closeModal(); }
             showMessage("Transaction Voided", `Partial payment cleared completely.`, "success");
+            renderParticipantsList();
+            renderPendingList();
             analyzeUserLedger(groupId);
         } catch (err) {
             console.error(err); showMessage("Void Failed", err.message, "error");
@@ -1909,6 +1935,8 @@
 
             if (window.history.state && window.history.state.id) { history.back(); } else { closeModal(); }
             showMessage("Payment Reversed", `Month ${pendingUndoState.month} payment was successfully deleted.`, "success");
+            renderParticipantsList();
+            renderPendingList();
             analyzeUserLedger(groupId);
         } catch (err) {
             console.error(err); showMessage("Undo Failed", err.message, "error");
