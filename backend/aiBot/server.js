@@ -181,6 +181,7 @@ function buildDefaulterContext() {
             
             const expectedMonth = calculateParticipantExpectedMonth(userJoinDate, group.startDate, totalMonths);
             const paid = member.monthsPaid || 0;
+            const partialPaid = member.partialPaidAmount || 0; // ZERO READS: Pulled directly from memory snapshot
             
             contextStr += `Participant: ${member.name} (@${member.id}) - Ph: ${userPhone} | Joined: ${userJoinDate ? userJoinDate.toISOString().split('T')[0] : 'Legacy'}\n`;
             
@@ -193,6 +194,11 @@ function buildDefaulterContext() {
                 
                 if (m <= paid) {
                     statusTag = "[PAID]";
+                } else if (m === paid + 1 && partialPaid > 0) {
+                    // Injecting highly specific partial payment data into context dynamically
+                    const balance = amt - partialPaid;
+                    statusTag = `[PARTIALLY PAID: ₹${partialPaid} received, Balance: ₹${balance}]`;
+                    pendingTotal += balance;
                 } else if (m < expectedMonth) {
                     statusTag = "[PREVIOUS MONTH PENDING]";
                     pendingTotal += amt;
@@ -286,8 +292,9 @@ STRICT RULES:
 1. Language: Tanglish (Spoken Tamil + English). Use "இருக்கு", "இல்லங்க", "கட்டணும்".
 2. Respect: Add "ங்க". No formal ancient Tamil.
 3. Terms: Keep financial terms in English (Pending, Paid, Due, Future Installment).
-4. Ledger Math: [PREVIOUS MONTH PENDING] + [CURRENT MONTH DUE] = Total Immediate Pending. Do NOT include [FUTURE INSTALLMENT] in current dues.
-5. Be crisp, direct, and ensure zero hallucination. Provide line-item clarity if asked.
+4. Ledger Math: [PREVIOUS MONTH PENDING] + [CURRENT MONTH DUE] + [PARTIALLY PAID Balance] = Total Immediate Pending. Do NOT include [FUTURE INSTALLMENT] in current dues.
+5. Partial Payments: If a month is [PARTIALLY PAID], clearly state the received and balance amounts naturally (e.g., "நீங்க ₹X கட்டிருக்கீங்க, இன்னும் ₹Y பேலன்ஸ் கட்டணும்ங்க").
+6. Be crisp, direct, and ensure zero hallucination. Provide line-item clarity if asked.
 
 SYSTEM CLOCK:
 TODAY: ${todayStr} | CURRENT MONTH: ${monthStr}
@@ -303,8 +310,9 @@ Task: Verify uploaded payment receipts against the active ledger.
 STRICT RULES:
 1. Language: Tanglish (Spoken Tamil + English). Use "இருக்கு", "இல்லங்க". No formal ancient Tamil.
 2. Match: Find the name and amount in the image, and match it to a pending due in the active ledger.
-3. Ledger Math: Ensure the receipt covers [PREVIOUS MONTH PENDING] or [CURRENT MONTH DUE].
-4. Response: Short and direct. State if the receipt covers their pending balance or if there is a mismatch.
+3. Ledger Math: Ensure the receipt covers [PREVIOUS MONTH PENDING], [CURRENT MONTH DUE], or [PARTIALLY PAID Balance].
+4. Partial Payments: If it's a partial payment, explain the remaining balance in Tanglish ("இன்னும் ₹X பேலன்ஸ் இருக்குங்க").
+5. Response: Short and direct. State if the receipt covers their pending balance or if there is a mismatch.
 
 ACTIVE GROUPS & LIVE LEDGER:
 ${buildDefaulterContext()}`;
