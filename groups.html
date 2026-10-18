@@ -152,6 +152,25 @@
     .skeleton-u-actions { display: flex; justify-content: flex-end; gap: 12px; border-top: 1px dashed var(--border-color); padding-top: 12px; }
     .skeleton-btn { width: 60px; height: 24px; border-radius: 8px; }
 
+    /* --- Detailed Enterprise Group Skeleton --- */
+    .skeleton-group-card {
+      background: var(--surface-color); border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 20px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 16px;
+      box-shadow: var(--card-shadow);
+    }
+    .skeleton-gc-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px; }
+    .skeleton-gc-title { width: 60%; height: 20px; border-radius: 4px; margin-bottom: 8px;}
+    .skeleton-gc-id { width: 30%; height: 14px; border-radius: 4px; }
+    .skeleton-gc-pot { width: 50%; height: 22px; border-radius: 4px; margin-bottom: 8px; }
+    .skeleton-gc-pot-label { width: 35%; height: 12px; border-radius: 4px; }
+    .skeleton-gc-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .skeleton-gc-stat-box { display: flex; flex-direction: column; gap: 6px; }
+    .skeleton-gc-stat-label { width: 70%; height: 10px; border-radius: 4px; }
+    .skeleton-gc-stat-val { width: 50%; height: 18px; border-radius: 4px; }
+    .skeleton-gc-footer { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border: 1px dashed var(--border-color); border-radius: 12px; background: var(--bg-color); }
+    .skeleton-gc-foot-left { width: 40%; height: 24px; border-radius: 4px; }
+    .skeleton-gc-foot-right { width: 30%; height: 24px; border-radius: 4px; }
+
     /* Group Card */
     .group-card {
       background-color: var(--surface-color); border: 1px solid var(--border-color);
@@ -244,7 +263,7 @@
     .call-btn:active { transform: scale(0.9); }
     .call-btn svg { width: 20px; height: 20px; fill: currentColor; }
 
-    /* Static Group Badge (For Timeline) - Updated to Sleek Slate Gradient */
+    /* Static Group Badge (For Timeline) - Sleek Slate Gradient */
     .group-header-card { background: linear-gradient(135deg, #475569, #1e293b); color: #ffffff; padding: 16px 20px; border-radius: 16px; margin-bottom: 24px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); display: flex; justify-content: space-between; align-items: center;}
     @media (prefers-color-scheme: dark) { .group-header-card { background: linear-gradient(135deg, #334155, #0f172a); border: 1px solid #475569; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); } }
     .gh-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; opacity: 0.8; margin-bottom: 4px; }
@@ -400,18 +419,89 @@
       </div>
       
       <div id="main-groups-list">
-        <div class="skeleton-user-card">
-            <div class="skeleton-u-top">
-                <div class="skeleton skeleton-icon"></div>
-                <div class="skeleton-lines">
-                    <div class="skeleton skeleton-text-lg"></div>
-                    <div class="skeleton skeleton-text-md"></div>
-                    <div class="skeleton skeleton-text-sm"></div>
+        <!-- Exact Replica Professional Group Skeletons -->
+        <div class="skeleton-group-card">
+            <div class="skeleton-gc-header">
+                <div style="flex: 1;">
+                    <div class="skeleton skeleton-gc-title"></div>
+                    <div class="skeleton skeleton-gc-id"></div>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
+                    <div class="skeleton skeleton-gc-pot"></div>
+                    <div class="skeleton skeleton-gc-pot-label"></div>
                 </div>
             </div>
-            <div class="skeleton-u-actions">
-                <div class="skeleton skeleton-btn"></div>
-                <div class="skeleton skeleton-btn"></div>
+            <div class="skeleton-gc-stats">
+                <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+                <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+                <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+            </div>
+            <div class="skeleton-gc-footer">
+                <div class="skeleton skeleton-gc-foot-left"></div>
+                <div class="skeleton skeleton-gc-foot-right"></div>
+            </div>
+        </div>
+        <div class="skeleton-group-card">
+            <div class="skeleton-gc-header">
+                <div style="flex: 1;">
+                    <div class="skeleton skeleton-gc-title"></div>
+                    <div class="skeleton skeleton-gc-id"></div>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
+                    <div class="skeleton skeleton-gc-pot"></div>
+                    <div class="skeleton skeleton-gc-pot-label"></div>
+                </div>
+            </div>
+            <div class="skeleton-gc-stats">
+                <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+                <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+                <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+            </div>
+            <div class="skeleton-gc-footer">
+                <div class="skeleton skeleton-gc-foot-left"></div>
+                <div class="skeleton skeleton-gc-foot-right"></div>
+            </div>
+        </div>
+        <div class="skeleton-group-card">
+            <div class="skeleton-gc-header">
+                <div style="flex: 1;">
+                    <div class="skeleton skeleton-gc-title"></div>
+                    <div class="skeleton skeleton-gc-id"></div>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
+                    <div class="skeleton skeleton-gc-pot"></div>
+                    <div class="skeleton skeleton-gc-pot-label"></div>
+                </div>
+            </div>
+            <div class="skeleton-gc-stats">
+                <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+                <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+                <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+            </div>
+            <div class="skeleton-gc-footer">
+                <div class="skeleton skeleton-gc-foot-left"></div>
+                <div class="skeleton skeleton-gc-foot-right"></div>
+            </div>
+        </div>
+        <div class="skeleton-group-card">
+            <div class="skeleton-gc-header">
+                <div style="flex: 1;">
+                    <div class="skeleton skeleton-gc-title"></div>
+                    <div class="skeleton skeleton-gc-id"></div>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
+                    <div class="skeleton skeleton-gc-pot"></div>
+                    <div class="skeleton skeleton-gc-pot-label"></div>
+                </div>
+            </div>
+            <div class="skeleton-gc-stats">
+                <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+                <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+                <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+            </div>
+            <div class="skeleton-gc-footer">
+                <div class="skeleton skeleton-gc-foot-left"></div>
+                <div class="skeleton skeleton-gc-foot-right"></div>
             </div>
         </div>
       </div>
@@ -663,7 +753,7 @@
         } catch(e) { }
     };
 
-    // --- FLAWLESS MODAL NAVIGATION (Stack Array Based - Anti Duplicate Touch) ---
+    // --- FLAWLESS MODAL NAVIGATION (Strict Single-Source Array Based) ---
     window.modalStack = [];
     let isNavigating = false;
 
@@ -677,18 +767,15 @@
         }
     };
     
+    // Completely rewritten to ONLY use native history to prevent double-pop bug
     window.closeModal = function() {
         if(isNavigating) return;
         isNavigating = true;
-        setTimeout(() => isNavigating = false, 300); // Navigation lock
+        setTimeout(() => isNavigating = false, 350); // Hard lock protects race conditions
 
         haptic('light');
         if (modalStack.length > 0) {
-            const popped = modalStack.pop();
-            document.getElementById(popped).classList.remove('active');
-            if (window.history.state && window.history.state.id === popped) {
-                history.back();
-            }
+            history.back(); // Defers entirely to the popstate listener below
         } else {
             closeAllModals();
         }
@@ -700,11 +787,19 @@
       document.querySelectorAll('.center-modal').forEach(m => m.classList.remove('active'));
     }
     
-    // UPDATED POPSTATE HANDLER - Respects Array Stack
+    // Single Source of Truth for tearing down UI
     window.addEventListener('popstate', (e) => {
         if (modalStack.length > 0) {
             const popped = modalStack.pop();
-            document.getElementById(popped).classList.remove('active');
+            const el = document.getElementById(popped);
+            if (el) el.classList.remove('active');
+            
+            // Failsafe cleanup ensuring deep nested layers stay secure
+            document.querySelectorAll('.modal, .center-modal').forEach(m => {
+                if (!modalStack.includes(m.id)) {
+                    m.classList.remove('active');
+                }
+            });
         } else {
             closeAllModals();
         }
@@ -745,20 +840,27 @@
         
         if (!isLoadMore) {
             let skelHtml = '';
-            for(let i=0; i<3; i++) {
+            for(let i=0; i<4; i++) {
                 skelHtml += `
-                <div class="skeleton-user-card">
-                    <div class="skeleton-u-top">
-                        <div class="skeleton skeleton-icon"></div>
-                        <div class="skeleton-lines">
-                            <div class="skeleton skeleton-text-lg"></div>
-                            <div class="skeleton skeleton-text-md"></div>
-                            <div class="skeleton skeleton-text-sm"></div>
+                <div class="skeleton-group-card">
+                    <div class="skeleton-gc-header">
+                        <div style="flex: 1;">
+                            <div class="skeleton skeleton-gc-title"></div>
+                            <div class="skeleton skeleton-gc-id"></div>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
+                            <div class="skeleton skeleton-gc-pot"></div>
+                            <div class="skeleton skeleton-gc-pot-label"></div>
                         </div>
                     </div>
-                    <div class="skeleton-u-actions">
-                        <div class="skeleton skeleton-btn"></div>
-                        <div class="skeleton skeleton-btn"></div>
+                    <div class="skeleton-gc-stats">
+                        <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+                        <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+                        <div class="skeleton-gc-stat-box"><div class="skeleton skeleton-gc-stat-label"></div><div class="skeleton skeleton-gc-stat-val"></div></div>
+                    </div>
+                    <div class="skeleton-gc-footer">
+                        <div class="skeleton skeleton-gc-foot-left"></div>
+                        <div class="skeleton skeleton-gc-foot-right"></div>
                     </div>
                 </div>`;
             }
@@ -1822,10 +1924,12 @@
                 await batch.commit();
                 
                 closeModal();
-                showMessage("Funds Reduced", `Successfully reversed ₹${val.toLocaleString('en-IN')}`, "success");
-                renderParticipantsList();
-                renderPendingList();
-                analyzeUserLedger(groupId);
+                setTimeout(() => {
+                    showMessage("Funds Reduced", `Successfully reversed ₹${val.toLocaleString('en-IN')}`, "success");
+                    renderParticipantsList();
+                    renderPendingList();
+                    analyzeUserLedger(groupId);
+                }, 150);
             }
         } catch (err) {
             console.error(err); showMessage("Update Failed", err.message, "error");
@@ -1853,10 +1957,12 @@
             await batch.commit();
             
             closeModal();
-            showMessage("Transaction Voided", `Partial payment cleared completely.`, "success");
-            renderParticipantsList();
-            renderPendingList();
-            analyzeUserLedger(groupId);
+            setTimeout(() => {
+                showMessage("Transaction Voided", `Partial payment cleared completely.`, "success");
+                renderParticipantsList();
+                renderPendingList();
+                analyzeUserLedger(groupId);
+            }, 150);
             
         } catch (err) {
             console.error(err); showMessage("Void Failed", err.message, "error");
@@ -1894,10 +2000,12 @@
             await batch.commit();
 
             closeModal();
-            showMessage("Payment Reversed", `Month ${pendingUndoState.month} payment was successfully deleted.`, "success");
-            renderParticipantsList();
-            renderPendingList();
-            analyzeUserLedger(groupId);
+            setTimeout(() => {
+                showMessage("Payment Reversed", `Month ${pendingUndoState.month} payment was successfully deleted.`, "success");
+                renderParticipantsList();
+                renderPendingList();
+                analyzeUserLedger(groupId);
+            }, 150);
 
         } catch (err) {
             console.error(err);
