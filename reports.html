@@ -223,6 +223,48 @@
     .invalid { color: var(--danger-color); }
     .loading-text { font-size: 11px; color: var(--brand-accent); position: absolute; right: 14px; top: 0; display: none; font-weight: 800; text-transform: uppercase;}
 
+    /* Professional Toast Notification (Adaptive Theme) */
+    .toast-notification {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background-color: var(--surface-color);
+      color: var(--text-main);
+      padding: 14px 22px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--border-color);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    @media (prefers-color-scheme: dark) {
+      .toast-notification {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+    }
+    .toast-notification.active {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .toast-icon-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .toast-success .toast-icon-wrap { color: var(--success-color); }
+    .toast-danger .toast-icon-wrap { color: var(--danger-color); }
+
     /* 100% Client-Side Complete Timeline Ledger */
     .timeline-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 40px;}
     .t-row { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
@@ -375,6 +417,12 @@
       <button id="main-load-more-btn" class="load-more-btn" style="display: none;" onclick="loadUsers(true)">Load More Users</button>
     </div>
   </main>
+
+  <!-- Notification Toast -->
+  <div id="toast-msg" class="toast-notification">
+      <span class="toast-icon-wrap" id="toast-icon"></span>
+      <span id="toast-text"></span>
+  </div>
 
   <aside id="user-detail-modal" class="modal">
     <div class="modal-header">
@@ -657,6 +705,30 @@
         haptic('heavy');
       }
       openModal('message-modal'); 
+    };
+
+    // --- NEW TOAST SYSTEM ---
+    window.showToast = function(message, type = 'success') {
+        const toast = document.getElementById('toast-msg');
+        const text = document.getElementById('toast-text');
+        const icon = document.getElementById('toast-icon');
+        
+        text.innerHTML = message;
+        toast.className = 'toast-notification toast-' + type;
+        
+        if (type === 'success') {
+            icon.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+            haptic('success');
+        } else if (type === 'danger') {
+            icon.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
+            haptic('heavy');
+        }
+        
+        toast.classList.add('active');
+        
+        setTimeout(() => {
+            toast.classList.remove('active');
+        }, 3000);
     };
 
     const phoneIconSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>`;
@@ -1690,7 +1762,12 @@
 
                 allUsersCache = allUsersCache.filter(u => u && u.id !== originalId);
                 allUsersCache.push({ id: newId, ...newUserData });
-                showMessage("Migration Complete", `Participant moved to <b>@${newId}</b>.`, "success");
+                
+                // Clear UI, Close Modal, Fire Toast
+                currentSearchTerm = ""; document.getElementById('master-search').value = "";
+                loadUsers(false);
+                if (window.history.state && window.history.state.id) { history.back(); } else { closeModal(); }
+                showToast("Participant moved to @" + newId);
             } else {
                 await updateDoc(doc(db, "users", originalId), { name: newName, phone: newPhone, joinedAt: newJoinDateObj });
                 
@@ -1718,12 +1795,13 @@
                      }
                      await batch.commit();
                 }
-                showMessage("Updated", "Participant profile saved successfully.", "success");
+                
+                // Clear UI, Close Modal, Fire Toast
+                currentSearchTerm = ""; document.getElementById('master-search').value = "";
+                loadUsers(false);
+                if (window.history.state && window.history.state.id) { history.back(); } else { closeModal(); }
+                showToast("Participant details updated successfully.");
             }
-            
-            currentSearchTerm = ""; document.getElementById('master-search').value = "";
-            loadUsers(false);
-            if (window.history.state && window.history.state.id) { history.back(); } else { closeModal(); }
             
         } catch(err) {
             console.error(err); showMessage("System Error", err.message, "error");
@@ -1797,9 +1875,11 @@
             await batch.commit();
 
             allUsersCache = allUsersCache.filter(u => u && u.id !== targetParticipantIdToDelete);
+            
+            // Clear UI, Close Modal, Fire Toast
             loadUsers(false);
             if (window.history.state && window.history.state.id) { history.back(); } else { closeModal(); }
-            showMessage("Deep Wipe Successful", `Participant removed.<br><br>Deleted <b>${txnsDeleted}</b> payments and <b>${auctionsDeleted}</b> payouts.`, "success");
+            showToast("Participant removed permanently.");
             
         } catch(e) { 
             console.error(e); showMessage("Deletion Error", `Failed to delete participant: <br><br> ${e.message}`, "error");
