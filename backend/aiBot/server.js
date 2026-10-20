@@ -193,12 +193,27 @@ function buildDefaulterContext() {
                 let statusTag = "";
                 
                 if (m <= paid) {
-                    statusTag = "[PAID]";
+                    // FIX: Differentiate between normal paid and advance payments
+                    if (m > expectedMonth) {
+                        statusTag = "[PAID IN ADVANCE]";
+                    } else {
+                        statusTag = "[PAID]";
+                    }
                 } else if (m === paid + 1 && partialPaid > 0) {
-                    // Injecting highly specific partial payment data into context dynamically
+                    // FIX: Inject timing context into partial payments
                     const balance = amt - partialPaid;
-                    statusTag = `[PARTIALLY PAID: ₹${partialPaid} received, Balance: ₹${balance}]`;
-                    pendingTotal += balance;
+                    let timingTag = "";
+                    
+                    if (m < expectedMonth) timingTag = " - PREVIOUS MONTH";
+                    else if (m === expectedMonth) timingTag = " - CURRENT MONTH";
+                    else timingTag = " - FUTURE MONTH";
+                    
+                    statusTag = `[PARTIALLY PAID${timingTag}: ₹${partialPaid} received, Balance: ₹${balance}]`;
+                    
+                    // Only add to immediate pending if it's a past or current month (not a future advance partial)
+                    if (m <= expectedMonth) {
+                        pendingTotal += balance;
+                    }
                 } else if (m < expectedMonth) {
                     statusTag = "[PREVIOUS MONTH PENDING]";
                     pendingTotal += amt;
@@ -292,8 +307,8 @@ STRICT RULES:
 1. Language: Tanglish (Spoken Tamil + English). Use "இருக்கு", "இல்லங்க", "கட்டணும்".
 2. Respect: Add "ங்க". No formal ancient Tamil.
 3. Terms: Keep financial terms in English (Pending, Paid, Due, Future Installment).
-4. Ledger Math: [PREVIOUS MONTH PENDING] + [CURRENT MONTH DUE] + [PARTIALLY PAID Balance] = Total Immediate Pending. Do NOT include [FUTURE INSTALLMENT] in current dues.
-5. Partial Payments: If a month is [PARTIALLY PAID], clearly state the received and balance amounts naturally (e.g., "நீங்க ₹X கட்டிருக்கீங்க, இன்னும் ₹Y பேலன்ஸ் கட்டணும்ங்க").
+4. Ledger Math: [PREVIOUS MONTH PENDING] + [CURRENT MONTH DUE] + [PARTIALLY PAID Balance (if past/current)] = Total Immediate Pending. Do NOT include [FUTURE INSTALLMENT] or [PAID IN ADVANCE] in current dues.
+5. Partial & Advance Payments: If a month is [PARTIALLY PAID], check if it says CURRENT or PREVIOUS month, and clearly state the received and balance amounts naturally ("நீங்க இந்த மாசத்துல ₹X கட்டிருக்கீங்க, இன்னும் ₹Y பேலன்ஸ் கட்டணும்ங்க"). If a month is [PAID IN ADVANCE], praise them for paying early.
 6. Be crisp, direct, and ensure zero hallucination. Provide line-item clarity if asked.
 
 SYSTEM CLOCK:
@@ -310,8 +325,8 @@ Task: Verify uploaded payment receipts against the active ledger.
 STRICT RULES:
 1. Language: Tanglish (Spoken Tamil + English). Use "இருக்கு", "இல்லங்க". No formal ancient Tamil.
 2. Match: Find the name and amount in the image, and match it to a pending due in the active ledger.
-3. Ledger Math: Ensure the receipt covers [PREVIOUS MONTH PENDING], [CURRENT MONTH DUE], or [PARTIALLY PAID Balance].
-4. Partial Payments: If it's a partial payment, explain the remaining balance in Tanglish ("இன்னும் ₹X பேலன்ஸ் இருக்குங்க").
+3. Ledger Math: Ensure the receipt covers [PREVIOUS MONTH PENDING], [CURRENT MONTH DUE], or [PARTIALLY PAID Balance (if past/current)].
+4. Partial & Advance Payments: If it's a partial payment, explain the remaining balance clearly. If they paid a [FUTURE INSTALLMENT] or [PAID IN ADVANCE], acknowledge and praise the early payment.
 5. Response: Short and direct. State if the receipt covers their pending balance or if there is a mismatch.
 
 ACTIVE GROUPS & LIVE LEDGER:
