@@ -83,7 +83,10 @@
             -webkit-font-smoothing: antialiased;
             
             /* Crucial Layout Locks */
+            box-sizing: content-box; /* Prevents padding on .back-btn and .action-icon from clipping the icon */
             overflow: hidden; 
+            width: 1em;
+            height: 1em;
             max-width: 1em; /* Locks the width to the font size so raw text doesn't expand */
             vertical-align: middle;
         }
@@ -870,7 +873,7 @@
                 <span class="material-symbols-outlined back-btn" onclick="triggerHaptic([20]); history.back();">arrow_back</span>
                 <div class="brand-text" onclick="triggerHaptic([20]); window.location.href='index.html'">
                     <span class="brand-title"><span class="meena">Meena</span> <span class="marketing">Chitfunds</span></span>
-                    <span class="goorac" id="headerSubtitle">AI Ledger Chat Engine v1.0</span>
+                    <span class="goorac" id="headerSubtitle">AI Ledger Chat</span>
                 </div>
             </div>
             
