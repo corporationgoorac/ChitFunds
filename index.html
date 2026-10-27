@@ -193,7 +193,7 @@
     }
 
     /* * ==========================================
-     * 3. AUTHENTICATION SCREEN (ACCOUNT ID INPUT)
+     * 3. AUTHENTICATION SCREEN (ACCOUNT ID + PHONE INPUT)
      * ==========================================
      */
     .auth-container {
@@ -203,25 +203,147 @@
 
     .login-card {
       background: var(--surface); border-radius: 20px; padding: 32px 24px;
-      width: 100%; max-width: 400px; box-shadow: var(--card-shadow); border: 1px solid var(--border);
+      width: 100%; max-width: 410px; box-shadow: var(--card-shadow); border: 1px solid var(--border);
     }
 
     .login-header { text-align: center; margin-bottom: 24px; }
     .login-header h2 { margin: 0; font-size: 1.45rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; line-height: 1.35;}
-    .login-header p { color: var(--text-muted); font-size: 0.92rem; margin-top: 8px; line-height: 1.5; font-weight: 500;}
+    .login-header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 8px; line-height: 1.5; font-weight: 500;}
 
-    .input-group { margin-bottom: 16px; }
+    .input-group { margin-bottom: 18px; }
+    
+    .field-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 0 2px;
+    }
+    .field-label {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .info-icon-btn {
+      background: var(--brand-accent-light);
+      color: var(--brand-primary);
+      border: 1px solid rgba(6, 95, 212, 0.22);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .info-icon-btn:hover {
+      background: var(--brand-primary);
+      color: #FFFFFF;
+    }
+    .info-icon-btn:active {
+      transform: scale(0.88);
+    }
+    .info-icon-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
     .styled-input {
       width: 100%; background: var(--input-bg); border: 2px solid var(--border);
-      color: var(--text-main); padding: 16px; border-radius: 12px; font-size: 1.15rem;
+      color: var(--text-main); padding: 15px 16px; border-radius: 12px; font-size: 1.12rem;
       transition: all 0.2s ease; font-weight: 800; text-align: center; letter-spacing: 1.2px;
       font-variant-numeric: tabular-nums;
     }
     .styled-input:focus { border-color: var(--brand-primary); box-shadow: 0 0 0 4px var(--brand-accent-light); }
-    .styled-input::placeholder { color: var(--text-muted); font-weight: 500; letter-spacing: 0; font-size: 0.98rem;}
+    .styled-input::placeholder { color: var(--text-muted); font-weight: 500; letter-spacing: 0; font-size: 0.95rem;}
     .styled-input.input-error {
       border-color: var(--danger-txt);
       animation: inputShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    /* Indian Phone Input Wrapper (🇮🇳 +91 | 10-Digit Input) */
+    .phone-input-wrapper {
+      display: flex;
+      align-items: stretch;
+      width: 100%;
+      background: var(--input-bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+    .phone-input-wrapper:focus-within {
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 4px var(--brand-accent-light);
+    }
+    .phone-input-wrapper.input-error {
+      border-color: var(--danger-txt);
+      animation: inputShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+    .phone-prefix {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 14px;
+      background: rgba(0, 0, 0, 0.03);
+      border-right: 1.5px solid var(--border);
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      user-select: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    @media (prefers-color-scheme: dark) {
+      .phone-prefix { background: rgba(255, 255, 255, 0.04); }
+    }
+    .flag-icon {
+      font-size: 1.18rem;
+      line-height: 1;
+    }
+    .phone-field {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      padding: 15px 14px;
+      font-size: 1.12rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      font-variant-numeric: tabular-nums;
+      text-align: left;
+    }
+    .phone-field::placeholder {
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0;
+      font-size: 0.94rem;
+    }
+
+    .sms-note-hint {
+      margin-top: 7px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 1.35;
+      cursor: pointer;
+    }
+    .sms-note-hint svg {
+      width: 14px;
+      height: 14px;
+      fill: var(--brand-primary);
+      flex-shrink: 0;
     }
 
     @keyframes inputShake {
@@ -236,11 +358,65 @@
       border: none; padding: 16px; border-radius: 12px; font-size: 1.05rem;
       font-weight: 800; cursor: pointer; transition: all 0.2s ease; margin-top: 8px;
       box-shadow: 0 4px 12px rgba(6, 95, 212, 0.22);
-      display: inline-flex; justify-content: center; align-items: center; gap: 8px;
+      display: inline-flex; justify-content: center; align-items: center; gap: 10px;
     }
     .btn-primary:hover { background: var(--brand-primary-hover); }
     .btn-primary:active { transform: scale(0.97); }
-    .btn-primary:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+    .btn-primary:disabled { opacity: 0.75; cursor: not-allowed; transform: none; }
+
+    /* Circular Button Spinner */
+    .btn-spinner {
+      width: 19px;
+      height: 19px;
+      border: 2.5px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #FFFFFF;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      flex-shrink: 0;
+    }
+
+    /* Toast Notification Banner */
+    .toast-banner {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: #0F172A;
+      color: #FFFFFF;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      line-height: 1.4;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+      z-index: 1100;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: calc(100% - 32px);
+      max-width: 380px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .toast-banner.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .toast-banner-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(56, 189, 248, 0.18);
+      color: #38BDF8;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.9rem;
+    }
 
     /* * ==========================================
      * 4. MAIN DASHBOARD (LEDGER VIEW)
@@ -532,6 +708,7 @@
       header { padding: 0 12px; }
       .g-col { padding: 12px 8px; }
       .badge { padding: 4px 8px; font-size: 0.62rem; }
+      .phone-prefix { padding: 0 10px; font-size: 0.92rem; }
     }
   </style>
 </head>
@@ -554,14 +731,23 @@
     </div>
   </div>
 
+  <!-- Interactive Toast Notification -->
+  <div id="info-toast" class="toast-banner" onclick="hideInfoToast()">
+    <span class="toast-banner-icon">ℹ️</span>
+    <span id="info-toast-text">Enter the 10-digit mobile number where you receive official Meena Chitfunds SMS updates.</span>
+  </div>
+
   <div id="auth-section" class="auth-container">
     <div class="login-card">
       <div class="login-header">
         <h2 id="txt-login-title">View Your Ledger</h2>
-        <p id="txt-login-sub">Enter your Account ID to check your monthly dues and payment status.</p>
+        <p id="txt-login-sub">Enter your Account ID and linked mobile number to check your monthly dues and payment status.</p>
       </div>
       
       <div class="input-group">
+        <div class="field-label-row">
+          <label class="field-label" for="custId" id="txt-label-account">Account ID</label>
+        </div>
         <input 
           type="text" 
           id="custId" 
@@ -571,11 +757,43 @@
           autocapitalize="characters"
           spellcheck="false"
           oninput="this.value = this.value.replace(/\s+/g, '').toUpperCase(); this.classList.remove('input-error');"
-          onkeydown="if(event.key === 'Enter') verifyAccess();"
+          onkeydown="if(event.key === 'Enter') document.getElementById('custPhone').focus();"
         >
       </div>
+
+      <div class="input-group">
+        <div class="field-label-row">
+          <label class="field-label" for="custPhone" id="txt-label-phone">Linked Mobile Number</label>
+          <button type="button" class="info-icon-btn" onclick="showPhoneInfoNote()" aria-label="Phone Number Information" title="Phone Number Info">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          </button>
+        </div>
+        <div class="phone-input-wrapper" id="phoneWrapper">
+          <div class="phone-prefix">
+            <span class="flag-icon">🇮🇳</span>
+            <span>+91</span>
+          </div>
+          <input 
+            type="tel" 
+            id="custPhone" 
+            class="phone-field" 
+            placeholder="10-digit mobile number" 
+            inputmode="numeric"
+            maxlength="10"
+            autocomplete="tel-national"
+            oninput="sanitizePhoneField(this)"
+            onkeydown="if(event.key === 'Enter') verifyAccess();"
+          >
+        </div>
+        <div class="sms-note-hint" onclick="showPhoneInfoNote()">
+          <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"/></svg>
+          <span id="txt-sms-hint">Note: Use the official number where you receive SMS</span>
+        </div>
+      </div>
       
-      <button class="btn-primary" id="loginBtn" onclick="verifyAccess()">Access Ledger</button>
+      <button class="btn-primary" id="loginBtn" onclick="verifyAccess()">
+        <span id="loginBtnText">Access Ledger</span>
+      </button>
     </div>
   </div>
 
@@ -652,10 +870,14 @@
       en: {
         toggleBtn: "த",
         loginTitle: "View Your Ledger",
-        loginSub: "Enter your Account ID to check your monthly dues and payment status.",
+        loginSub: "Enter your Account ID and linked mobile number to check your monthly dues and payment status.",
+        labelAccount: "Account ID",
+        labelPhone: "Linked Mobile Number",
         inputPlaceholder: "Enter Account ID (e.g. M105)",
+        phonePlaceholder: "10-digit mobile number",
+        smsHint: "Note: Use the official number where you receive SMS",
         accessBtn: "Access Ledger",
-        authLoading: "Authenticating...",
+        authLoading: "Verifying...",
         logoutBtn: "Exit",
         selectGroupPrompt: "-- Select a Group to View --",
         viewGroupPrefix: "View Group:",
@@ -681,6 +903,12 @@
         accountHolderDefault: "Account Holder",
         modalIdTitle: "Account ID",
         modalIdEmptyMsg: "Please enter your account ID",
+        modalPhoneTitle: "Mobile Number Required",
+        modalPhoneEmptyMsg: "Please enter your 10-digit mobile number linked to this account.",
+        modalPhoneMismatchTitle: "Verification Failed",
+        modalPhoneMismatchMsg: "The mobile number entered does not match this Account ID. Please enter the official number where you receive SMS.",
+        modalPhoneInfoTitle: "Official Linked Mobile Number",
+        modalPhoneInfoMsg: "Please enter the 10-digit mobile number where you receive official Meena Chitfunds SMS messages. That is the official number linked to your account.",
         modalAccessDeniedTitle: "Access Denied",
         modalNotFoundMsg: "Account ID not found. Please contact administration.",
         modalNoGroupsMsg: "Your account is currently not assigned to any active groups.",
@@ -691,8 +919,12 @@
       ta: {
         toggleBtn: "E",
         loginTitle: "உங்கள் கணக்கு விவரம்",
-        loginSub: "உங்கள் மாதாந்திர தவணை மற்றும் நிலையை அறிய Account ID-ஐ உள்ளிடவும்.",
+        loginSub: "உங்கள் மாதாந்திர தவணை மற்றும் நிலையை அறிய Account ID மற்றும் இணைக்கப்பட்ட மொபைல் எண்ணை உள்ளிடவும்.",
+        labelAccount: "Account ID",
+        labelPhone: "இணைக்கப்பட்ட மொபைல் எண்",
         inputPlaceholder: "Account ID உள்ளிடவும் (எ.கா. M105)",
+        phonePlaceholder: "10 இலக்க மொபைல் எண்",
+        smsHint: "குறிப்பு: SMS வரும் அதிகாரப்பூர்வ மொபைல் எண்ணை உள்ளிடவும்",
         accessBtn: "விவரம் பார்க்க",
         authLoading: "சரிபார்க்கப்படுகிறது...",
         logoutBtn: "வெளியேறு",
@@ -720,6 +952,12 @@
         accountHolderDefault: "வாடிக்கையாளர்",
         modalIdTitle: "Account ID",
         modalIdEmptyMsg: "தயவுசெய்து உங்கள் Account ID-ஐ உள்ளிடவும்",
+        modalPhoneTitle: "மொபைல் எண் தேவை",
+        modalPhoneEmptyMsg: "இந்த கணக்குடன் இணைக்கப்பட்ட 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்.",
+        modalPhoneMismatchTitle: "சரிபார்ப்பு தோல்வி",
+        modalPhoneMismatchMsg: "நீங்கள் உள்ளிட்ட மொபைல் எண் இந்த Account ID உடன் பொருந்தவில்லை. உங்களுக்கு SMS வரும் அதிகாரப்பூர்வ எண்ணை உள்ளிடவும்.",
+        modalPhoneInfoTitle: "இணைக்கப்பட்ட மொபைல் எண்",
+        modalPhoneInfoMsg: "மீனா சிட்பண்ட்ஸ்-இல் இருந்து உங்களுக்கு SMS வரும் 10 இலக்க மொபைல் எண்ணை உள்ளிடவும். அதுவே உங்கள் கணக்குடன் இணைக்கப்பட்ட அதிகாரப்பூர்வ எண்ணாகும்.",
         modalAccessDeniedTitle: "அனுமதி மறுக்கப்பட்டது",
         modalNotFoundMsg: "Account ID காணப்படவில்லை. நிர்வாகத்தைத் தொடர்பு கொள்ளவும்.",
         modalNoGroupsMsg: "உங்கள் கணக்கு எந்த குழுவிலும் இணைக்கப்படவில்லை.",
@@ -739,6 +977,74 @@
     let isModalOpen = false;
     let isDashboardOpen = false;
     let lastModalKey = null;
+    let toastTimer = null;
+
+    // --- SMART INDIAN 10-DIGIT PHONE SANITIZER ---
+    // Strips spaces, +91, leading 0s, dashes, or formatting from both user input & Firestore DB strings
+    window.extractTenDigitPhone = (rawPhone) => {
+      if (!rawPhone) return "";
+      let digits = String(rawPhone).replace(/\D/g, "");
+      if (digits.length > 10) {
+        if (digits.startsWith("91") && digits.length >= 12) {
+          digits = digits.slice(-10);
+        } else if (digits.startsWith("0") && digits.length >= 11) {
+          digits = digits.slice(-10);
+        } else {
+          digits = digits.slice(-10);
+        }
+      }
+      return digits;
+    };
+
+    window.sanitizePhoneField = (inputEl) => {
+      const wrapper = document.getElementById("phoneWrapper");
+      if (wrapper) wrapper.classList.remove("input-error");
+      let digits = String(inputEl.value).replace(/\D/g, "");
+      // If user pastes a full +91XXXXXXXXXX or 0XXXXXXXXXX number, extract the 10-digit mobile number automatically
+      if (digits.length > 10) {
+        digits = window.extractTenDigitPhone(digits);
+      }
+      inputEl.value = digits.slice(0, 10);
+    };
+
+    // --- PHONE INFO NOTE (TOAST + BACK-BUTTON MODAL) ---
+    window.hideInfoToast = () => {
+      const toast = document.getElementById("info-toast");
+      if (toast) toast.classList.remove("show");
+    };
+
+    window.showPhoneInfoNote = () => {
+      window.triggerHaptic("light");
+      const toast = document.getElementById("info-toast");
+      const toastText = document.getElementById("info-toast-text");
+      if (toast && toastText) {
+        toastText.innerText = t("modalPhoneInfoMsg");
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.remove("show");
+        }, 4000);
+      }
+      window.showModal(
+        t("modalPhoneInfoTitle"),
+        t("modalPhoneInfoMsg"),
+        "info",
+        { titleKey: "modalPhoneInfoTitle", msgKey: "modalPhoneInfoMsg" }
+      );
+    };
+
+    // --- BUTTON LOADING SPINNER HELPER ---
+    function setLoginButtonLoading(isLoading) {
+      const btn = document.getElementById("loginBtn");
+      if (!btn) return;
+      if (isLoading) {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="btn-spinner"></span><span id="loginBtnText">${t("authLoading")}</span>`;
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = `<span id="loginBtnText">${t("accessBtn")}</span>`;
+      }
+    }
 
     // --- APPLY LANGUAGE TO UI ---
     window.applyLanguage = (reRenderLedger = true) => {
@@ -746,13 +1052,16 @@
       document.getElementById("langToggleBtn").innerText = t("toggleBtn");
       document.getElementById("txt-login-title").innerText = t("loginTitle");
       document.getElementById("txt-login-sub").innerText = t("loginSub");
+      document.getElementById("txt-label-account").innerText = t("labelAccount");
+      document.getElementById("txt-label-phone").innerText = t("labelPhone");
       document.getElementById("custId").placeholder = t("inputPlaceholder");
+      document.getElementById("custPhone").placeholder = t("phonePlaceholder");
+      document.getElementById("txt-sms-hint").innerText = t("smsHint");
       
       const loginBtn = document.getElementById("loginBtn");
-      if (!loginBtn.disabled) {
-        loginBtn.innerText = t("accessBtn");
-      } else {
-        loginBtn.innerText = t("authLoading");
+      const loginBtnText = document.getElementById("loginBtnText");
+      if (loginBtn && loginBtnText) {
+        loginBtnText.innerText = loginBtn.disabled ? t("authLoading") : t("accessBtn");
       }
 
       document.getElementById("txt-logout-btn").innerText = t("logoutBtn");
@@ -765,6 +1074,9 @@
       document.getElementById("txt-col-status").innerText = t("colStatus");
       document.getElementById("txt-footer-sub").innerText = t("footerSub");
       document.getElementById("modal-ok-btn").innerText = t("okBtn");
+
+      const toastText = document.getElementById("info-toast-text");
+      if (toastText) toastText.innerText = t("modalPhoneInfoMsg");
 
       // Refresh group dropdown text if user has multiple groups
       if (currentUserData && currentUserData.activeGroups && currentUserData.activeGroups.length > 1) {
@@ -827,9 +1139,7 @@
       document.getElementById("loader-spinner").style.display = "none";
       document.getElementById("auth-section").style.display = "flex";
 
-      const btn = document.getElementById("loginBtn");
-      btn.disabled = false;
-      btn.innerText = t("accessBtn");
+      setLoginButtonLoading(false);
 
       const inputEl = document.getElementById("custId");
       if (inputEl) {
@@ -847,7 +1157,7 @@
     };
 
     window.addEventListener("popstate", (event) => {
-      // 1. If the alert modal is currently open, pressing Back closes the modal first
+      // 1. If the alert/info modal is currently open, pressing Back closes the modal first
       if (isModalOpen) {
         window.closeModal(true);
         return;
@@ -867,7 +1177,7 @@
       const modal = document.getElementById("custom-modal");
       document.getElementById("modal-title").innerText = title;
       document.getElementById("modal-msg").innerText = message;
-      document.getElementById("modal-icon").innerText = type === "error" ? "⚠️" : "✅";
+      document.getElementById("modal-icon").innerText = type === "error" ? "⚠️" : (type === "info" ? "ℹ️" : "✅");
       document.getElementById("modal-ok-btn").innerText = t("okBtn");
       
       if (!isModalOpen) {
@@ -884,15 +1194,12 @@
       window.triggerHaptic("light");
       isModalOpen = false;
       lastModalKey = null;
+      window.hideInfoToast();
 
       const modal = document.getElementById("custom-modal");
       modal.classList.remove("modal-show");
       setTimeout(() => {
         modal.style.display = "none";
-        const inputEl = document.getElementById("custId");
-        if (document.getElementById("auth-section").style.display !== "none" && inputEl) {
-          inputEl.focus();
-        }
       }, 200);
 
       // Sync browser history if closed via "OK" button or backdrop tap instead of hardware Back button
@@ -946,13 +1253,20 @@
         return expected;
     }
 
-    // --- VERIFY & LOGIN (0-Auth Required, just ID check) ---
+    // --- VERIFY & LOGIN (1-READ ACCOUNT ID + PHONE VERIFICATION) ---
     window.verifyAccess = async () => {
       window.triggerHaptic("light");
       const inputEl = document.getElementById("custId");
+      const phoneEl = document.getElementById("custPhone");
+      const phoneWrapper = document.getElementById("phoneWrapper");
+
       const idInput = inputEl.value.replace(/\s+/g, "").toUpperCase();
       inputEl.value = idInput;
 
+      const cleanInputPhone = window.extractTenDigitPhone(phoneEl.value);
+      phoneEl.value = cleanInputPhone;
+
+      // 1. Validate Account ID Presence
       if (!idInput) {
         inputEl.classList.remove("input-error");
         void inputEl.offsetWidth; // Reflow to re-trigger shake animation
@@ -966,32 +1280,68 @@
         return;
       }
 
-      const btn = document.getElementById("loginBtn");
-      btn.innerText = t("authLoading");
-      btn.disabled = true;
+      // 2. Validate 10-Digit Phone Number Presence
+      if (cleanInputPhone.length !== 10) {
+        if (phoneWrapper) {
+          phoneWrapper.classList.remove("input-error");
+          void phoneWrapper.offsetWidth;
+          phoneWrapper.classList.add("input-error");
+        }
+        window.showModal(
+          t("modalPhoneTitle"),
+          t("modalPhoneEmptyMsg"),
+          "error",
+          { titleKey: "modalPhoneTitle", msgKey: "modalPhoneEmptyMsg" }
+        );
+        return;
+      }
+
+      // 3. Activate Button Circular Spinner
+      setLoginButtonLoading(true);
 
       try {
-        // 1. Fetch User Data
+        // 1 Single Firestore Read by Document ID
         const docRef = doc(db, "users", idInput);
         const snap = await getDoc(docRef);
 
         if (!snap.exists()) {
             const notFoundErr = new Error(t("modalNotFoundMsg"));
+            notFoundErr.titleKey = "modalAccessDeniedTitle";
             notFoundErr.msgKey = "modalNotFoundMsg";
             throw notFoundErr;
         }
 
-        currentUserData = snap.data();
+        const fetchedData = snap.data();
+
+        // Sanitize the phone number stored in Firestore (removes spaces, +91, 0 prefix, etc.)
+        const dbCleanPhone = window.extractTenDigitPhone(fetchedData.phone);
+
+        // Compare sanitized 10-digit phone numbers with 0 extra reads
+        if (!dbCleanPhone || dbCleanPhone !== cleanInputPhone) {
+            if (phoneWrapper) {
+              phoneWrapper.classList.remove("input-error");
+              void phoneWrapper.offsetWidth;
+              phoneWrapper.classList.add("input-error");
+            }
+            const phoneMismatchErr = new Error(t("modalPhoneMismatchMsg"));
+            phoneMismatchErr.titleKey = "modalPhoneMismatchTitle";
+            phoneMismatchErr.msgKey = "modalPhoneMismatchMsg";
+            throw phoneMismatchErr;
+        }
+
+        currentUserData = fetchedData;
         currentUserData.id = snap.id;
 
         // Ensure user is in at least one group
         if (!currentUserData.activeGroups || currentUserData.activeGroups.length === 0) {
              const noGroupErr = new Error(t("modalNoGroupsMsg"));
+             noGroupErr.titleKey = "modalAccessDeniedTitle";
              noGroupErr.msgKey = "modalNoGroupsMsg";
              throw noGroupErr;
         }
 
         window.triggerHaptic("success");
+        setLoginButtonLoading(false);
 
         // Push Dashboard state to History API so mobile Back button returns to Account ID box
         if (!isDashboardOpen) {
@@ -999,7 +1349,7 @@
             history.pushState({ view: "dashboard" }, "");
         }
 
-        // 2. Transition UI
+        // Transition UI
         document.getElementById("auth-section").style.display = "none";
         document.getElementById("dashboard-view").style.display = "block";
         window.scrollTo({ top: 0, behavior: "instant" });
@@ -1033,15 +1383,15 @@
 
       } catch (e) {
         console.error(e);
+        setLoginButtonLoading(false);
+        const titleKey = e.titleKey || "modalAccessDeniedTitle";
         const msgKey = e.msgKey || "modalSystemErrMsg";
         window.showModal(
-          t("modalAccessDeniedTitle"),
+          t(titleKey),
           e.msgKey ? t(e.msgKey) : (e.message || t("modalSystemErrMsg")),
           "error",
-          { titleKey: "modalAccessDeniedTitle", msgKey }
+          { titleKey, msgKey }
         );
-        btn.innerText = t("accessBtn");
-        btn.disabled = false;
       }
     };
 
@@ -1246,14 +1596,22 @@
       history.replaceState({ view: "home", modalOpen: false }, "");
       window.applyLanguage(false);
 
-      // Allows domain.com/public.html?id=RAHUL_101
-      const searchId = new URLSearchParams(window.location.search).get('id');
+      // Allows domain.com/public.html?id=RAHUL_101&phone=9876543210
+      const params = new URLSearchParams(window.location.search);
+      const searchId = params.get('id');
+      const searchPhone = params.get('phone');
       const hashId = window.location.hash.replace('#', '');
       
       const autoId = (searchId || hashId || '').replace(/\s+/g, '').toUpperCase();
+      const autoPhone = window.extractTenDigitPhone(searchPhone || '');
       
       if (autoId) {
           document.getElementById("custId").value = autoId;
+      }
+      if (autoPhone.length === 10) {
+          document.getElementById("custPhone").value = autoPhone;
+      }
+      if (autoId && autoPhone.length === 10) {
           verifyAccess();
       }
     };
