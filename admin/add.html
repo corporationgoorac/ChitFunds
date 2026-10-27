@@ -903,9 +903,8 @@
         let elapsed = (now.getFullYear() - joinDate.getFullYear()) * 12;
         elapsed -= joinDate.getMonth();
         elapsed += now.getMonth();
-        if (elapsed < 0) elapsed = 0;
-        
-        let expectedMonth = elapsed + 1;
+        let expectedMonth = elapsed < 0 ? 0 : elapsed + 1;
+
         const totalGroupMonths = groupData.totalMonths || 0;
         if (totalGroupMonths > 0 && expectedMonth > totalGroupMonths) {
             expectedMonth = totalGroupMonths;
