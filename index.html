@@ -15,16 +15,19 @@
     :root { 
       --bg: #F0F2F5; 
       --surface: #FFFFFF; 
+      --surface-hover: #F7F9FC;
       --border: #CED0D4;
       --divider: #E4E6EB;
       
       --brand-primary: #065fd4;
       --brand-primary-hover: #004ba0;
+      --brand-accent-light: rgba(6, 95, 212, 0.09);
       
       --success-bg: #E4F2EB;
       --success-txt: #0f9d58;
       --pending-bg: #FFF8E5;
-      --pending-txt: #F5A623;
+      --pending-txt: #D9822B;
+      --danger-bg: #FEECEB;
       --danger-txt: #FA383E;
       --partial-bg: #e6f0fa;
       --partial-txt: #065fd4;
@@ -34,29 +37,33 @@
       --input-bg: #F0F2F5;
       --icon-bg: #E4E6EB;
 
-      --header-bg: #FFFFFF;
-      --header-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-      --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
-      --modal-overlay: rgba(244, 244, 244, 0.85);
+      --header-bg: rgba(255, 255, 255, 0.95);
+      --header-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      --modal-overlay: rgba(15, 20, 28, 0.65);
       --modal-btn-bg: #E4E6EB;
       --modal-btn-txt: #050505;
       --modal-btn-hover: #D8DADF;
+      --focus-glow: rgba(6, 95, 212, 0.16);
     }
     
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #18191A; 
         --surface: #242526; 
+        --surface-hover: #2C2D2E;
         --border: #3E4042;
         --divider: #3E4042;
         
         --brand-primary: #3ea6ff;
         --brand-primary-hover: #3982E4;
+        --brand-accent-light: rgba(62, 166, 255, 0.14);
         
         --success-bg: rgba(15, 157, 88, 0.15);
         --success-txt: #34a853;
-        --pending-bg: rgba(245, 166, 35, 0.15);
-        --pending-txt: #E4A231;
+        --pending-bg: rgba(245, 166, 35, 0.14);
+        --pending-txt: #F5A623;
+        --danger-bg: rgba(252, 92, 101, 0.15);
         --danger-txt: #FC5C65;
         --partial-bg: rgba(62, 166, 255, 0.15);
         --partial-txt: #3ea6ff;
@@ -66,18 +73,23 @@
         --input-bg: #3A3B3C;
         --icon-bg: #3A3B3C;
 
-        --header-bg: #242526;
-        --header-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        --card-shadow: none;
-        --modal-overlay: rgba(0, 0, 0, 0.85);
+        --header-bg: rgba(36, 37, 38, 0.95);
+        --header-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+        --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        --modal-overlay: rgba(0, 0, 0, 0.82);
         --modal-btn-bg: #3A3B3C;
         --modal-btn-txt: #E4E6EB;
         --modal-btn-hover: #4E4F50;
+        --focus-glow: rgba(62, 166, 255, 0.22);
       }
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
     
+    html {
+      scroll-behavior: smooth;
+    }
+
     body { 
       background: var(--bg); 
       color: var(--text-main); 
@@ -87,29 +99,37 @@
       min-height: 100dvh;
       display: flex; flex-direction: column;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
     /* * ==========================================
-     * 2. HEADER
+     * 2. HEADER (SINGLE-LINE MOBILE OPTIMIZED)
      * ==========================================
      */
     header {
       background: var(--header-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       box-shadow: var(--header-shadow);
-      padding: 0 20px;
-      height: 60px;
+      border-bottom: 1px solid var(--divider);
+      padding: 0 16px;
+      height: 62px;
       position: sticky; top: 0; z-index: 50;
       display: flex; justify-content: space-between; align-items: center;
+      gap: 10px;
+      width: 100%;
     }
 
     .brand-logo {
-      font-size: 1.2rem;
+      font-size: clamp(0.95rem, 3.8vw, 1.2rem);
       font-weight: 800;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.4px;
       color: var(--brand-primary);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .brand-logo::before {
       content: 'M';
@@ -118,19 +138,29 @@
       width: 30px; height: 30px;
       display: inline-flex; justify-content: center; align-items: center;
       border-radius: 8px;
-      font-size: 16px; font-weight: 800;
+      font-size: 15px; font-weight: 800;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(6, 95, 212, 0.25);
     }
 
     .portal-tag {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      font-weight: 700;
+      font-size: clamp(0.68rem, 2.5vw, 0.78rem);
+      color: var(--brand-primary);
+      background: var(--brand-accent-light);
+      border: 1px solid rgba(6, 95, 212, 0.18);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-left: auto;
+      line-height: 1;
     }
 
     /* * ==========================================
-     * 3. AUTHENTICATION SCREEN (ID INPUT)
+     * 3. AUTHENTICATION SCREEN (ACCOUNT ID INPUT)
      * ==========================================
      */
     .auth-container {
@@ -139,110 +169,347 @@
     }
 
     .login-card {
-      background: var(--surface); border-radius: 16px; padding: 32px 24px;
+      background: var(--surface); border-radius: 20px; padding: 32px 24px;
       width: 100%; max-width: 400px; box-shadow: var(--card-shadow); border: 1px solid var(--border);
     }
 
     .login-header { text-align: center; margin-bottom: 24px; }
-    .login-header h2 { margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;}
-    .login-header p { color: var(--text-muted); font-size: 0.95rem; margin-top: 8px; line-height: 1.4; font-weight: 500;}
+    .login-header h2 { margin: 0; font-size: 1.45rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;}
+    .login-header p { color: var(--text-muted); font-size: 0.92rem; margin-top: 8px; line-height: 1.45; font-weight: 500;}
 
     .input-group { margin-bottom: 16px; }
     .styled-input {
       width: 100%; background: var(--input-bg); border: 2px solid var(--border);
-      color: var(--text-main); padding: 16px; border-radius: 12px; font-size: 1.1rem;
-      transition: border-color 0.2s; font-weight: 700; text-align: center; letter-spacing: 1px;
+      color: var(--text-main); padding: 16px; border-radius: 12px; font-size: 1.15rem;
+      transition: all 0.2s ease; font-weight: 800; text-align: center; letter-spacing: 1.2px;
+      font-variant-numeric: tabular-nums;
     }
-    .styled-input:focus { border-color: var(--brand-primary); }
+    .styled-input:focus { border-color: var(--brand-primary); box-shadow: 0 0 0 4px var(--brand-accent-light); }
     .styled-input::placeholder { color: var(--text-muted); font-weight: 500; letter-spacing: 0;}
+    .styled-input.input-error {
+      border-color: var(--danger-txt);
+      animation: inputShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes inputShake {
+      10%, 90% { transform: translateX(-2px); }
+      20%, 80% { transform: translateX(4px); }
+      30%, 50%, 70% { transform: translateX(-6px); }
+      40%, 60% { transform: translateX(6px); }
+    }
 
     .btn-primary {
       width: 100%; background: var(--brand-primary); color: #FFFFFF;
-      border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem;
-      font-weight: 800; cursor: pointer; transition: 0.2s; margin-top: 12px;
-      box-shadow: 0 4px 12px rgba(6, 95, 212, 0.2);
+      border: none; padding: 16px; border-radius: 12px; font-size: 1.05rem;
+      font-weight: 800; cursor: pointer; transition: all 0.2s ease; margin-top: 8px;
+      box-shadow: 0 4px 12px rgba(6, 95, 212, 0.22);
+      display: inline-flex; justify-content: center; align-items: center; gap: 8px;
     }
+    .btn-primary:hover { background: var(--brand-primary-hover); }
     .btn-primary:active { transform: scale(0.97); }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
 
     /* * ==========================================
      * 4. MAIN DASHBOARD (LEDGER VIEW)
      * ==========================================
      */
-    #dashboard-view { display: none; padding: 24px 16px; max-width: 800px; margin: 0 auto; padding-bottom: 80px; width: 100%; flex: 1; }
+    #dashboard-view { display: none; padding: 20px 14px; max-width: 800px; margin: 0 auto; padding-bottom: 80px; width: 100%; flex: 1; }
 
-    /* User Profile Top Section */
-    .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .user-profile-left { display: flex; align-items: center; gap: 14px; }
-    .user-avatar { width: 56px; height: 56px; background: linear-gradient(135deg, var(--brand-primary), #004ba0); color: white; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: 800;}
-    .user-info h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase;}
-    .user-info p { margin: 4px 0 0; color: var(--brand-primary); font-size: 0.9rem; font-weight: 800; font-family: monospace; background: var(--brand-accent-light); padding: 4px 8px; border-radius: 6px; display: inline-block;}
+    /* User Profile Top Section (Handles Long Names Cleanly) */
+    .user-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      gap: 12px;
+      margin-bottom: 20px; 
+      background: var(--surface);
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: var(--card-shadow);
+    }
+    .user-profile-left { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      min-width: 0; 
+      flex: 1; 
+    }
+    .user-avatar { 
+      width: 52px; 
+      height: 52px; 
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--brand-primary), #004ba0); 
+      color: white; 
+      border-radius: 14px; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      font-size: 1.4rem; 
+      font-weight: 800;
+      box-shadow: 0 3px 8px rgba(6, 95, 212, 0.25);
+    }
+    .user-info {
+      min-width: 0;
+      flex: 1;
+    }
+    .user-info h1 { 
+      margin: 0; 
+      font-size: clamp(1.05rem, 4.2vw, 1.45rem); 
+      font-weight: 800; 
+      letter-spacing: -0.4px; 
+      text-transform: uppercase;
+      line-height: 1.25;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+    .user-info p { 
+      margin: 6px 0 0; 
+      color: var(--brand-primary); 
+      font-size: 0.82rem; 
+      font-weight: 800; 
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; 
+      background: var(--brand-accent-light); 
+      padding: 4px 8px; 
+      border-radius: 6px; 
+      display: inline-block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
     
-    .btn-logout { background: var(--modal-btn-bg); color: var(--modal-btn-txt); border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; transition: background 0.2s; }
+    .btn-logout { 
+      background: var(--modal-btn-bg); 
+      color: var(--modal-btn-txt); 
+      border: 1px solid var(--border); 
+      padding: 10px 14px; 
+      border-radius: 10px; 
+      cursor: pointer; 
+      font-size: 0.85rem; 
+      font-weight: 800; 
+      transition: all 0.2s; 
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
     .btn-logout:hover { background: var(--modal-btn-hover); }
+    .btn-logout:active { transform: scale(0.95); }
 
     /* Summary Stats Grid */
-    .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-    .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px 10px; box-shadow: var(--card-shadow); text-align: center; }
-    .s-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;}
-    .s-val { font-size: 1.8rem; font-weight: 800; color: var(--text-main); letter-spacing: -1px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 20px; }
+    .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px 8px; box-shadow: var(--card-shadow); text-align: center; }
+    .s-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; white-space: nowrap;}
+    .s-val { font-size: clamp(1.35rem, 5vw, 1.75rem); font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
     .s-val.success { color: var(--success-txt); }
 
     /* Group Detail Dropdown Wrapper */
-    .group-selector-wrapper { background: var(--surface); padding: 16px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px; box-shadow: var(--card-shadow); display: none; }
-    .group-selector-wrapper select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 700; color: var(--text-main); outline: none;}
+    .group-selector-wrapper { background: var(--surface); padding: 14px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: var(--card-shadow); display: none; }
+    .group-selector-wrapper select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); padding: 14px; border-radius: 10px; font-size: 0.98rem; font-weight: 700; color: var(--text-main); outline: none;}
 
     /* Generated Table Grid Styles */
     .ledger-container { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; box-shadow: var(--card-shadow); margin-bottom: 24px; display: none;}
-    .ledger-header { padding: 20px; border-bottom: 1px solid var(--divider); background: var(--input-bg); display: flex; justify-content: space-between; align-items: center;}
-    .lh-title { font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
-    .lh-sub { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-top: 4px; }
+    .ledger-header { padding: 18px 16px; border-bottom: 1px solid var(--divider); background: var(--input-bg); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;}
+    .lh-title { font-size: 1.05rem; font-weight: 800; color: var(--text-main); word-break: break-word; }
+    .lh-sub { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; margin-top: 3px; }
 
-    .grid-table { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid var(--divider); }
+    /* Balanced 3-Column Financial Grid */
+    .grid-table { 
+      display: grid; 
+      grid-template-columns: minmax(84px, 0.95fr) minmax(95px, 1.15fr) minmax(92px, 0.95fr); 
+      border-bottom: 1px solid var(--divider); 
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
     .grid-table:last-child { border-bottom: none; }
-    .g-col { padding: 16px; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; border-right: 1px solid var(--divider);}
+    .g-col { 
+      padding: 14px 12px; 
+      font-size: 0.92rem; 
+      font-weight: 600; 
+      display: flex; 
+      align-items: center; 
+      border-right: 1px solid var(--divider);
+      min-width: 0;
+    }
     .g-col:last-child { border-right: none; }
+    .g-col.amount-col { justify-content: flex-end; text-align: right; }
     
     /* Table Headers */
-    .grid-table.header-row { background: var(--input-bg); font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;}
+    .grid-table.header-row { background: var(--input-bg); font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;}
+    .grid-table.header-row .g-col { padding: 12px; }
 
     /* Dynamic Row Styles */
-    .month-badge { font-weight: 800; font-size: 0.9rem; color: var(--text-main); }
-    .amount-text { font-weight: 800; font-size: 1.1rem; }
+    .month-badge { font-weight: 800; font-size: 0.88rem; color: var(--text-main); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .amount-text { font-weight: 800; font-size: clamp(0.92rem, 3.6vw, 1.06rem); white-space: nowrap; font-variant-numeric: tabular-nums; }
     
     .status-cell { justify-content: center; }
-    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;}
+    .badge { 
+      display: inline-flex; 
+      align-items: center; 
+      justify-content: center;
+      gap: 4px; 
+      padding: 5px 10px; 
+      border-radius: 999px; 
+      font-size: 0.7rem; 
+      font-weight: 800; 
+      text-transform: uppercase; 
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+      line-height: 1.1;
+    }
+    .badge svg { flex-shrink: 0; }
     .badge-paid { background: var(--success-bg); color: var(--success-txt); }
     .badge-pending { background: var(--pending-bg); color: var(--pending-txt); }
     .badge-partial { background: var(--partial-bg); color: var(--partial-txt); }
 
+    /* * ==========================================
+     * 5. PARTIAL PAYMENT ("IN PROGRESS") SUB-BAR
+     * ==========================================
+     */
+    .grid-table.partial-row {
+      background: var(--surface-hover);
+      box-shadow: inset 4px 0 0 var(--brand-primary);
+    }
+    .partial-due-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      line-height: 1.15;
+    }
+    .partial-due-label {
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--danger-txt);
+      margin-bottom: 2px;
+      white-space: nowrap;
+    }
+    .partial-breakdown-bar {
+      grid-column: 1 / -1;
+      border-top: 1px dashed var(--divider);
+      background: var(--brand-accent-light);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .partial-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      width: 100%;
+    }
+    .pm-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      min-width: 0;
+    }
+    .pm-label {
+      font-size: 0.62rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 2px;
+      white-space: nowrap;
+    }
+    .pm-val {
+      font-size: clamp(0.75rem, 2.8vw, 0.85rem);
+      font-weight: 800;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .pm-val.target { color: var(--text-main); }
+    .pm-val.paid { color: var(--success-txt); }
+    .pm-val.due { color: var(--danger-txt); }
+
+    .partial-progress-track {
+      width: 100%;
+      height: 6px;
+      background: var(--divider);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .partial-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand-primary), var(--success-txt));
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    /* Auto-Scroll Target Highlight Pulse */
+    .grid-table.target-focus-row {
+      animation: rowFocusPulse 2.2s ease-out 1;
+    }
+    @keyframes rowFocusPulse {
+      0% { box-shadow: inset 4px 0 0 var(--brand-primary), 0 0 0 0 var(--focus-glow); }
+      35% { background-color: var(--brand-accent-light); box-shadow: inset 4px 0 0 var(--brand-primary), 0 0 0 6px var(--focus-glow); }
+      100% { box-shadow: inset 0 0 0 transparent; }
+    }
+
     /* Footer */
-    .site-footer { text-align: center; padding: 30px; color: var(--text-muted); font-size: 0.85rem; margin-top: auto; border-top: 1px solid var(--border); font-weight: 600;}
+    .site-footer { text-align: center; padding: 26px 16px; color: var(--text-muted); font-size: 0.82rem; margin-top: auto; border-top: 1px solid var(--border); font-weight: 600;}
 
     /* Animations */
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .loader { border: 3px solid var(--border); border-top: 3px solid var(--brand-primary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 40px auto; }
+    .loader { border: 3px solid var(--border); border-top: 3px solid var(--brand-primary); border-radius: 50%; width: 28px; height: 28px; animation: spin 0.85s linear infinite; margin: 40px auto; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     /* Native Modal Alert */
-    #custom-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
-    .modal-content { background: var(--surface); border: 1px solid var(--border); padding: 32px 24px; border-radius: 20px; text-align: center; max-width: 340px; width: 100%; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); transform: scale(0.95); opacity: 0; transition: all 0.2s cubic-bezier(0.08, 0.82, 0.17, 1); }
-    .modal-show .modal-content { transform: scale(1); opacity: 1; }
-    .modal-icon { font-size: 3rem; margin-bottom: 16px; display: block; }
-    .modal-title { color: var(--text-main); font-size: 1.4rem; font-weight: 800; margin: 0 0 12px 0; letter-spacing: -0.5px;}
-    .modal-msg { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 24px; font-weight: 500;}
-    .modal-btn { background: var(--brand-primary); color: white; border: none; padding: 14px 24px; font-weight: 800; border-radius: 12px; cursor: pointer; width: 100%; font-size: 1.05rem; }
+    #custom-modal { 
+      display: none; 
+      position: fixed; 
+      top: 0; left: 0; 
+      width: 100%; height: 100%; 
+      background: var(--modal-overlay); 
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 1000; 
+      justify-content: center; 
+      align-items: center; 
+      padding: 20px; 
+    }
+    .modal-content { 
+      background: var(--surface); 
+      border: 1px solid var(--border); 
+      padding: 28px 22px; 
+      border-radius: 20px; 
+      text-align: center; 
+      max-width: 340px; 
+      width: 100%; 
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28); 
+      transform: scale(0.92) translateY(8px); 
+      opacity: 0; 
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1); 
+    }
+    .modal-show .modal-content { transform: scale(1) translateY(0); opacity: 1; }
+    .modal-icon { font-size: 2.8rem; margin-bottom: 12px; display: block; line-height: 1; }
+    .modal-title { color: var(--text-main); font-size: 1.3rem; font-weight: 800; margin: 0 0 8px 0; letter-spacing: -0.4px;}
+    .modal-msg { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin: 0 0 22px 0; font-weight: 600;}
+    .modal-btn { background: var(--brand-primary); color: white; border: none; padding: 14px 24px; font-weight: 800; border-radius: 12px; cursor: pointer; width: 100%; font-size: 1rem; transition: transform 0.15s ease, background 0.2s ease; }
+    .modal-btn:active { transform: scale(0.97); }
 
+    @media (max-width: 380px) {
+      header { padding: 0 12px; }
+      .g-col { padding: 12px 8px; }
+      .badge { padding: 4px 8px; font-size: 0.65rem; }
+    }
   </style>
 </head>
 <body>
 
   <header>
     <div class="brand-logo">MEENA CHITFUNDS</div>
-    <div class="portal-tag">Client Access</div>
+    <div class="portal-tag">Account Portal</div>
   </header>
 
-  <div id="custom-modal">
+  <div id="custom-modal" onclick="if(event.target === this) closeModal()">
     <div class="modal-content">
       <span class="modal-icon" id="modal-icon">⚠️</span>
       <h3 class="modal-title" id="modal-title">Alert</h3>
@@ -255,11 +522,21 @@
     <div class="login-card">
       <div class="login-header">
         <h2>View Your Ledger</h2>
-        <p>Enter your Client ID to check your monthly dues and payment status.</p>
+        <p>Enter your Account ID to check your monthly dues and payment status.</p>
       </div>
       
       <div class="input-group">
-        <input type="text" id="custId" class="styled-input" placeholder="e.g. M105" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+        <input 
+          type="text" 
+          id="custId" 
+          class="styled-input" 
+          placeholder="Enter Account ID (e.g. M105)" 
+          autocomplete="off" 
+          autocapitalize="characters"
+          spellcheck="false"
+          oninput="this.value = this.value.replace(/\s+/g, '').toUpperCase(); this.classList.remove('input-error');"
+          onkeydown="if(event.key === 'Enter') verifyAccess();"
+        >
       </div>
       
       <button class="btn-primary" id="loginBtn" onclick="verifyAccess()">Access Ledger</button>
@@ -276,11 +553,11 @@
           <p id="userId">@ID</p>
         </div>
       </div>
-      <button class="btn-logout" onclick="location.reload()">Exit</button>
+      <button class="btn-logout" onclick="handleLogout()">Exit</button>
     </div>
 
     <div class="group-selector-wrapper" id="group-selector-wrapper">
-        <select id="user-group-select" onchange="renderGroupLedger(this.value)"></select>
+        <select id="user-group-select" onchange="triggerHaptic('light'); renderGroupLedger(this.value)"></select>
     </div>
     
     <div id="loader-spinner" style="display:none;"><div class="loader"></div></div>
@@ -312,7 +589,7 @@
             
             <div class="grid-table header-row">
                 <div class="g-col">Timeline</div>
-                <div class="g-col" style="justify-content: right;">Amount</div>
+                <div class="g-col amount-col">Amount</div>
                 <div class="g-col status-cell">Status</div>
             </div>
             
@@ -325,15 +602,38 @@
 
   <footer class="site-footer">
     <div style="margin-bottom: 6px; font-weight: 800; color: var(--text-main); font-size: 0.9rem;">MEENA CHITFUNDS FINANCIAL SERVICES</div>
-    <div>Secure Client Portal</div>
+    <div>Secure Account Portal</div>
   </footer>
 
   <script type="module">
     import { db } from "./config.js";
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
+    // --- HAPTIC VIBRATION ENGINE ---
+    window.triggerHaptic = (type = "light") => {
+      try {
+        if (typeof navigator !== "undefined" && typeof navigator.vibrate === "function") {
+          if (type === "error") {
+            navigator.vibrate([45, 60, 45]);
+          } else if (type === "success") {
+            navigator.vibrate([20, 40, 30]);
+          } else {
+            navigator.vibrate(18);
+          }
+        }
+      } catch (err) {
+        // Ignore if unsupported by browser/OS
+      }
+    };
+
+    window.handleLogout = () => {
+      window.triggerHaptic("light");
+      location.reload();
+    };
+
     // --- MODAL LOGIC ---
     window.showModal = (title, message, type = "error") => {
+      window.triggerHaptic(type === "error" ? "error" : "light");
       const modal = document.getElementById("custom-modal");
       document.getElementById("modal-title").innerText = title;
       document.getElementById("modal-msg").innerText = message;
@@ -344,9 +644,16 @@
     };
 
     window.closeModal = () => {
+      window.triggerHaptic("light");
       const modal = document.getElementById("custom-modal");
       modal.classList.remove("modal-show");
-      setTimeout(() => modal.style.display = "none", 200);
+      setTimeout(() => {
+        modal.style.display = "none";
+        const inputEl = document.getElementById("custId");
+        if (document.getElementById("auth-section").style.display !== "none" && inputEl) {
+          inputEl.focus();
+        }
+      }, 200);
     };
 
     // --- CORE CALCULATION ENGINE ---
@@ -399,10 +706,16 @@
 
     // --- VERIFY & LOGIN (0-Auth Required, just ID check) ---
     window.verifyAccess = async () => {
-      const idInput = document.getElementById("custId").value.trim().toUpperCase();
+      window.triggerHaptic("light");
+      const inputEl = document.getElementById("custId");
+      const idInput = inputEl.value.replace(/\s+/g, "").toUpperCase();
+      inputEl.value = idInput;
 
       if (!idInput) {
-        window.showModal("ID Required", "Please enter your valid Client ID to view your ledger.");
+        inputEl.classList.remove("input-error");
+        void inputEl.offsetWidth; // Reflow to re-trigger shake animation
+        inputEl.classList.add("input-error");
+        window.showModal("Account ID", "Please enter your account ID");
         return;
       }
 
@@ -416,7 +729,7 @@
         const snap = await getDoc(docRef);
 
         if (!snap.exists()) {
-            throw new Error("Client ID not found. Please contact administration.");
+            throw new Error("Account ID not found. Please contact administration.");
         }
 
         currentUserData = snap.data();
@@ -427,14 +740,16 @@
              throw new Error("Your account is currently not assigned to any active groups.");
         }
 
+        window.triggerHaptic("success");
+
         // 2. Transition UI
         document.getElementById("auth-section").style.display = "none";
         document.getElementById("dashboard-view").style.display = "block";
         
         // Populate Header Profile
-        document.getElementById("userName").innerText = currentUserData.name || "Client";
+        document.getElementById("userName").innerText = currentUserData.name || "Account Holder";
         document.getElementById("userId").innerText = `@${currentUserData.id}`;
-        document.getElementById("userAvatar").innerText = currentUserData.name ? currentUserData.name.charAt(0).toUpperCase() : "C";
+        document.getElementById("userAvatar").innerText = currentUserData.name ? currentUserData.name.trim().charAt(0).toUpperCase() : "A";
 
         // Setup Dropdown
         const selectEl = document.getElementById("user-group-select");
@@ -449,6 +764,9 @@
                 opt.value = gId; opt.innerText = `View Group: @${gId}`;
                 selectEl.appendChild(opt);
             });
+            // Automatically load the first group so the screen isn't empty on entry
+            selectEl.value = currentUserData.activeGroups[0];
+            renderGroupLedger(currentUserData.activeGroups[0]);
         } else {
             // Auto render if only 1 group
             wrapperEl.style.display = "none";
@@ -487,14 +805,14 @@
             if (groupData.memberSnapshot) {
                 const userState = groupData.memberSnapshot.find(s => s.id === currentUserData.id);
                 if(userState) {
-                    monthsPaid = userState.monthsPaid || 0;
-                    partialPaid = userState.partialPaidAmount || 0;
+                    monthsPaid = Number(userState.monthsPaid) || 0;
+                    partialPaid = Number(userState.partialPaidAmount) || 0;
                 }
             }
 
             // 3. Engine Variables
-            const totalMonths = groupData.totalMonths || 0;
-            const startAmt = groupData.startAmount || 0;
+            const totalMonths = Number(groupData.totalMonths) || 0;
+            const startAmt = Number(groupData.startAmount) || 0;
             const schedule = groupData.installmentSchedule || [];
             const systemCurrentMonth = calculateCurrentSystemMonth(groupData.startDate);
             const expectedMonth = calculateParticipantExpectedMonth(currentUserData, groupData);
@@ -523,11 +841,11 @@
                     <div class="g-col">
                         <span class="month-badge" style="color: var(--success-txt);">Advance</span>
                     </div>
-                    <div class="g-col" style="justify-content: right;">
+                    <div class="g-col amount-col">
                         <span class="amount-text" style="color: var(--success-txt);">₹${Number(advanceAmt).toLocaleString('en-IN')}</span>
                     </div>
                     <div class="g-col status-cell">
-                        <span class="badge badge-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Paid</span>
+                        <span class="badge badge-paid"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Paid</span>
                     </div>
                 `;
                 container.appendChild(advRow);
@@ -540,39 +858,64 @@
                 // Determine Status
                 let statusHtml = "";
                 let amountHtml = "";
+                let extraSubRowHtml = "";
                 let highlightStyle = "";
+                let extraRowClass = "";
                 
                 if (m <= monthsPaid) {
                     // Paid
-                    statusHtml = `<span class="badge badge-paid"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Paid</span>`;
+                    statusHtml = `<span class="badge badge-paid"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Paid</span>`;
                     amountHtml = `<span class="amount-text">₹${Number(dueAmount).toLocaleString('en-IN')}</span>`;
                 } else if (m === monthsPaid + 1 && partialPaid > 0) {
-                    // NEW: Partial / In Progress Breakdown
-                    let balanceDue = dueAmount - partialPaid;
+                    // NEW: Partial / In Progress Breakdown (Clean Full-Width Sub-Bar for Mobile)
+                    let balanceDue = Math.max(0, dueAmount - partialPaid);
+                    let progressPercent = dueAmount > 0 ? Math.min(100, Math.round((partialPaid / dueAmount) * 100)) : 0;
+                    
+                    extraRowClass = "partial-row";
                     statusHtml = `<span class="badge badge-partial">In Progress</span>`;
                     amountHtml = `
-                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
-                            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">TARGET: ₹${Number(dueAmount).toLocaleString('en-IN')}</div>
-                            <div style="font-size: 0.85rem; color: var(--success-txt); font-weight: 800;">PAID: ₹${Number(partialPaid).toLocaleString('en-IN')}</div>
-                            <div class="amount-text" style="color: var(--danger-txt); margin-top: 4px;">DUE: ₹${Number(balanceDue).toLocaleString('en-IN')}</div>
+                        <div class="partial-due-stack">
+                            <span class="partial-due-label">Balance Due</span>
+                            <span class="amount-text" style="color: var(--danger-txt);">₹${Number(balanceDue).toLocaleString('en-IN')}</span>
                         </div>
                     `;
-                    highlightStyle = "background: var(--surface-hover); border-left: 4px solid var(--brand-primary);";
+                    extraSubRowHtml = `
+                        <div class="partial-breakdown-bar">
+                            <div class="partial-metrics">
+                                <div class="pm-item">
+                                    <span class="pm-label">Target</span>
+                                    <span class="pm-val target">₹${Number(dueAmount).toLocaleString('en-IN')}</span>
+                                </div>
+                                <div class="pm-item">
+                                    <span class="pm-label">Paid</span>
+                                    <span class="pm-val paid">₹${Number(partialPaid).toLocaleString('en-IN')}</span>
+                                </div>
+                                <div class="pm-item">
+                                    <span class="pm-label">Pending</span>
+                                    <span class="pm-val due">₹${Number(balanceDue).toLocaleString('en-IN')}</span>
+                                </div>
+                            </div>
+                            <div class="partial-progress-track">
+                                <div class="partial-progress-fill" style="width: ${progressPercent}%;"></div>
+                            </div>
+                        </div>
+                    `;
                 } else if (m <= expectedMonth) {
                     // Missed / Currently Due
                     statusHtml = `<span class="badge badge-pending">Pending</span>`;
                     amountHtml = `<span class="amount-text" style="color:var(--danger-txt);">₹${Number(dueAmount).toLocaleString('en-IN')}</span>`;
                     if (m === monthsPaid + 1) {
-                        highlightStyle = "background: var(--pending-bg);";
+                        highlightStyle = "background: var(--pending-bg); box-shadow: inset 4px 0 0 var(--pending-txt);";
                     }
                 } else {
                     // Future Month (Not yet due)
-                    statusHtml = `<span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Upcoming</span>`;
+                    statusHtml = `<span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">Upcoming</span>`;
                     amountHtml = `<span class="amount-text" style="color:var(--text-muted); font-weight: 600;">₹${Number(dueAmount).toLocaleString('en-IN')}</span>`;
                 }
 
                 const row = document.createElement("div");
-                row.className = "grid-table";
+                row.id = `ledger-month-${m}`;
+                row.className = `grid-table ${extraRowClass}`.trim();
                 if (highlightStyle) {
                     row.style.cssText = highlightStyle;
                 }
@@ -581,12 +924,13 @@
                     <div class="g-col">
                         <span class="month-badge">Month ${m}</span>
                     </div>
-                    <div class="g-col" style="justify-content: right;">
+                    <div class="g-col amount-col">
                         ${amountHtml}
                     </div>
                     <div class="g-col status-cell">
                         ${statusHtml}
                     </div>
+                    ${extraSubRowHtml}
                 `;
                 container.appendChild(row);
             }
@@ -595,6 +939,24 @@
             document.getElementById("loader-spinner").style.display = "none";
             document.getElementById("ledger-wrapper").style.display = "block";
             document.getElementById("ledger-container").style.display = "block";
+
+            // 6. Intelligent Auto-Scroll to Final Active/Pending Month
+            let targetScrollMonth = 1;
+            if (monthsPaid < totalMonths && (partialPaid > 0 || monthsPaid < expectedMonth)) {
+                // Has partial payment in progress or pending dues -> scroll to the first unpaid/partial month
+                targetScrollMonth = monthsPaid + 1;
+            } else if (monthsPaid > 0) {
+                // Caught up -> scroll to their latest paid month (e.g., Month 20 if 20 months paid)
+                targetScrollMonth = Math.min(monthsPaid, totalMonths);
+            }
+
+            setTimeout(() => {
+                const targetRow = document.getElementById(`ledger-month-${targetScrollMonth}`);
+                if (targetRow) {
+                    targetRow.scrollIntoView({ behavior: "smooth", block: "center" });
+                    targetRow.classList.add("target-focus-row");
+                }
+            }, 250);
 
         } catch (err) {
             console.error(err);
@@ -609,7 +971,7 @@
       const searchId = new URLSearchParams(window.location.search).get('id');
       const hashId = window.location.hash.replace('#', '');
       
-      const autoId = (searchId || hashId || '').trim().toUpperCase();
+      const autoId = (searchId || hashId || '').replace(/\s+/g, '').toUpperCase();
       
       if (autoId) {
           document.getElementById("custId").value = autoId;
