@@ -761,6 +761,7 @@
     .btn-whatsapp:hover { background: #20BA5A; }
     .btn-whatsapp:active { transform: scale(0.97); }
     .btn-whatsapp:disabled { opacity: 0.75; cursor: not-allowed; transform: none; }
+    .btn-whatsapp svg { fill: currentColor; width: 22px; height: 22px; flex-shrink: 0; }
     .bs-close-btn {
       margin-top: 16px; background: transparent; color: var(--text-muted);
       border: none; font-size: 0.95rem; font-weight: 700; padding: 10px;
@@ -812,7 +813,10 @@
     <h3 class="bs-title" id="bs-title">Official Linked Number</h3>
     <p class="bs-desc" id="bs-desc">Please enter the 10-digit mobile number where you receive official Meena Chitfunds WhatsApp updates.</p>
     <button class="btn-whatsapp" id="btn-whatsapp-admin" onclick="fetchAdminPhoneAndRedirect()">
-      <span id="wa-btn-text">Contact Admin on WhatsApp</span>
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+      </svg>
+      <span id="wa-btn-text">Support on WhatsApp</span>
     </button>
     <button class="bs-close-btn" id="bs-close-btn" onclick="closeBottomSheet()">Cancel</button>
   </div>
@@ -959,7 +963,7 @@
         accessBtn: "Access Ledger",
         authLoading: "Verifying...",
         waConnecting: "Connecting...",
-        waContactBtn: "Contact Admin on WhatsApp",
+        waContactBtn: "Support on WhatsApp",
         waCancelBtn: "Cancel",
         logoutBtn: "Exit",
         selectGroupPrompt: "-- Select a Group to View --",
@@ -1011,7 +1015,7 @@
         accessBtn: "விவரம் பார்க்க",
         authLoading: "சரிபார்க்கப்படுகிறது...",
         waConnecting: "இணைகிறது...",
-        waContactBtn: "வாட்ஸ்அப்பில் தொடர்பு கொள்ள",
+        waContactBtn: "வாட்ஸ்அப் சப்போர்ட்",
         waCancelBtn: "ரத்து செய்",
         logoutBtn: "வெளியேறு",
         selectGroupPrompt: "-- குழுவைத் தேர்ந்தெடுக்கவும் --",
@@ -1069,7 +1073,6 @@
     let cachedAdminPhoneForCustomer = null; // ZERO-READ CACHE FOR WHATSAPP BUTTON
 
     // --- SMART INDIAN 10-DIGIT PHONE SANITIZER ---
-    // Strips spaces, +91, leading 0s, dashes, or formatting from both user input & Firestore DB strings
     window.extractTenDigitPhone = (rawPhone) => {
       if (!rawPhone) return "";
       let digits = String(rawPhone).replace(/\D/g, "");
@@ -1085,11 +1088,24 @@
       return digits;
     };
 
+    // --- MOBILE LINK NUMBER FORMATTER (+91 STRICT INJECTION) ---
+    function formatForWhatsAppLink(rawPhone) {
+        if (!rawPhone) return null;
+        let digits = String(rawPhone).replace(/\D/g, '');
+        if (digits.length === 10) {
+            return '91' + digits;
+        } else if (digits.length === 11 && digits.startsWith('0')) {
+            return '91' + digits.substring(1);
+        } else if (digits.length >= 12 && digits.startsWith('91')) {
+            return digits; // Already formatted with country code
+        }
+        return null; // Invalid pattern
+    }
+
     window.sanitizePhoneField = (inputEl) => {
       const wrapper = document.getElementById("phoneWrapper");
       if (wrapper) wrapper.classList.remove("input-error");
       let digits = String(inputEl.value).replace(/\D/g, "");
-      // If user pastes a full +91XXXXXXXXXX or 0XXXXXXXXXX number, extract the 10-digit mobile number automatically
       if (digits.length > 10) {
         digits = window.extractTenDigitPhone(digits);
       }
@@ -1135,11 +1151,10 @@
     window.fetchAdminPhoneAndRedirect = async () => {
       window.triggerHaptic("light");
       const btn = document.getElementById("btn-whatsapp-admin");
-      const btnText = document.getElementById("wa-btn-text");
 
       try {
         if (cachedAdminPhoneForCustomer) {
-          window.open(`https://wa.me/${cachedAdminPhoneForCustomer}`, '_blank');
+          window.location.href = `https://wa.me/${cachedAdminPhoneForCustomer}`;
           return;
         }
 
@@ -1147,18 +1162,30 @@
         btn.innerHTML = `<span class="btn-spinner"></span><span id="wa-btn-text">${t("waConnecting")}</span>`;
 
         const adminSnap = await getDoc(doc(db, "system_state", "admin_settings"));
+        
         if (adminSnap.exists() && adminSnap.data().adminPhone) {
-          cachedAdminPhoneForCustomer = adminSnap.data().adminPhone;
-          window.open(`https://wa.me/${cachedAdminPhoneForCustomer}`, '_blank');
+          const rawNum = adminSnap.data().adminPhone;
+          const formattedNum = formatForWhatsAppLink(rawNum);
+          
+          if (formattedNum) {
+            cachedAdminPhoneForCustomer = formattedNum;
+            window.location.href = `https://wa.me/${cachedAdminPhoneForCustomer}`;
+          } else {
+            throw new Error("Invalid admin phone format in database.");
+          }
         } else {
           throw new Error("Admin number not configured in system_state/admin_settings.");
         }
       } catch (err) {
         console.error("Failed to fetch admin number:", err);
-        window.showModal("Error", "Could not connect to Admin WhatsApp at this time.", "error");
+        window.showModal("Error", "Could not connect to WhatsApp Support at this time.", "error");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<span id="wa-btn-text">${t("waContactBtn")}</span>`;
+        btn.innerHTML = `
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+          </svg>
+          <span id="wa-btn-text">${t("waContactBtn")}</span>`;
       }
     };
 
@@ -1169,7 +1196,6 @@
     };
 
     window.showPhoneInfoNote = () => {
-      // Trigger the sleek bottom sheet instead of the rigid modal
       window.showBottomSheet();
     };
 
@@ -1207,13 +1233,21 @@
       // Update Bottom Sheet Text
       document.getElementById("bs-title").innerText = t("modalPhoneInfoTitle");
       document.getElementById("bs-desc").innerText = t("modalPhoneInfoMsg");
+      
       const waBtn = document.getElementById("btn-whatsapp-admin");
-      const waBtnText = document.getElementById("wa-btn-text");
-      if (waBtn && waBtnText) {
-        waBtnText.innerText = waBtn.disabled ? t("waConnecting") : t("waContactBtn");
+      if (waBtn) {
+        if (waBtn.disabled) {
+           waBtn.innerHTML = `<span class="btn-spinner"></span><span id="wa-btn-text">${t("waConnecting")}</span>`;
+        } else {
+           waBtn.innerHTML = `
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+              </svg>
+              <span id="wa-btn-text">${t("waContactBtn")}</span>`;
+        }
       }
+      
       document.getElementById("bs-close-btn").innerText = t("waCancelBtn");
-
       document.getElementById("txt-logout-btn").innerText = t("logoutBtn");
       document.getElementById("txt-sum-total").innerText = t("sumTotal");
       document.getElementById("txt-sum-paid").innerText = t("sumPaid");
@@ -1291,12 +1325,13 @@
 
       setLoginButtonLoading(false);
 
-      // Check if entry was via dynamic link to clear inputs and sanitize URL address bar
+      // Sanitize URL strictly and wipe inputs if entered via dynamic link
       if (isDynamicLogin) {
-        window.history.replaceState({ view: "home", modalOpen: false }, document.title, window.location.pathname);
+        // This instantly removes ?id= and #hash without reloading the page
+        window.history.replaceState({ view: "home", modalOpen: false, bottomSheetOpen: false }, document.title, window.location.pathname);
         document.getElementById("custId").value = "";
         document.getElementById("custPhone").value = "";
-        isDynamicLogin = false; // Reset the flag
+        isDynamicLogin = false; // Reset the flag so future manual entries are preserved
       }
 
       const inputEl = document.getElementById("custId");
@@ -1536,7 +1571,7 @@
                 opt.value = gId; opt.innerText = `${t("viewGroupPrefix")} @${gId}`;
                 selectEl.appendChild(opt);
             });
-            // Automatically load the first group so the screen isn't empty on entry
+            // Automatically load the first group so the screen isnt empty on entry
             selectEl.value = currentUserData.activeGroups[0];
             renderGroupLedger(currentUserData.activeGroups[0], true);
         } else {
