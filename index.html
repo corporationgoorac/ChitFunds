@@ -782,7 +782,7 @@
             maxlength="10"
             autocomplete="tel-national"
             oninput="sanitizePhoneField(this)"
-            onkeydown="if(event.key === 'Enter') verifyAccess();"
+            onkeydown="if(event.key === 'Enter') verifyAccess(false);"
           >
         </div>
         <div class="sms-note-hint" onclick="showPhoneInfoNote()">
@@ -791,7 +791,7 @@
         </div>
       </div>
       
-      <button class="btn-primary" id="loginBtn" onclick="verifyAccess()">
+      <button class="btn-primary" id="loginBtn" onclick="verifyAccess(false)">
         <span id="loginBtnText">Access Ledger</span>
       </button>
     </div>
@@ -860,7 +860,7 @@
   </footer>
 
   <script type="module">
-    import { db } from "./config.js";
+    import { db } from "./admins/config.js";
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
     // --- BILINGUAL LANGUAGE ENGINE (ENGLISH & TAMIL) ---
@@ -978,6 +978,7 @@
     let isDashboardOpen = false;
     let lastModalKey = null;
     let toastTimer = null;
+    let isDynamicLogin = false; // FLAG FOR ENTRY TRACKING
 
     // --- SMART INDIAN 10-DIGIT PHONE SANITIZER ---
     // Strips spaces, +91, leading 0s, dashes, or formatting from both user input & Firestore DB strings
@@ -1141,6 +1142,14 @@
 
       setLoginButtonLoading(false);
 
+      // Check if entry was via dynamic link to clear inputs and sanitize URL address bar
+      if (isDynamicLogin) {
+        window.history.replaceState({ view: "home", modalOpen: false }, document.title, window.location.pathname);
+        document.getElementById("custId").value = "";
+        document.getElementById("custPhone").value = "";
+        isDynamicLogin = false; // Reset the flag
+      }
+
       const inputEl = document.getElementById("custId");
       if (inputEl) {
         inputEl.focus();
@@ -1254,7 +1263,7 @@
     }
 
     // --- VERIFY & LOGIN (1-READ ACCOUNT ID + PHONE VERIFICATION) ---
-    window.verifyAccess = async () => {
+    window.verifyAccess = async (bypassPhone = false) => {
       window.triggerHaptic("light");
       const inputEl = document.getElementById("custId");
       const phoneEl = document.getElementById("custPhone");
@@ -1280,8 +1289,8 @@
         return;
       }
 
-      // 2. Validate 10-Digit Phone Number Presence
-      if (cleanInputPhone.length !== 10) {
+      // 2. Validate 10-Digit Phone Number Presence (ONLY IF NOT BYPASSED)
+      if (!bypassPhone && cleanInputPhone.length !== 10) {
         if (phoneWrapper) {
           phoneWrapper.classList.remove("input-error");
           void phoneWrapper.offsetWidth;
@@ -1313,20 +1322,20 @@
 
         const fetchedData = snap.data();
 
-        // Sanitize the phone number stored in Firestore (removes spaces, +91, 0 prefix, etc.)
-        const dbCleanPhone = window.extractTenDigitPhone(fetchedData.phone);
-
-        // Compare sanitized 10-digit phone numbers with 0 extra reads
-        if (!dbCleanPhone || dbCleanPhone !== cleanInputPhone) {
-            if (phoneWrapper) {
-              phoneWrapper.classList.remove("input-error");
-              void phoneWrapper.offsetWidth;
-              phoneWrapper.classList.add("input-error");
+        // Compare sanitized 10-digit phone numbers (ONLY IF NOT BYPASSED)
+        if (!bypassPhone) {
+            const dbCleanPhone = window.extractTenDigitPhone(fetchedData.phone);
+            if (!dbCleanPhone || dbCleanPhone !== cleanInputPhone) {
+                if (phoneWrapper) {
+                  phoneWrapper.classList.remove("input-error");
+                  void phoneWrapper.offsetWidth;
+                  phoneWrapper.classList.add("input-error");
+                }
+                const phoneMismatchErr = new Error(t("modalPhoneMismatchMsg"));
+                phoneMismatchErr.titleKey = "modalPhoneMismatchTitle";
+                phoneMismatchErr.msgKey = "modalPhoneMismatchMsg";
+                throw phoneMismatchErr;
             }
-            const phoneMismatchErr = new Error(t("modalPhoneMismatchMsg"));
-            phoneMismatchErr.titleKey = "modalPhoneMismatchTitle";
-            phoneMismatchErr.msgKey = "modalPhoneMismatchMsg";
-            throw phoneMismatchErr;
         }
 
         currentUserData = fetchedData;
@@ -1596,23 +1605,17 @@
       history.replaceState({ view: "home", modalOpen: false }, "");
       window.applyLanguage(false);
 
-      // Allows domain.com/public.html?id=RAHUL_101&phone=9876543210
+      // Allows domain.com/public.html?id=RAHUL_101
       const params = new URLSearchParams(window.location.search);
       const searchId = params.get('id');
-      const searchPhone = params.get('phone');
       const hashId = window.location.hash.replace('#', '');
       
       const autoId = (searchId || hashId || '').replace(/\s+/g, '').toUpperCase();
-      const autoPhone = window.extractTenDigitPhone(searchPhone || '');
       
       if (autoId) {
           document.getElementById("custId").value = autoId;
-      }
-      if (autoPhone.length === 10) {
-          document.getElementById("custPhone").value = autoPhone;
-      }
-      if (autoId && autoPhone.length === 10) {
-          verifyAccess();
+          isDynamicLogin = true;
+          verifyAccess(true); // Call verification bypassing the phone check
       }
     };
 
