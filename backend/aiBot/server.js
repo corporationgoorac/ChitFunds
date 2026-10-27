@@ -129,9 +129,8 @@ function calculateParticipantExpectedMonth(joinDate, fallbackStartDateStr, total
     elapsed -= start.getMonth();
     elapsed += now.getMonth();
     
-    if (elapsed < 0) elapsed = 0;
-    
-    let expected = elapsed + 1;
+    let expected = elapsed < 0 ? 0 : elapsed + 1;
+
     if (totalGroupMonths > 0 && expected > totalGroupMonths) {
         expected = totalGroupMonths;
     }
