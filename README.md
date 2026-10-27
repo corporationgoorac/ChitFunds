@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="icon.png" alt="Meena Chitfunds Logo" width="150"/>
+  <img src="admin/icon.png" alt="Meena Chitfunds Logo" width="150"/>
 
   # Meena Chitfunds Portal
   **A secure financial ledger and client access portal developed by Goorac Corporation.**
