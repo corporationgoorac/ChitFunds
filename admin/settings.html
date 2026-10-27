@@ -98,7 +98,11 @@
 
     /* Layout */
     main { padding: 24px 20px 80px; }
-    .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; margin-bottom: 16px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;}
+    
+    /* REBUILT: Shatterproof Section Title to prevent small screen wrap collisions */
+    .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; margin-bottom: 16px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; gap: 12px;}
+    .section-title span:first-child { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .section-title span:last-child { flex-shrink: 0; }
 
     /* REBUILT: Premium Settings Cards - Highly Responsive Text Wrapping Engine */
     .settings-card {
@@ -120,9 +124,8 @@
     .sc-meta-row { display: flex; align-items: center; gap: 6px; }
     .sc-phone { font-size: 13px; color: var(--text-muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
     
-    /* Bottom Identity & Badges Area */
+    /* Bottom Identity & Badges Area (UID Removed) */
     .sc-bottom-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-    .sc-uid { font-size: 11px; font-family: monospace; background: var(--surface-hover); color: var(--text-muted); padding: 4px 10px; border-radius: 8px; font-weight: 800; letter-spacing: 0.5px; border: 1px solid var(--border-color); }
     .admin-badge { background: var(--success-light); color: var(--success-color); font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid rgba(15, 157, 88, 0.2); margin: 0; }
     
     .sc-icon { flex-shrink: 0; width: 24px; height: 24px; color: var(--border-color); margin-top: 14px; }
@@ -151,6 +154,9 @@
     .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
     input:checked + .slider { background-color: var(--success-color); }
     input:checked + .slider:before { transform: translateX(22px); }
+    
+    /* Disabled Switch Support */
+    input:disabled + .slider { cursor: not-allowed; background-color: var(--border-color); opacity: 0.5; }
 
     /* Action Buttons */
     .btn-row { display: flex; gap: 12px; }
@@ -175,7 +181,6 @@
     .sheet-header-profile { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; }
     .sheet-avatar { width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg, var(--brand-accent), #004ba0); color: white; display: flex; justify-content: center; align-items: center; font-size: 32px; font-weight: 800; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(6, 95, 212, 0.3); flex-shrink: 0;}
     .sheet-header-profile h3 { margin: 0; font-size: 20px; font-weight: 800; color: var(--text-main); text-align: center; word-break: break-word; padding: 0 16px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;}
-    #manage-uid-display { font-size: 13px; font-family: monospace; color: var(--text-muted); font-weight: 800; margin-top: 10px; word-break: break-all; text-align: center; background: var(--surface-hover); border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 8px;}
 
     /* Center Alert Modals */
     .center-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); z-index: 300; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);}
@@ -199,10 +204,11 @@
     @keyframes shimmer { 0% { background-position: -500px 0; } 100% { background-position: 500px 0; } }
     .skeleton { background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border-color) 50%, var(--surface-hover) 75%); background-size: 1000px 100%; animation: shimmer 2s infinite linear; border-radius: 4px; }
     
-    .skeleton-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 18px 16px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 16px; box-shadow: var(--card-shadow); }
+    /* REBUILT: Perfectly matching card layout for seamless transition */
+    .skeleton-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 18px 16px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 14px; box-shadow: var(--card-shadow); }
     .skeleton-avatar { width: 52px; height: 52px; border-radius: 16px; flex-shrink: 0; }
-    .skeleton-text-lg { width: 140px; height: 16px; border-radius: 4px; margin-top: 4px;}
-    .skeleton-text-sm { width: 90px; height: 12px; border-radius: 4px; }
+    .skeleton-text-lg { width: 140px; height: 18px; border-radius: 4px; margin-top: 2px;}
+    .skeleton-text-sm { width: 110px; height: 13px; border-radius: 4px; }
   </style>
 </head>
 <body>
@@ -221,19 +227,21 @@
 
   <main>
     <!-- Logged In User Section -->
-    <div class="section-title">Your Profile</div>
+    <div class="section-title"><span>Your Profile</span></div>
     <div id="current-user-container">
-        <!-- Skeleton Loader -->
+        <!-- Rebuilt Accurate Skeleton Loader -->
         <div class="skeleton-card">
             <div class="skeleton-avatar skeleton"></div>
             <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:8px;">
                 <div class="skeleton-text-lg skeleton"></div>
                 <div class="skeleton-text-sm skeleton"></div>
-                <div style="display:flex; gap:8px; margin-top:4px;">
-                    <div class="skeleton-text-sm skeleton" style="width:70px; height:20px; border-radius:6px;"></div>
-                    <div class="skeleton-text-sm skeleton" style="width:60px; height:20px; border-radius:6px;"></div>
+                <div style="display:flex; align-items: center; gap:8px; margin-top:4px;">
+                    <!-- Simulates the Admin Badge -->
+                    <div class="skeleton-text-sm skeleton" style="width:60px; height:20px; border-radius:8px;"></div>
                 </div>
             </div>
+            <!-- Simulates the right chevron icon -->
+            <div class="skeleton" style="width:24px; height:24px; border-radius:4px; margin-top:14px; flex-shrink:0;"></div>
         </div>
     </div>
 
@@ -241,32 +249,32 @@
 
     <!-- All Users Management Section -->
     <div class="section-title">
-        <span>Manage Workspace Admins</span>
+        <span>Workspace Admins</span>
         <span id="user-count-badge" style="background: var(--brand-accent-light); color: var(--brand-accent); padding: 2px 8px; border-radius: 8px; font-size: 11px;">Loading</span>
     </div>
     <div id="users-list-container">
-        <!-- Skeletons -->
+        <!-- Rebuilt Accurate Skeletons -->
         <div class="skeleton-card">
             <div class="skeleton-avatar skeleton"></div>
             <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:8px;">
                 <div class="skeleton-text-lg skeleton"></div>
                 <div class="skeleton-text-sm skeleton"></div>
-                <div style="display:flex; gap:8px; margin-top:4px;">
-                    <div class="skeleton-text-sm skeleton" style="width:70px; height:20px; border-radius:6px;"></div>
-                    <div class="skeleton-text-sm skeleton" style="width:60px; height:20px; border-radius:6px;"></div>
+                <div style="display:flex; align-items: center; gap:8px; margin-top:4px;">
+                    <div class="skeleton-text-sm skeleton" style="width:60px; height:20px; border-radius:8px;"></div>
                 </div>
             </div>
+            <div class="skeleton" style="width:24px; height:24px; border-radius:4px; margin-top:14px; flex-shrink:0;"></div>
         </div>
         <div class="skeleton-card">
             <div class="skeleton-avatar skeleton"></div>
             <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:8px;">
                 <div class="skeleton-text-lg skeleton"></div>
                 <div class="skeleton-text-sm skeleton"></div>
-                <div style="display:flex; gap:8px; margin-top:4px;">
-                    <div class="skeleton-text-sm skeleton" style="width:70px; height:20px; border-radius:6px;"></div>
-                    <div class="skeleton-text-sm skeleton" style="width:60px; height:20px; border-radius:6px;"></div>
+                <div style="display:flex; align-items: center; gap:8px; margin-top:4px;">
+                    <div class="skeleton-text-sm skeleton" style="width:60px; height:20px; border-radius:8px;"></div>
                 </div>
             </div>
+            <div class="skeleton" style="width:24px; height:24px; border-radius:4px; margin-top:14px; flex-shrink:0;"></div>
         </div>
     </div>
     
@@ -294,13 +302,14 @@
       <input type="tel" id="edit-self-phone" placeholder="+91 XXXXXXXXXX" autocomplete="off">
     </div>
 
-    <div class="toggle-row">
+    <!-- Self-Lockout Fix: Disabled Toggle -->
+    <div class="toggle-row" style="opacity: 0.85;">
         <div class="toggle-labels">
             <h4>Workspace Admin</h4>
-            <p>Grant full control over the app</p>
+            <p>You cannot modify your own access</p>
         </div>
         <label class="switch">
-            <input type="checkbox" id="edit-self-admin">
+            <input type="checkbox" id="edit-self-admin" disabled>
             <span class="slider"></span>
         </label>
     </div>
@@ -317,7 +326,7 @@
     <div class="sheet-header-profile">
         <div class="sheet-avatar" id="manage-avatar" style="background: var(--brand-accent-light); color: var(--brand-accent); box-shadow: none;">?</div>
         <h3 id="manage-header-name">Manage User</h3>
-        <div id="manage-uid-display">@UID</div>
+        <!-- UID display removed here -->
     </div>
 
     <div class="input-group">
@@ -464,19 +473,22 @@
       openModal('message-modal', true);
     };
 
-    // --- Authentication & Initialization ---
+    // --- Authentication & Initialization (Simultaneous Fetch Fix) ---
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.replace('login.html');
       } else {
         loggedInUid = user.uid;
-        await loadCurrentUserProfile();
-        loadUsers(false); // Initial load of users list
+        // Fire both fetches at the exact same time so the skeleton layout doesn't glitch/shift
+        Promise.all([
+          loadCurrentUserProfile(),
+          loadUsers(false)
+        ]).catch(err => console.error("Initialization error:", err));
       }
     });
 
-    // --- REBUILT: Highly Resilient Card HTML Generator ---
-    function createUserCardHTML(data, isSelf = false, docId = '') {
+    // --- REBUILT: Highly Resilient Card HTML Generator (UID entirely stripped) ---
+    function createUserCardHTML(data, isSelf = false) {
         const name = data.name || "Unnamed User";
         const initial = name.charAt(0).toUpperCase();
         const phone = data.mobile || data.phone || data.email || "No details added"; 
@@ -487,6 +499,9 @@
         
         const phoneIcon = `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="flex-shrink:0;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>`;
 
+        // If the user has an admin badge, output the wrapper div, else omit to save DOM space
+        const bottomRowHTML = isAdmin ? `<div class="sc-bottom-row">${badgeHTML}</div>` : '';
+
         return `
             <div class="${avatarClass}">${initial}</div>
             <div class="sc-info">
@@ -494,10 +509,7 @@
                 <div class="sc-meta-row">
                     <span class="sc-phone">${phoneIcon} ${phone}</span>
                 </div>
-                <div class="sc-bottom-row">
-                    <span class="sc-uid">@${docId}</span>
-                    ${badgeHTML}
-                </div>
+                ${bottomRowHTML}
             </div>
             <svg class="sc-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
         `;
@@ -516,14 +528,17 @@
                 
                 const card = document.createElement('div');
                 card.className = 'settings-card';
-                card.innerHTML = createUserCardHTML(loggedInUserData, true, loggedInUid);
+                card.innerHTML = createUserCardHTML(loggedInUserData, true);
                 
                 card.onclick = () => {
                     document.getElementById('edit-self-avatar').innerText = (loggedInUserData.name || '?').charAt(0).toUpperCase();
                     document.getElementById('edit-self-header-name').innerText = loggedInUserData.name || "Edit Profile";
                     document.getElementById('edit-self-name').value = loggedInUserData.name || "";
                     document.getElementById('edit-self-phone').value = loggedInUserData.mobile || loggedInUserData.phone || "";
+                    
+                    // Admin toggle logic is preserved for database state, but locked in UI
                     document.getElementById('edit-self-admin').checked = loggedInUserData.admin === true;
+                    
                     openModal('edit-profile-sheet');
                 };
                 
@@ -538,7 +553,7 @@
         }
     }
 
-    // --- Load Paginated Users List ---
+    // --- Load Paginated Users List (Ghost-Click Fix applied via Limit + 1 strategy) ---
     window.loadUsers = async function(isLoadMore = false) {
         const container = document.getElementById('users-list-container');
         const loadBtn = document.getElementById('load-more-btn');
@@ -548,10 +563,10 @@
         }
 
         try {
-            // Fetching strictly from 'admins' collection
-            let q = query(collection(db, "admins"), limit(10));
+            // Fetching 11 documents to strictly determine if a "Next Page" exists without causing a ghost-click
+            let q = query(collection(db, "admins"), limit(11));
             if(isLoadMore && lastVisibleUser) {
-                q = query(collection(db, "admins"), startAfter(lastVisibleUser), limit(10));
+                q = query(collection(db, "admins"), startAfter(lastVisibleUser), limit(11));
             }
 
             let snap = await getDocs(q);
@@ -563,25 +578,30 @@
                 loadBtn.style.display = 'none';
                 return;
             }
+            
+            // Check if we retrieved the extra document
+            const hasMore = snap.docs.length > 10;
+            // Cap rendering loop to max 10
+            const renderCount = hasMore ? 10 : snap.docs.length;
+            
+            lastVisibleUser = snap.docs[renderCount - 1];
 
-            lastVisibleUser = snap.docs[snap.docs.length - 1];
-
-            snap.forEach(docSnap => {
+            for (let i = 0; i < renderCount; i++) {
+                const docSnap = snap.docs[i];
                 const data = docSnap.data();
                 const uId = docSnap.id;
                 
-                // Optional: Don't show the logged in user twice
-                if(uId === loggedInUid) return;
+                if(uId === loggedInUid) continue;
 
                 const card = document.createElement('div');
                 card.className = 'settings-card';
-                card.innerHTML = createUserCardHTML(data, false, uId);
+                card.innerHTML = createUserCardHTML(data, false);
                 
                 card.onclick = () => {
                     currentlyManagingUserId = uId;
                     document.getElementById('manage-avatar').innerText = (data.name || '?').charAt(0).toUpperCase();
                     document.getElementById('manage-header-name').innerText = data.name || "Manage User";
-                    document.getElementById('manage-uid-display').innerText = `@${uId}`;
+                    // UID stripped
                     document.getElementById('manage-name').value = data.name || "";
                     document.getElementById('manage-phone').value = data.mobile || data.phone || "";
                     document.getElementById('manage-admin').checked = data.admin === true;
@@ -589,12 +609,12 @@
                 };
 
                 container.appendChild(card);
-            });
+            }
 
-            // Count Update (approx for badge)
             if(!isLoadMore) document.getElementById('user-count-badge').innerText = `Admin Feed`;
 
-            loadBtn.style.display = snap.docs.length === 10 ? 'block' : 'none';
+            // Display 'Load More' only if the 11th hidden document was successfully fetched
+            loadBtn.style.display = hasMore ? 'block' : 'none';
 
         } catch(e) {
             console.error("Fetch error", e);
@@ -607,13 +627,13 @@
         const btn = document.getElementById('save-self-btn');
         const newName = document.getElementById('edit-self-name').value.trim();
         const newPhone = document.getElementById('edit-self-phone').value.trim();
-        const isAdmin = document.getElementById('edit-self-admin').checked;
+        // Since checkbox is disabled, fetch standard stored state to prevent accidental override mapping
+        const isAdmin = loggedInUserData.admin;
 
         if(!newName) { showMessage("Invalid Input", "Name cannot be empty."); return; }
 
         btn.innerText = "Saving..."; btn.disabled = true;
         try {
-            // Updating strictly in 'admins' collection
             await updateDoc(doc(db, "admins", loggedInUid), {
                 name: newName,
                 mobile: newPhone,
@@ -646,7 +666,6 @@
 
         btn.innerText = "Updating..."; btn.disabled = true;
         try {
-            // Updating strictly in 'admins' collection
             await updateDoc(doc(db, "admins", currentlyManagingUserId), {
                 name: newName,
                 mobile: newPhone,
@@ -673,7 +692,6 @@
         
         btn.innerText = "Deleting..."; btn.disabled = true;
         try {
-            // Deleting strictly from 'admins' collection
             await deleteDoc(doc(db, "admins", currentlyManagingUserId));
             
             if("vibrate" in navigator) navigator.vibrate([40, 50, 40]);
