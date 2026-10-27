@@ -704,6 +704,69 @@
     .modal-btn { background: var(--brand-primary); color: white; border: none; padding: 14px 24px; font-weight: 800; border-radius: 12px; cursor: pointer; width: 100%; font-size: 1rem; transition: transform 0.15s ease, background 0.2s ease; }
     .modal-btn:active { transform: scale(0.97); }
 
+    /* * ==========================================
+     * 6. BOTTOM SHEET (MODERN APP UI)
+     * ==========================================
+     */
+    .bottom-sheet-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--modal-overlay);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      z-index: 1050;
+      opacity: 0; visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .bottom-sheet-overlay.show {
+      opacity: 1; visibility: visible;
+    }
+    .bottom-sheet {
+      position: fixed; bottom: 0; left: 0; width: 100%;
+      background: var(--surface);
+      border-radius: 24px 24px 0 0;
+      padding: 24px;
+      z-index: 1100;
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .bottom-sheet.show {
+      transform: translateY(0);
+    }
+    .bs-drag-handle {
+      width: 40px; height: 5px; border-radius: 5px;
+      background: var(--border); margin-bottom: 20px;
+    }
+    .bs-icon {
+      width: 54px; height: 54px; border-radius: 50%;
+      background: rgba(37, 211, 102, 0.15); color: #25D366;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; margin-bottom: 16px;
+    }
+    .bs-title {
+      font-size: 1.3rem; font-weight: 800; color: var(--text-main);
+      margin: 0 0 10px 0; text-align: center; letter-spacing: -0.3px;
+    }
+    .bs-desc {
+      font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;
+      text-align: center; margin: 0 0 24px 0; font-weight: 600;
+    }
+    .btn-whatsapp {
+      width: 100%; background: #25D366; color: #FFFFFF;
+      border: none; padding: 16px; border-radius: 12px; font-size: 1.05rem;
+      font-weight: 800; cursor: pointer; transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+      display: inline-flex; justify-content: center; align-items: center; gap: 10px;
+    }
+    .btn-whatsapp:hover { background: #20BA5A; }
+    .btn-whatsapp:active { transform: scale(0.97); }
+    .btn-whatsapp:disabled { opacity: 0.75; cursor: not-allowed; transform: none; }
+    .bs-close-btn {
+      margin-top: 16px; background: transparent; color: var(--text-muted);
+      border: none; font-size: 0.95rem; font-weight: 700; padding: 10px;
+      cursor: pointer;
+    }
+
     @media (max-width: 380px) {
       header { padding: 0 12px; }
       .g-col { padding: 12px 8px; }
@@ -734,7 +797,24 @@
   <!-- Interactive Toast Notification -->
   <div id="info-toast" class="toast-banner" onclick="hideInfoToast()">
     <span class="toast-banner-icon">ℹ️</span>
-    <span id="info-toast-text">Enter the 10-digit mobile number where you receive official Meena Chitfunds SMS updates.</span>
+    <span id="info-toast-text">Enter the 10-digit mobile number where you receive official Meena Chitfunds WhatsApp updates.</span>
+  </div>
+
+  <!-- Sleek Bottom Sheet UI -->
+  <div class="bottom-sheet-overlay" id="bs-overlay" onclick="closeBottomSheet()"></div>
+  <div class="bottom-sheet" id="bottom-sheet">
+    <div class="bs-drag-handle"></div>
+    <div class="bs-icon">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+      </svg>
+    </div>
+    <h3 class="bs-title" id="bs-title">Official Linked Number</h3>
+    <p class="bs-desc" id="bs-desc">Please enter the 10-digit mobile number where you receive official Meena Chitfunds WhatsApp updates.</p>
+    <button class="btn-whatsapp" id="btn-whatsapp-admin" onclick="fetchAdminPhoneAndRedirect()">
+      <span id="wa-btn-text">Contact Admin on WhatsApp</span>
+    </button>
+    <button class="bs-close-btn" id="bs-close-btn" onclick="closeBottomSheet()">Cancel</button>
   </div>
 
   <div id="auth-section" class="auth-container">
@@ -787,7 +867,7 @@
         </div>
         <div class="sms-note-hint" onclick="showPhoneInfoNote()">
           <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"/></svg>
-          <span id="txt-sms-hint">Note: Use the official number where you receive SMS</span>
+          <span id="txt-sms-hint">Note: Use the official number where you receive WhatsApp messages</span>
         </div>
       </div>
       
@@ -860,7 +940,7 @@
   </footer>
 
   <script type="module">
-    import { db } from "./admins/config.js";
+    import { db } from "./admin/config.js";
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
     // --- BILINGUAL LANGUAGE ENGINE (ENGLISH & TAMIL) ---
@@ -875,9 +955,12 @@
         labelPhone: "Linked Mobile Number",
         inputPlaceholder: "Enter Account ID (e.g. M105)",
         phonePlaceholder: "10-digit mobile number",
-        smsHint: "Note: Use the official number where you receive SMS",
+        smsHint: "Note: Use the official number where you receive WhatsApp messages",
         accessBtn: "Access Ledger",
         authLoading: "Verifying...",
+        waConnecting: "Connecting...",
+        waContactBtn: "Contact Admin on WhatsApp",
+        waCancelBtn: "Cancel",
         logoutBtn: "Exit",
         selectGroupPrompt: "-- Select a Group to View --",
         viewGroupPrefix: "View Group:",
@@ -906,9 +989,9 @@
         modalPhoneTitle: "Mobile Number Required",
         modalPhoneEmptyMsg: "Please enter your 10-digit mobile number linked to this account.",
         modalPhoneMismatchTitle: "Verification Failed",
-        modalPhoneMismatchMsg: "The mobile number entered does not match this Account ID. Please enter the official number where you receive SMS.",
+        modalPhoneMismatchMsg: "The mobile number entered does not match this Account ID. Please enter the official number where you receive WhatsApp messages.",
         modalPhoneInfoTitle: "Official Linked Mobile Number",
-        modalPhoneInfoMsg: "Please enter the 10-digit mobile number where you receive official Meena Chitfunds SMS messages. That is the official number linked to your account.",
+        modalPhoneInfoMsg: "Please enter the 10-digit mobile number where you receive official Meena Chitfunds WhatsApp updates. That is the official number linked to your account.",
         modalAccessDeniedTitle: "Access Denied",
         modalNotFoundMsg: "Account ID not found. Please contact administration.",
         modalNoGroupsMsg: "Your account is currently not assigned to any active groups.",
@@ -924,9 +1007,12 @@
         labelPhone: "இணைக்கப்பட்ட மொபைல் எண்",
         inputPlaceholder: "Account ID உள்ளிடவும் (எ.கா. M105)",
         phonePlaceholder: "10 இலக்க மொபைல் எண்",
-        smsHint: "குறிப்பு: SMS வரும் அதிகாரப்பூர்வ மொபைல் எண்ணை உள்ளிடவும்",
+        smsHint: "குறிப்பு: WhatsApp மெசேஜ் வரும் அதிகாரப்பூர்வ மொபைல் எண்ணை உள்ளிடவும்",
         accessBtn: "விவரம் பார்க்க",
         authLoading: "சரிபார்க்கப்படுகிறது...",
+        waConnecting: "இணைகிறது...",
+        waContactBtn: "வாட்ஸ்அப்பில் தொடர்பு கொள்ள",
+        waCancelBtn: "ரத்து செய்",
         logoutBtn: "வெளியேறு",
         selectGroupPrompt: "-- குழுவைத் தேர்ந்தெடுக்கவும் --",
         viewGroupPrefix: "குழு:",
@@ -955,9 +1041,9 @@
         modalPhoneTitle: "மொபைல் எண் தேவை",
         modalPhoneEmptyMsg: "இந்த கணக்குடன் இணைக்கப்பட்ட 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்.",
         modalPhoneMismatchTitle: "சரிபார்ப்பு தோல்வி",
-        modalPhoneMismatchMsg: "நீங்கள் உள்ளிட்ட மொபைல் எண் இந்த Account ID உடன் பொருந்தவில்லை. உங்களுக்கு SMS வரும் அதிகாரப்பூர்வ எண்ணை உள்ளிடவும்.",
+        modalPhoneMismatchMsg: "நீங்கள் உள்ளிட்ட மொபைல் எண் இந்த Account ID உடன் பொருந்தவில்லை. உங்களுக்கு WhatsApp மெசேஜ் வரும் அதிகாரப்பூர்வ எண்ணை உள்ளிடவும்.",
         modalPhoneInfoTitle: "இணைக்கப்பட்ட மொபைல் எண்",
-        modalPhoneInfoMsg: "மீனா சிட்பண்ட்ஸ்-இல் இருந்து உங்களுக்கு SMS வரும் 10 இலக்க மொபைல் எண்ணை உள்ளிடவும். அதுவே உங்கள் கணக்குடன் இணைக்கப்பட்ட அதிகாரப்பூர்வ எண்ணாகும்.",
+        modalPhoneInfoMsg: "மீனா சிட்பண்ட்ஸ்-இல் இருந்து உங்களுக்கு WhatsApp மெசேஜ் வரும் 10 இலக்க மொபைல் எண்ணை உள்ளிடவும். அதுவே உங்கள் கணக்குடன் இணைக்கப்பட்ட அதிகாரப்பூர்வ எண்ணாகும்.",
         modalAccessDeniedTitle: "அனுமதி மறுக்கப்பட்டது",
         modalNotFoundMsg: "Account ID காணப்படவில்லை. நிர்வாகத்தைத் தொடர்பு கொள்ளவும்.",
         modalNoGroupsMsg: "உங்கள் கணக்கு எந்த குழுவிலும் இணைக்கப்படவில்லை.",
@@ -976,9 +1062,11 @@
     let activeGroupId = null;
     let isModalOpen = false;
     let isDashboardOpen = false;
+    let isBottomSheetOpen = false; // BOTTOM SHEET STATE
     let lastModalKey = null;
     let toastTimer = null;
     let isDynamicLogin = false; // FLAG FOR ENTRY TRACKING
+    let cachedAdminPhoneForCustomer = null; // ZERO-READ CACHE FOR WHATSAPP BUTTON
 
     // --- SMART INDIAN 10-DIGIT PHONE SANITIZER ---
     // Strips spaces, +91, leading 0s, dashes, or formatting from both user input & Firestore DB strings
@@ -1008,30 +1096,81 @@
       inputEl.value = digits.slice(0, 10);
     };
 
-    // --- PHONE INFO NOTE (TOAST + BACK-BUTTON MODAL) ---
+    // --- BOTTOM SHEET ENGINE (REPLACES INFO MODAL) ---
+    window.showBottomSheet = () => {
+      window.triggerHaptic("light");
+      
+      const overlay = document.getElementById("bs-overlay");
+      const sheet = document.getElementById("bottom-sheet");
+      
+      document.getElementById("bs-title").innerText = t("modalPhoneInfoTitle");
+      document.getElementById("bs-desc").innerText = t("modalPhoneInfoMsg");
+      
+      if (!isBottomSheetOpen) {
+        isBottomSheetOpen = true;
+        history.pushState({ view: isDashboardOpen ? "dashboard" : "home", bottomSheetOpen: true }, "");
+      }
+
+      overlay.classList.add("show");
+      sheet.classList.add("show");
+    };
+
+    window.closeBottomSheet = (fromPopState = false) => {
+      if (!isBottomSheetOpen && !fromPopState) return;
+      window.triggerHaptic("light");
+      isBottomSheetOpen = false;
+      
+      const overlay = document.getElementById("bs-overlay");
+      const sheet = document.getElementById("bottom-sheet");
+      
+      overlay.classList.remove("show");
+      sheet.classList.remove("show");
+
+      if (!fromPopState && history.state && history.state.bottomSheetOpen) {
+        history.back();
+      }
+    };
+
+    // --- WHATSAPP ADMIN REDIRECT LOGIC ---
+    window.fetchAdminPhoneAndRedirect = async () => {
+      window.triggerHaptic("light");
+      const btn = document.getElementById("btn-whatsapp-admin");
+      const btnText = document.getElementById("wa-btn-text");
+
+      try {
+        if (cachedAdminPhoneForCustomer) {
+          window.open(`https://wa.me/${cachedAdminPhoneForCustomer}`, '_blank');
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = `<span class="btn-spinner"></span><span id="wa-btn-text">${t("waConnecting")}</span>`;
+
+        const adminSnap = await getDoc(doc(db, "system_state", "admin_settings"));
+        if (adminSnap.exists() && adminSnap.data().adminPhone) {
+          cachedAdminPhoneForCustomer = adminSnap.data().adminPhone;
+          window.open(`https://wa.me/${cachedAdminPhoneForCustomer}`, '_blank');
+        } else {
+          throw new Error("Admin number not configured in system_state/admin_settings.");
+        }
+      } catch (err) {
+        console.error("Failed to fetch admin number:", err);
+        window.showModal("Error", "Could not connect to Admin WhatsApp at this time.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span id="wa-btn-text">${t("waContactBtn")}</span>`;
+      }
+    };
+
+    // --- PHONE INFO NOTE (TOAST & BOTTOM SHEET TRIGGER) ---
     window.hideInfoToast = () => {
       const toast = document.getElementById("info-toast");
       if (toast) toast.classList.remove("show");
     };
 
     window.showPhoneInfoNote = () => {
-      window.triggerHaptic("light");
-      const toast = document.getElementById("info-toast");
-      const toastText = document.getElementById("info-toast-text");
-      if (toast && toastText) {
-        toastText.innerText = t("modalPhoneInfoMsg");
-        toast.classList.add("show");
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => {
-          toast.classList.remove("show");
-        }, 4000);
-      }
-      window.showModal(
-        t("modalPhoneInfoTitle"),
-        t("modalPhoneInfoMsg"),
-        "info",
-        { titleKey: "modalPhoneInfoTitle", msgKey: "modalPhoneInfoMsg" }
-      );
+      // Trigger the sleek bottom sheet instead of the rigid modal
+      window.showBottomSheet();
     };
 
     // --- BUTTON LOADING SPINNER HELPER ---
@@ -1064,6 +1203,16 @@
       if (loginBtn && loginBtnText) {
         loginBtnText.innerText = loginBtn.disabled ? t("authLoading") : t("accessBtn");
       }
+
+      // Update Bottom Sheet Text
+      document.getElementById("bs-title").innerText = t("modalPhoneInfoTitle");
+      document.getElementById("bs-desc").innerText = t("modalPhoneInfoMsg");
+      const waBtn = document.getElementById("btn-whatsapp-admin");
+      const waBtnText = document.getElementById("wa-btn-text");
+      if (waBtn && waBtnText) {
+        waBtnText.innerText = waBtn.disabled ? t("waConnecting") : t("waContactBtn");
+      }
+      document.getElementById("bs-close-btn").innerText = t("waCancelBtn");
 
       document.getElementById("txt-logout-btn").innerText = t("logoutBtn");
       document.getElementById("txt-sum-total").innerText = t("sumTotal");
@@ -1158,7 +1307,7 @@
 
     window.handleLogout = () => {
       window.triggerHaptic("light");
-      if (history.state && (history.state.view === "dashboard" || history.state.modalOpen)) {
+      if (history.state && (history.state.view === "dashboard" || history.state.modalOpen || history.state.bottomSheetOpen)) {
         history.back();
       } else {
         window.returnToHomeView(false);
@@ -1166,13 +1315,19 @@
     };
 
     window.addEventListener("popstate", (event) => {
-      // 1. If the alert/info modal is currently open, pressing Back closes the modal first
+      // 1. If bottom sheet is open, close it first
+      if (isBottomSheetOpen) {
+        window.closeBottomSheet(true);
+        return;
+      }
+      
+      // 2. If the alert/info modal is currently open, pressing Back closes the modal
       if (isModalOpen) {
         window.closeModal(true);
         return;
       }
 
-      // 2. If the user is on the Ledger Dashboard and presses Back, return to Account ID login screen
+      // 3. If the user is on the Ledger Dashboard and presses Back, return to Account ID login screen
       if (isDashboardOpen && (!event.state || event.state.view !== "dashboard")) {
         window.triggerHaptic("light");
         window.returnToHomeView(true);
@@ -1602,7 +1757,7 @@
     // --- DYNAMIC URL AUTO-LOGIN ---
     const initAutoLogin = () => {
       // Set initial History state and apply saved language
-      history.replaceState({ view: "home", modalOpen: false }, "");
+      history.replaceState({ view: "home", modalOpen: false, bottomSheetOpen: false }, "");
       window.applyLanguage(false);
 
       // Allows domain.com/public.html?id=RAHUL_101
