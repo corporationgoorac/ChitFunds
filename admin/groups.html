@@ -1617,13 +1617,20 @@
                     const safePhone = activeViewedUser.phone.replace(/\D/g, '');
                     const waNumber = safePhone.length === 10 ? `91${safePhone}` : safePhone;
                     
-                    let msg = `*Meena Chitfunds*\nGroup: ${activeGroupData.groupName.toUpperCase()} (@${groupId})\nTimeline: Month ${evalMonth} of ${totalGroupMonths}\n\nDear ${activeViewedUser.name.toUpperCase()},\n\n`;
-                    
-                    if (snapshotPartialPaid > 0 && snapshotMonthsPaid + 1 === evalMonth) {
-                         msg += `Month ${evalMonth} Target: ₹${calculateDueForMonth(evalMonth, startAmt, schedule)}\nReceived: ₹${snapshotPartialPaid}\n*Pending Balance: ₹${pendingTotal}*\n\nKindly clear your partial dues.`;
-                    } else {
-                         msg += `You have pending payments.\n*Total Pending: ₹${pendingTotal}*\n\nKindly clear your dues at the earliest.`;
+                  let msg = `*Meena Chitfunds*\nGroup: ${activeGroupData.groupName.toUpperCase()} (@${activeGroupData.id})\nTimeline: Month ${evalMonth} of ${activeGroupData.totalMonths || 0}\n\nDear ${activeViewedUser.name.toUpperCase()},\n\nYou have pending payments for the following months:\n`;
+
+                    for (let m = snapshotMonthsPaid + 1; m <= evalMonth; m++) {
+                        let dueForM = calculateDueForMonth(m, startAmt, schedule);
+                        if (m === snapshotMonthsPaid + 1 && snapshotPartialPaid > 0) {
+                            let remainingPartial = dueForM - snapshotPartialPaid;
+                            msg += `• Month ${m}: ₹${dueForM.toLocaleString('en-IN')} (Paid ₹${snapshotPartialPaid.toLocaleString('en-IN')}, Bal: ₹${remainingPartial.toLocaleString('en-IN')})\n`;
+                        } else {
+                            msg += `• Month ${m}: ₹${dueForM.toLocaleString('en-IN')}\n`;
+                        }
                     }
+
+                    msg += `\n*Total Pending: ₹${pendingTotal.toLocaleString('en-IN')}*\n\nKindly clear your dues at the earliest.`;
+
 
                     const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
                     
