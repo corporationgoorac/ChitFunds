@@ -1293,15 +1293,20 @@
                         const safePhone = u.phone.replace(/\D/g,'');
                         const waNumber = safePhone.length === 10 ? `91${safePhone}` : safePhone;
                         
-                        let msg = `*Meena Chitfunds*\nGroup: ${activeGroupData.groupName.toUpperCase()} (@${activeGroupData.id})\nTimeline: Month ${expectedUserMonth} of ${activeGroupData.totalMonths || 0}\n\nDear ${(u.name || 'Participant').toUpperCase()},\n\n`;
-                        
-                        if (partialPaid > 0 && startMonth === expectedUserMonth) {
-                             msg += `Month ${expectedUserMonth} Target: ₹${calculateDueForMonth(expectedUserMonth, startAmt, schedule)}\nReceived: ₹${partialPaid}\n*Pending Balance: ₹${totalOwed}*\n\nKindly clear your partial dues.`;
-                        } else {
-                            let breakdownText = "";
-                            pendingMonthsList.forEach(pm => { breakdownText += `- Month ${pm.month}: ₹${pm.amount}\n`; });
-                            msg += `You have pending payments:\n\n${breakdownText}\n*Total Pending: ₹${totalOwed}*\n\nKindly clear your dues at the earliest.`;
+                       let msg = `*Meena Chitfunds*\nGroup: ${activeGroupData.groupName.toUpperCase()} (@${activeGroupData.id})\nTimeline: Month ${expectedUserMonth} of ${activeGroupData.totalMonths || 0}\n\nDear ${(u.name || 'Participant').toUpperCase()},\n\nYou have pending payments for the following months:\n`;
+
+                        for (let m = startMonth; m <= expectedUserMonth; m++) {
+                            let dueForM = calculateDueForMonth(m, startAmt, schedule);
+                            if (m === startMonth && partialPaid > 0) {
+                                let remainingPartial = dueForM - partialPaid;
+                                msg += `• Month ${m}: ₹${dueForM.toLocaleString('en-IN')} (Paid ₹${partialPaid.toLocaleString('en-IN')}, Bal: ₹${remainingPartial.toLocaleString('en-IN')})\n`;
+                            } else {
+                                msg += `• Month ${m}: ₹${dueForM.toLocaleString('en-IN')}\n`;
+                            }
                         }
+
+                        msg += `\n*Total Pending: ₹${totalOwed.toLocaleString('en-IN')}*\n\nKindly clear your dues at the earliest.`;
+
 
                         const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
                         
