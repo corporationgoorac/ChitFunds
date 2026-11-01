@@ -1617,13 +1617,20 @@
                     const safePhone = activeViewedUser.phone.replace(/\D/g, '');
                     const waNumber = safePhone.length === 10 ? `91${safePhone}` : safePhone;
                     
-                    let msg = `*Meena Chitfunds*\nGroup: ${activeGroupData.groupName.toUpperCase()} (@${groupId})\nTimeline: Month ${evalMonth} of ${totalGroupMonths}\n\nDear ${activeViewedUser.name.toUpperCase()},\n\n`;
-                    
-                    if (snapshotPartialPaid > 0 && snapshotMonthsPaid + 1 === evalMonth) {
-                         msg += `Month ${evalMonth} Target: ₹${calculateDueForMonth(evalMonth, startAmt, schedule)}\nReceived: ₹${snapshotPartialPaid}\n*Pending Balance: ₹${pendingTotal}*\n\nKindly clear your partial dues.`;
-                    } else {
-                         msg += `You have pending payments.\n*Total Pending: ₹${pendingTotal}*\n\nKindly clear your dues at the earliest.`;
-                    }
+                 let msg = `*Meena Chitfunds*\nGroup: ${activeGroupData.groupName.toUpperCase()} (@${activeGroupData.id})\nTimeline: Month ${expectedUserMonth} of ${activeGroupData.totalMonths || 0}\n\nDear ${(u.name || 'Participant').toUpperCase()},\n\nYou have pending payments for the following months:\n`;
+
+                        for (let m = startMonth; m <= expectedUserMonth; m++) {
+                            let dueForM = calculateDueForMonth(m, startAmt, schedule);
+                            if (m === startMonth && partialPaid > 0) {
+                                let remainingPartial = dueForM - partialPaid;
+                                msg += `• Month ${m}: ₹${dueForM.toLocaleString('en-IN')} (Paid ₹${partialPaid.toLocaleString('en-IN')}, Bal: ₹${remainingPartial.toLocaleString('en-IN')})\n`;
+                            } else {
+                                msg += `• Month ${m}: ₹${dueForM.toLocaleString('en-IN')}\n`;
+                            }
+                        }
+
+                        msg += `\n*Total Pending: ₹${totalOwed.toLocaleString('en-IN')}*\n\nKindly clear your dues at the earliest.`;
+
 
                     const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
                     
